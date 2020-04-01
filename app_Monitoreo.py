@@ -5,7 +5,6 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-from scipy.optimize import minimize
 
 #   Dash
 import pathlib

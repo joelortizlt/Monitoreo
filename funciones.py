@@ -18,8 +18,6 @@ def aggr_sum(result_col):
     filt = list(map(avg, it.zip_longest(*result_col)))
     return filt
 
-#---
-
 #Esta función permite encontrar la posición de un encabezado espeífico (a) en un dataframe (df)
 def encontrar_encabezado(df,a):
     n=0
