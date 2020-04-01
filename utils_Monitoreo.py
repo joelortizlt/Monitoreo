@@ -281,8 +281,11 @@ def Barplot(df, curva='MAE_pd', grupo='c_riesgo'):
     return dcc.Graph(
                 figure={'data': [go.Bar(x = df[curva], 
                                         y = df[grupo],
-                                        orientation = 'h'),
+                                        orientation = 'h',
+                                        name = curva[:3]),
                                 go.Bar(x=df[curva_optima],
                                         y = df[grupo],
-                                        orientation = 'h')]
+                                        orientation = 'h',
+                                        name = 'MAE Óptimo')],
+                        'layout': go.Layout(yaxis={'type': 'category'})
         })

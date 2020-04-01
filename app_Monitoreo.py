@@ -5,6 +5,7 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
+from scipy.optimize import minimize
 
 #   Dash
 import pathlib
@@ -364,6 +365,8 @@ report_list_pd, report_list_can, report_list_pre  = [], [], []
 pd_MAE_graph_list, can_MAE_graph_list, pre_MAE_graph_list = [], [], []
 resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre = '', '', ''
 resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
+comb_size = []
+MAE_titles = []
 
 filtro1 = 'c_riesgo'
 filtro2 = 'c_plazo'
@@ -389,10 +392,19 @@ for corte in cortes:
         product.curvas = product.curvas.drop(index=[5, 11, 17, 23, 29]) # Drop plazo 72 en todas las combinaciones
         product.curvas.index = list(range(25))
 
+    # MAE - Barplots
     if corte[0]==[filtro1] or corte[0]==[filtro2]:
         for tipo_curva in MAE_list:
             barplot = Barplot(product.stats, curva=tipo_curva[0], grupo=corte[0][0])    
             tipo_curva[1].append(barplot)
+        comb_size.append(len(product.curvas.index))
+        MAE_titles.append(str(corte[0][0])[2:].capitalize())
+    
+    if corte[0]==[filtro1]:
+        valores = product.curvas[filtro1].values
+    if corte[0]==[filtro2]:
+        for valor in valores:
+            MAE_titles.append(filtro1[2:].capitalize() + ' ' + valor)
 
     nro_combinaciones = len(product.curvas.index)
 
@@ -425,8 +437,9 @@ for corte in cortes:
             elif mae[0]=='MAE_pre':
                 pre_alertas_list.append(aux_lista)
 
-    title_list = [[pd_alertas_list, 'PD', pd_graph_list, report_list_pd], [can_alertas_list, 'Cancelaciones', can_graph_list, report_list_can],
-                    [pre_alertas_list, 'Prepagos', pre_graph_list, report_list_pre] 
+    title_list = [[pd_alertas_list, 'PD', pd_graph_list, report_list_pd, pd_MAE_graph_list, 'MAE_pd'], 
+                    [can_alertas_list, 'Cancelaciones', can_graph_list, report_list_can, can_MAE_graph_list, 'MAE_can'],
+                    [pre_alertas_list, 'Prepagos', pre_graph_list, report_list_pre, pre_MAE_graph_list, 'MAE_pre'] 
                 ]
 
     for title in title_list:
@@ -459,7 +472,7 @@ for corte in cortes:
             for linea in list(range(nro_combinaciones)):
                 str2 = str(product.curvas[corte[0][0]].values[linea]).capitalize()
                 report_list_aux.append([(str1 + ' ' + str2, title[2][corte[1] + linea], 'twelve columns')])
- 
+                 
             title[3].append(report_list_aux)
         
         else:
@@ -504,6 +517,9 @@ for corte in cortes:
                 for linea in nro_combinaciones_comb[0]:
                     str2 = str(product.curvas[filtro2].values[linea]).capitalize()
                     report_list_aux.append([(str1 + ' ' + str2, title[2][auxcorte + linea], 'twelve columns')])
+                    # MAE
+                    barplot = Barplot(product.stats, curva=title[5], grupo=corte[0][1])
+                    title[4].append(barplot)
 
                 auxcorte = auxcorte + 5
 
@@ -539,12 +555,19 @@ report_list_resumen = [ [('Resumen de Alertas por Riesgo y Plazo', aux2,'product
                         [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]
 ]
 
-report_list_MAE = [ [('Gráficos MAE', aux2, 'product')],
-                    [('PD', pd_MAE_graph_list[0], 'twelve columns')],
-                    [('PD', pd_MAE_graph_list[1], 'twelve columns')],
-                    [('PD', can_MAE_graph_list[0], 'twelve columns')],
-                    [('PD', can_MAE_graph_list[1], 'twelve columns')]
-]
+report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre = [], [], []
+report_list_MAE = [[report_list_MAE_pd, 'PD', pd_MAE_graph_list], [report_list_MAE_can, 'Cancelaciones', can_MAE_graph_list], 
+                    [report_list_MAE_pre, 'Prepagos', pre_MAE_graph_list]]
+
+for report_list in report_list_MAE:
+    range_MAE = [ [0], [1], list(range(2, comb_size[1]+2)) ]
+    report_list_aux = []
+    report_list_aux.append( [('Gráficos MAE - '+ report_list[1], aux2, 'product')] )
+    for rango in range_MAE:
+        for rango2 in rango:
+            report_list_aux.append( [(MAE_titles[rango2], report_list[2][rango2], 'twelve columns')] )
+    report_list[0].append(report_list_aux)
+
 
 import dash
 from dash.dependencies import Input, Output
@@ -573,7 +596,6 @@ app.layout = html.Div(
 def display_page(pathname):
     
     return (
-        overview.create_layout(app, report_list_MAE),
         overview.create_layout(app, report_list_resumen),
         overview.create_layout(app, report_list_pd[0]),
         overview.create_layout(app, report_list_can[0]),
@@ -596,6 +618,9 @@ def display_page(pathname):
         overview.create_layout(app, report_list_pd[6]),
         overview.create_layout(app, report_list_can[6]),
         overview.create_layout(app, report_list_pre[6]),
+        overview.create_layout(app, report_list_MAE_pd[0]),
+        overview.create_layout(app, report_list_MAE_can[0]),
+        overview.create_layout(app, report_list_MAE_pre[0]),
     )
 
 if __name__=='__main__':
