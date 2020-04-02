@@ -13,11 +13,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 #   Otros Scripts
-from utils_Monitoreo import Header, get_header, Plotgraph, Barplot
+from utils_Inputs import Header, get_header, Plotgraph, Barplot
 import funciones as f
-from MonitoreoNoRevolvente import MonitoreoNoRevolvente
-from MonitoreoNoRevolventeReal import MonitoreoNoRevolventeReal
-from MonitoreoNoRevolventeTeorico import MonitoreoNoRevolventeTeorico
+from InputsNoRevolvente import InputsNoRevolvente
+from InputsNoRevolventeReal import InputsNoRevolventeReal
+from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 # 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
 
@@ -46,11 +46,11 @@ cortes =  [[[filtro1], nro_comb_filtro1], [[filtro2], nro_comb_filtro2], [[filtr
 MAE_list = [['MAE_pd', pd_MAE_graph_list], ['MAE_can', can_MAE_graph_list], ['MAE_pre', pre_MAE_graph_list]]
 
 for corte in cortes:
-    productR = MonitoreoNoRevolventeReal(xls_product)
+    productR = InputsNoRevolventeReal(xls_product)
     productR.condensar(corte[0])
-    productT = MonitoreoNoRevolventeTeorico(xls_product)
+    productT = InputsNoRevolventeTeorico(xls_product)
     productT.condensar(corte[0])
-    product = MonitoreoNoRevolvente(productR,productT)
+    product = InputsNoRevolvente(productR,productT)
     product.optimizar()
     product.curvas
     product.stats
@@ -83,10 +83,10 @@ for corte in cortes:
         graph = Plotgraph(product.curvas, corte=combinacion)
         pd_graph_list.append(graph)
 
-        graph2 = Plotgraph(product.curvas, curvas='Cancelaciones', corte=combinacion)
+        graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', corte=combinacion)
         can_graph_list.append(graph2)
 
-        graph3 = Plotgraph(product.curvas, curvas='Prepago', corte=combinacion)
+        graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', corte=combinacion)
         pre_graph_list.append(graph3)
 
         # Listado de  alertas:

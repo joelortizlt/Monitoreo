@@ -84,10 +84,10 @@ for corte in cortes:
         graph = Plotgraph(product.curvas, corte=combinacion)
         if_graph_list.append(graph)
 
-        graph2 = Plotgraph(product.curvas, curvas='EF', corte=combinacion)
+        graph2 = Plotgraph(product.curvas, curvas='EF', nombre='Egresos Financieros', corte=combinacion)
         ef_graph_list.append(graph2)
 
-        graph3 = Plotgraph(product.curvas, curvas='Saldo', corte=combinacion)
+        graph3 = Plotgraph(product.curvas, curvas='Saldo', nombre='Saldos', corte=combinacion)
         saldo_graph_list.append(graph3)
 
         # Listado de  alertas:

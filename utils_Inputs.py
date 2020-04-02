@@ -63,7 +63,7 @@ def get_menu():
     return menu
 
 # Line Graph --> PD, Cancelaciones, Prepagos
-def Plotgraph(df, curvas='IF', nombre='Ingreso Financiero', corte=0, y_title='Monto'):
+def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
 
     # Text
     text_list = []
@@ -73,7 +73,7 @@ def Plotgraph(df, curvas='IF', nombre='Ingreso Financiero', corte=0, y_title='Mo
                     '', '', '', '', '', value, '', '', '', '', '', value, '', '', '', '', '', value, '', '', '', '', '', value]
     
     curve_name = curvas.lower() # Lowercase
-    columns_aux = [curve_name + '_real', curve_name + '_teorico', curve_name + '_optimo']
+    columns_aux = [curve_name + '_real', curve_name + '_teorica', curve_name + '_optima']
     for column in columns_aux:
         plazo = len(df[column][corte]) - 1
         text = text_aux[:plazo]
@@ -157,7 +157,7 @@ def Plotgraph(df, curvas='IF', nombre='Ingreso Financiero', corte=0, y_title='Mo
                         config = {"displayModeBar": False}
     ) 
     
-def Barplot(df, curva='MAE_if', grupo='c_riesgo'):
+def Barplot(df, curva='MAE_pd', grupo='c_riesgo'):
 
     curva_optima = curva[:3] + 'op' + curva[3:]
     
