@@ -1,36 +1,38 @@
-# 0. Librerías 
+# 0. Librerias *****************************************************************************
 
 import numpy as np
 import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-from scipy.optimize import minimize
 
 #   Dash
 import pathlib
 import dash_core_components as dcc
 import dash_html_components as html
 
-#   Otros Scripts
-from utils_Monitoreo import Header, get_header, Plotgraph, Barplot
+# Otros Scripts
+from utils_Outputs import Header, get_header, Plotgraph, Barplot
 import funciones as f
-from MonitoreoNoRevolvente import MonitoreoNoRevolvente
-from MonitoreoNoRevolventeReal import MonitoreoNoRevolventeReal
-from MonitoreoNoRevolventeTeorico import MonitoreoNoRevolventeTeorico
+from OutputsNoRevolvente import OutputsNoRevolvente
+from OutputsNoRevolventeReal import OutputsNoRevolventeReal
+from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 
-# 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
+# 1. Lectura de Data - Reporte IF, EF, SALDO, MAE
 
-xls_product = pd.ExcelFile('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\\6. Reporte_Monitoreo\Data\Vehicular.xlsx')
+csv_REAL_VEH = '\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\\7. Reporte_Outputs\Data\IFEFSAL_REALES.csv'
+csv_IF_VEH = '\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\\7. Reporte_Outputs\Data\IF_TEORICO.csv'
+csv_EF_VEH = '\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\\7. Reporte_Outputs\Data\EF_TEORICO.csv'
+csv_SALDO_VEH = '\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\\7. Reporte_Outputs\Data\SALDO_TEORICO.csv'
 
-pd_graph_list, can_graph_list, pre_graph_list = [], [], []
-pd_alertas_list, can_alertas_list, pre_alertas_list = [], [], []
-report_list_pd, report_list_can, report_list_pre  = [], [], []
-pd_MAE_graph_list, can_MAE_graph_list, pre_MAE_graph_list = [], [], []
-resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre = '', '', ''
-resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
+if_graph_list, ef_graph_list, saldo_graph_list = [], [], []
+if_alertas_list, ef_alertas_list, saldo_alertas_list = [], [], []
+report_list_if, report_list_ef, report_list_saldo  = [], [], []
+if_MAE_graph_list, ef_MAE_graph_list, saldo_MAE_graph_list = [], [], []
+resumen_descalibrados_if, resumen_descalibrados_ef, resumen_descalibrados_saldo = '', '', ''
+resumen_revision_if, resumen_revision_ef, resumen_revision_saldo = '', '', ''
 comb_size = []
-report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre = [], [], []
+report_list_MAE_if, report_list_MAE_ef, report_list_MAE_saldo = [], [], []
 MAE_titles = []
 
 # 2. Setting de Filtros
@@ -43,17 +45,16 @@ cortes =  [[[filtro1], nro_comb_filtro1], [[filtro2], nro_comb_filtro2], [[filtr
 
 # 3. Generación de Objetos
 
-MAE_list = [['MAE_pd', pd_MAE_graph_list], ['MAE_can', can_MAE_graph_list], ['MAE_pre', pre_MAE_graph_list]]
+MAE_list = [['MAE_if', if_MAE_graph_list], ['MAE_ef', ef_MAE_graph_list], ['MAE_saldo', saldo_MAE_graph_list]]
 
 for corte in cortes:
-    productR = MonitoreoNoRevolventeReal(xls_product)
+    productR = OutputsNoRevolventeReal(csv_REAL_VEH)
     productR.condensar(corte[0])
-    productT = MonitoreoNoRevolventeTeorico(xls_product)
+    productT = OutputsNoRevolventeTeorico(csvif = csv_IF_VEH, csvef = csv_EF_VEH, csvsaldo = csv_SALDO_VEH)
     productT.condensar(corte[0])
-    product = MonitoreoNoRevolvente(productR,productT)
-    product.optimizar()
+    product = OutputsNoRevolvente(productR,productT)
+    product.optimizar(0.001)
     product.curvas
-    product.stats
 
     if corte[0]==['c_plazo']:
         product.curvas = product.curvas.drop(index=[5])
@@ -81,13 +82,13 @@ for corte in cortes:
 
         # Gráficos:
         graph = Plotgraph(product.curvas, corte=combinacion)
-        pd_graph_list.append(graph)
+        if_graph_list.append(graph)
 
-        graph2 = Plotgraph(product.curvas, curvas='Cancelaciones', corte=combinacion)
-        can_graph_list.append(graph2)
+        graph2 = Plotgraph(product.curvas, curvas='EF', corte=combinacion)
+        ef_graph_list.append(graph2)
 
-        graph3 = Plotgraph(product.curvas, curvas='Prepago', corte=combinacion)
-        pre_graph_list.append(graph3)
+        graph3 = Plotgraph(product.curvas, curvas='Saldo', corte=combinacion)
+        saldo_graph_list.append(graph3)
 
         # Listado de  alertas:
         for mae in MAE_list:
@@ -99,16 +100,16 @@ for corte in cortes:
             else:
                 aux_lista = 'Calibrado'
                 
-            if mae[0]=='MAE_pd':
-                pd_alertas_list.append(aux_lista)
-            elif mae[0]=='MAE_can':
-                can_alertas_list.append(aux_lista)
-            elif mae[0]=='MAE_pre':
-                pre_alertas_list.append(aux_lista)
+            if mae[0]=='MAE_if':
+                if_alertas_list.append(aux_lista)
+            elif mae[0]=='MAE_ef':
+                ef_alertas_list.append(aux_lista)
+            elif mae[0]=='MAE_saldo':
+                saldo_alertas_list.append(aux_lista)
 
-    title_list = [[pd_alertas_list, 'PD', pd_graph_list, report_list_pd, pd_MAE_graph_list, 'MAE_pd'], 
-                    [can_alertas_list, 'Cancelaciones', can_graph_list, report_list_can, can_MAE_graph_list, 'MAE_can'],
-                    [pre_alertas_list, 'Prepagos', pre_graph_list, report_list_pre, pre_MAE_graph_list, 'MAE_pre'] 
+    title_list = [[if_alertas_list, 'Ingreso Financiero', if_graph_list, report_list_if, if_MAE_graph_list, 'MAE_if'], 
+                    [ef_alertas_list, 'Egreso Financiero', ef_graph_list, report_list_ef, ef_MAE_graph_list, 'MAE_ef'],
+                    [saldo_alertas_list, 'Saldos', saldo_graph_list, report_list_saldo, saldo_MAE_graph_list, 'MAE_saldo'] 
                 ]
 
     for title in title_list:
@@ -194,19 +195,19 @@ for corte in cortes:
 
                 title[3].append(report_list_aux)
 
-        if title[1]=='PD':
-            resumen_descalibrados_pd = resumen_descalibrados_pd + aux_descal
-            resumen_revision_pd = resumen_revision_pd + aux_revision
-        elif title[1]=='Cancelaciones':
-            resumen_descalibrados_can = resumen_descalibrados_can + aux_descal
-            resumen_revision_can = resumen_revision_can + aux_revision
+        if title[1]=='Ingreso Financiero':
+            resumen_descalibrados_if = resumen_descalibrados_if + aux_descal
+            resumen_revision_if = resumen_revision_if + aux_revision
+        elif title[1]=='Egreso Financiero':
+            resumen_descalibrados_ef = resumen_descalibrados_ef + aux_descal
+            resumen_revision_ef = resumen_revision_ef + aux_revision
         else:
-            resumen_descalibrados_pre = resumen_revision_pre + aux_descal
-            resumen_revision_pre = resumen_revision_pre + aux_revision
+            resumen_descalibrados_saldo = resumen_revision_saldo + aux_descal
+            resumen_revision_saldo = resumen_revision_saldo + aux_revision
 
 # To html
-aux_resumen = [resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre, resumen_revision_pd, resumen_revision_can,
-                resumen_revision_pre]
+aux_resumen = [resumen_descalibrados_if, resumen_descalibrados_ef, resumen_descalibrados_saldo, resumen_revision_if, resumen_revision_ef,
+                resumen_revision_saldo]
 for aux in aux_resumen:
     if aux!='':
         aux = html.P(aux, style={"color": "#ffffff", "fontSize": "40"}, className='row')
@@ -216,16 +217,16 @@ for aux in aux_resumen:
 aux2 = html.P(' ', style={"color": "#ffffff", "fontSize": "40"}, className='row')
 
 report_list_resumen = [ [('Resumen de Alertas por Riesgo y Plazo', aux2,'product')],
-                        [('Curvas de PD - Descalibrados', resumen_descalibrados_pd, 'product')],
-                        [('Curvas de PD - Revisión', resumen_revision_pd, 'product')],
-                        [('Curvas de Cancelaciones - Descalibrados', resumen_descalibrados_can, 'product')],
-                        [('Curvas de Cancelaciones - Revisión', resumen_revision_can, 'product')],
-                        [('Curvas de Prepagos - Descalibrados', resumen_descalibrados_pre, 'product')],
-                        [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]
+                        [('Curvas de Ingresos Financieros - Descalibrados', resumen_descalibrados_if, 'product')],
+                        [('Curvas de Ingresos Financieros - Revisión', resumen_revision_if, 'product')],
+                        [('Curvas de Egresos Financieros - Descalibrados', resumen_descalibrados_ef, 'product')],
+                        [('Curvas de Egresos Financieros - Revisión', resumen_revision_ef, 'product')],
+                        [('Curvas de Saldos - Descalibrados', resumen_descalibrados_saldo, 'product')],
+                        [('Curvas de Saldos - Revisión', resumen_revision_saldo, 'product')]
 ]
 
-report_list_MAE = [[report_list_MAE_pd, 'PD', pd_MAE_graph_list], [report_list_MAE_can, 'Cancelaciones', can_MAE_graph_list], 
-                    [report_list_MAE_pre, 'Prepagos', pre_MAE_graph_list]]
+report_list_MAE = [[report_list_MAE_if, 'Ingresos Financieros', if_MAE_graph_list], [report_list_MAE_ef, 'Egresos Financieros', ef_MAE_graph_list], 
+                    [report_list_MAE_saldo, 'Saldos', saldo_MAE_graph_list]]
 
 for report_list in report_list_MAE:
     range_MAE = [ [0], [1], list(range(2, comb_size[1]+2)) ]
@@ -266,31 +267,32 @@ def display_page(pathname):
     
     return (
         overview.create_layout(app, report_list_resumen),
-        overview.create_layout(app, report_list_pd[0]),
-        overview.create_layout(app, report_list_can[0]),
-        overview.create_layout(app, report_list_pre[0]),
-        overview.create_layout(app, report_list_pd[1]),
-        overview.create_layout(app, report_list_can[1]),
-        overview.create_layout(app, report_list_pre[1]),
-        overview.create_layout(app, report_list_pd[2]),
-        overview.create_layout(app, report_list_can[2]),
-        overview.create_layout(app, report_list_pre[2]),
-        overview.create_layout(app, report_list_pd[3]),
-        overview.create_layout(app, report_list_can[3]),
-        overview.create_layout(app, report_list_pre[3]),
-        overview.create_layout(app, report_list_pd[4]),
-        overview.create_layout(app, report_list_can[4]),
-        overview.create_layout(app, report_list_pre[4]),
-        overview.create_layout(app, report_list_pd[5]),
-        overview.create_layout(app, report_list_can[5]),
-        overview.create_layout(app, report_list_pre[5]),
-        overview.create_layout(app, report_list_pd[6]),
-        overview.create_layout(app, report_list_can[6]),
-        overview.create_layout(app, report_list_pre[6]),
-        overview.create_layout(app, report_list_MAE_pd[0]),
-        overview.create_layout(app, report_list_MAE_can[0]),
-        overview.create_layout(app, report_list_MAE_pre[0]),
+        overview.create_layout(app, report_list_if[0]),
+        overview.create_layout(app, report_list_ef[0]),
+        overview.create_layout(app, report_list_saldo[0]),
+        overview.create_layout(app, report_list_if[1]),
+        overview.create_layout(app, report_list_ef[1]),
+        overview.create_layout(app, report_list_saldo[1]),
+        overview.create_layout(app, report_list_if[2]),
+        overview.create_layout(app, report_list_ef[2]),
+        overview.create_layout(app, report_list_saldo[2]),
+        overview.create_layout(app, report_list_if[3]),
+        overview.create_layout(app, report_list_ef[3]),
+        overview.create_layout(app, report_list_saldo[3]),
+        overview.create_layout(app, report_list_if[4]),
+        overview.create_layout(app, report_list_ef[4]),
+        overview.create_layout(app, report_list_saldo[4]),
+        overview.create_layout(app, report_list_if[5]),
+        overview.create_layout(app, report_list_ef[5]),
+        overview.create_layout(app, report_list_saldo[5]),
+        overview.create_layout(app, report_list_if[6]),
+        overview.create_layout(app, report_list_ef[6]),
+        overview.create_layout(app, report_list_saldo[6]),
+        overview.create_layout(app, report_list_MAE_if[0]),
+        overview.create_layout(app, report_list_MAE_ef[0]),
+        overview.create_layout(app, report_list_MAE_saldo[0]),
     )
 
 if __name__=='__main__':
     app.run_server(debug=True)
+
