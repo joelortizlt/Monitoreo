@@ -70,7 +70,7 @@ class OutputsNoRevolvente():
             plt.plot(z,t,label = 'teórica')
             if optimo:
                 o = self.curvas[texto+'_optimo'][i]
-                plt.plot(z,o,label = 'óptima')
+                plt.plot(z,o,label = 'óptimo')
             plt.plot(0)
             plt.legend(fontsize=10)
             plt.show()

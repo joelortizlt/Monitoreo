@@ -11,10 +11,10 @@ import funciones as f
 #creación de la clase
 class InputsNoRevolventeReal():
     #constructor del objeto
-    def __init__(self,csv,mincosecha='',maxcosecha=''): #se insume un documento de Excel
+    def __init__(self,df,mincosecha='',maxcosecha=''): #se insume un documento de Excel
         
         #tranformar la data de las hojas del excel en dataframes
-        df_real = pd.read_csv(csv)
+        df_real = df
         
         #colocar las curvas en una sola celda
         df_real['prepagos'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'PREPAGO_1'):f.encontrar_encabezado(df_real,'MTODESEMBOLSADO_1')].values.tolist()})
@@ -85,4 +85,4 @@ class InputsNoRevolventeReal():
             resultado = np.cumsum(resultado)
             curvas.at[i,'pre_real'] = f.porcentaje(resultado)
         
-        self.curvas = curvas
+        self.curvasR = curvas

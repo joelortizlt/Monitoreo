@@ -11,17 +11,15 @@ from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 from InputsNoRevolvente import InputsNoRevolvente
 
 #Se insumen los CSV
-csv_REAL_VEH = '/Users/renzomartinch/Downloads/PDCANPRE_REALES.csv'
-csv_PD_VEH = '/Users/renzomartinch/Downloads/PD_TEORICO.csv'
-csv_CAN_VEH = '/Users/renzomartinch/Downloads/CAN_TEORICO.csv'
-csv_PRE_VEH = '/Users/renzomartinch/Downloads/PRE_TEORICO.csv'
+csv_REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_REAL.csv')
+csv_TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUNTS_TEORICO.csv')
 #Se definen los cortes
 cortes = ['c_riesgo']
 
-vehicularR = InputsNoRevolventeReal(csv_REAL_VEH)
+vehicularR = InputsNoRevolventeReal(csv_REAL)
 vehicularR.condensar(cortes)
 
-vehicularT = InputsNoRevolventeTeorico(csvpd = csv_PD_VEH, csvcan = csv_CAN_VEH, csvpre = csv_PRE_VEH)
+vehicularT = InputsNoRevolventeTeorico(csv_TEORICO)
 vehicularT.condensar(cortes)
 
 vehicular = InputsNoRevolvente(vehicularR,vehicularT)

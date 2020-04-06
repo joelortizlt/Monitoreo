@@ -5,14 +5,29 @@ import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import funciones as f
+from InputsNoRevolventeReal import InputsNoRevolventeReal
+from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 
 
 #creación de la clase
-class InputsNoRevolvente():
+class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
     #constructor del objeto
-    def __init__(self,NRR,NRT): #se insumen 2 objetos (uno real y uno teorico)
-        curvas = pd.merge(left=NRR.curvas, right=NRT.curvas, how='left', left_on=f.all_cortes(NRR.curvas), right_on=f.all_cortes(NRT.curvas))
+    def __init__(self,df_real,df_teorico,mincosecha='',maxcosecha='',completar=False):
+
+        if completar==False:
+            pass
+
+        InputsNoRevolventeReal.__init__(self,df_real,mincosecha,maxcosecha)
+        InputsNoRevolventeTeorico.__init__(self,df_teorico,mincosecha,maxcosecha)
+
+
+    def condensar(self,cortes=[]):
+
+        InputsNoRevolventeReal.condensar(self,cortes)
+        InputsNoRevolventeTeorico.condensar(self,cortes)
+        
+        curvas = pd.merge(left=self.curvasR, right=self.curvasR, how='left', left_on=f.all_cortes(self.curvasR), right_on=f.all_cortes(self.curvasT))
         curvas['check']=curvas['recuento_x']-curvas['recuento_y']
         curvas = curvas.rename(columns={'recuento_x':'recuento'}).drop('recuento_y',1)
         
@@ -58,7 +73,7 @@ class InputsNoRevolvente():
             plt.plot(z,t,label = 'teórica')
             if optimo:
                 o = self.curvas[texto+'_optimo'][i]
-                plt.plot(z,o,label = 'óptima')
+                plt.plot(z,o,label = 'óptimo')
             plt.plot(0)
             plt.legend(fontsize=10)
             plt.show()
