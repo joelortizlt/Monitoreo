@@ -40,4 +40,4 @@ def all_cortes(df):
 def porcentaje(resultado):
     resultado = [100*x for x in resultado]
     resultado = [round(x,4) for x in resultado]
-    return resultado
+    return resultado      

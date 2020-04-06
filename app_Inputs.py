@@ -13,7 +13,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 #   Otros Scripts
-from utils_Inputs import Header, get_header, Plotgraph, Barplot
+from utils import Header, get_header, Plotgraph, Barplot
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 from InputsNoRevolventeReal import InputsNoRevolventeReal
