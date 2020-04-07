@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import funciones as f
 
-from OutputsNoRevolventeReal import OutputsNoRevolventeReal
-from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 from OutputsNoRevolvente import OutputsNoRevolvente
 
 #Se insumen los CSV

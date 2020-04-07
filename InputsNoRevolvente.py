@@ -169,3 +169,17 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.curvas.at[i,'pd_optimo'] = [round(x,4) for x in ypd]
             self.curvas.at[i,'can_optimo'] = [round(x,4) for x in ycan]
             self.curvas.at[i,'pre_optimo'] = [round(x,4) for x in ypre]
+
+    def impactoTmin(self,df):
+        cortes=f.all_cortes(self.stats)
+        df = df[cortes+['CODSOLICITUD','COSECHA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']]
+        Tmin = self.stats[cortes].copy()
+
+        for i in range(len(Tmin)):
+            temp = pd.merge(df, pd.DataFrame([Tmin.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)    
+            Tmin.at[i,'Tmin_base']  = f.weighted_average(temp,'Tmin','MTODESEMBOLSADO')
+            Tmin.at[i,'delta_pd']  = (f.weighted_average(temp,'PDTmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_pd']-1)*10
+            Tmin.at[i,'delta_can']  = (f.weighted_average(temp,'CANTmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_can']-1)*10
+            Tmin.at[i,'delta_pre']  = (f.weighted_average(temp,'PRETmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_pre']-1)*10
+            Tmin.at[i,'Tmin_final']  = Tmin.loc[i,'Tmin_base']+Tmin.loc[i,'delta_pd']+Tmin.loc[i,'delta_can']+Tmin.loc[i,'delta_pre']
+        self.Tmin = Tmin

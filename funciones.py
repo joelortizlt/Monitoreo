@@ -1,4 +1,5 @@
 import itertools as it
+import pandas as pd
 
 #Se crean las funciones de soporten necesarias
 def operation_pd(a, b):
@@ -41,3 +42,11 @@ def porcentaje(resultado):
     resultado = [100*x for x in resultado]
     resultado = [round(x,4) for x in resultado]
     return resultado      
+
+#Joel
+def weighted_average(df, data_col, weight_col):
+    df['_data_times_weight'] = df[data_col] * df[weight_col]
+    df['_weight_where_notnull'] = df[weight_col] * pd.notnull(df[data_col])
+    result = df['_data_times_weight'].sum() / df['_weight_where_notnull'].sum()
+    del df['_data_times_weight'], df['_weight_where_notnull']
+    return result
