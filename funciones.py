@@ -32,7 +32,7 @@ def encontrar_encabezado(df,a):
 def all_cortes(df):
     temp = []
     for i in list(df):
-        if str(i)[0:2]=='c_':
+        if str(i)[0:2]=='C_':
             temp.append(i)
     return temp
 

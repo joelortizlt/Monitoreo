@@ -11,25 +11,22 @@ from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 from InputsNoRevolvente import InputsNoRevolvente
 
 #Se insumen los CSV
-csv_REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_REAL.csv')
-csv_TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUNTS_TEORICO.csv')
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_REAL.csv')
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_TEORICO.csv')
 #Se definen los cortes
-cortes = ['c_riesgo']
+cortes = ['C_SEGMENTO']
 
-vehicularR = InputsNoRevolventeReal(csv_REAL)
-vehicularR.condensar(cortes)
-
-vehicularT = InputsNoRevolventeTeorico(csv_TEORICO)
-vehicularT.condensar(cortes)
-
-vehicular = InputsNoRevolvente(vehicularR,vehicularT)
+vehicular = InputsNoRevolvente(REAL,TEORICO,completar=True)
+print(vehicular.df_real)
+print(vehicular.df_teorico)
+vehicular.condensar(cortes)
 print(vehicular.curvas)
-
+print(vehicular.stats)
 vehicular.plotear('can')
 vehicular.MAE('can')
 
 vehicular.optimizar()
 print(vehicular.curvas)
-
+print(vehicular.stats)
 vehicular.plotear('can',optimo=True)
 vehicular.MAE('can',optimo=True)

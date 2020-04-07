@@ -7,7 +7,6 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 
 
-
 #creación de la clase
 class InputsNoRevolventeReal():
     #constructor del objeto
@@ -17,11 +16,11 @@ class InputsNoRevolventeReal():
         df_real = df
         
         #colocar las curvas en una sola celda
-        df_real['prepagos'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'PREPAGO_1'):f.encontrar_encabezado(df_real,'MTODESEMBOLSADO_1')].values.tolist()})
-        df_real['desembolso'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'MTODESEMBOLSADO_1'):f.encontrar_encabezado(df_real,'prepagos')].values.tolist()})
+        df_real['prepagos'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'PREPAGO1'):f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1')].values.tolist()})
+        df_real['desembolso'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1'):f.encontrar_encabezado(df_real,'prepagos')].values.tolist()})
         
         #seleccionar solo la data relevante
-        df_real = df_real[f.all_cortes(df_real)+['CODSOLICITUD','COSECHA','FAIL_TYPE', 'SURVIVAL','maxmad','prepagos','desembolso']]
+        df_real = df_real[f.all_cortes(df_real)+['CODSOLICITUD','COSECHA','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -34,8 +33,8 @@ class InputsNoRevolventeReal():
         
         #si no se ingresa cortes espécificos, se usan todos
         if cortes==[]:
-            self.df_real['c_todos']=''
-            cortes=['c_todos']
+            self.df_real['C_TODOS']=''
+            cortes=['C_TODOS']
         
         #Creamos la 'plantilla'
         curvas = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
@@ -45,19 +44,19 @@ class InputsNoRevolventeReal():
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODSOLICITUD','COSECHA','maxmad','FAIL_TYPE','SURVIVAL','prepagos','desembolso']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_real[cortes+['CODSOLICITUD','COSECHA','MAXMAD','FAIL_TYPE','SURVIVAL','prepagos','desembolso']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
             
             #pd y cancelaciones reales
             vector = pd.DataFrame()
             c = 0
             surviv = 1
-            for j in range(1, temp['maxmad'].max()+1):
+            for j in range(1, temp['MAXMAD'].max()+1):
                 #Count del número de defaults en cada maduración del rango de fechas
                 default = temp.query('FAIL_TYPE == 1' + ' & SURVIVAL=='+str(j))['SURVIVAL'].count()
                 #Count del número de cancelaciones en cada maduración del rango de fechas
                 cancel = temp.query('FAIL_TYPE == 2' + ' & SURVIVAL=='+str(j))['SURVIVAL'].count()
                 #Count del número de cuentas en cada maduración tomando en cuenta la máxima maduración y rango de fechas
-                dem = temp.query('maxmad>=' + str(j))['SURVIVAL'].count()
+                dem = temp.query('MAXMAD>=' + str(j))['SURVIVAL'].count()
                 #Marginales
                 pd_marginal = None
                 if not dem == 0:
@@ -77,8 +76,8 @@ class InputsNoRevolventeReal():
             curvas.at[i,'can_real'] = f.porcentaje(resultado)
             
             #prepagos reales
-            temp['sum_prepagos']=list(map(f.operation_pd, temp['maxmad'], temp['prepagos']))
-            temp['sum_desembolso']=list(map(f.operation_pd, temp['maxmad'], temp['desembolso']))    
+            temp['sum_prepagos']=list(map(f.operation_pd, temp['MAXMAD'], temp['prepagos']))
+            temp['sum_desembolso']=list(map(f.operation_pd, temp['MAXMAD'], temp['desembolso']))    
             a = f.aggr_sum(temp['sum_prepagos'])
             b = f.aggr_sum(temp['sum_desembolso'])
             resultado = [ai / bi for ai, bi in zip(a, b)]

@@ -22,7 +22,7 @@ class InputsNoRevolventeTeorico():
         df_teorico['pre_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PRE1'):f.encontrar_encabezado(df_teorico,'pd_marginal')].values.tolist()})
  
         #seleccionar solo la data relevante
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODSOLICITUD','COSECHA','maxmad','pd_marginal', 'can_marginal', 'pre_marginal']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODSOLICITUD','COSECHA','MAXMAD','pd_marginal', 'can_marginal', 'pre_marginal']]
         
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
@@ -36,8 +36,8 @@ class InputsNoRevolventeTeorico():
         
         #si no se ingresa cortes espécificos, se usan todos
         if cortes==[]:
-            self.df_teorico['c_todos']=''
-            cortes=['c_todos']
+            self.df_teorico['C_TODOS']=''
+            cortes=['C_TODOS']
 
         #Creamos la 'plantilla'
         curvas = self.df_teorico.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
@@ -48,23 +48,21 @@ class InputsNoRevolventeTeorico():
         #TEÓRICOS
         for i in range(len(curvas)):
             
+            temp = pd.merge(self.df_teorico[cortes+['CODSOLICITUD','COSECHA','MAXMAD','pd_marginal','can_marginal','pre_marginal']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
             #pd teórico
-            temp = pd.merge(self.df_teorico[cortes+['CODSOLICITUD','COSECHA','maxmad','pd_marginal']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
-            temp['result'] = list(map(f.operation_pd, temp['maxmad'], temp['pd_marginal']))
+            temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['pd_marginal']))
             resultado = f.aggr_avg(temp['result'])
             resultado = np.cumsum(resultado)  
             curvas.at[i,'pd_teorico'] = f.porcentaje(resultado)
             
             #cancelaciones teórico
-            temp = pd.merge(self.df_teorico[cortes+['CODSOLICITUD','COSECHA','maxmad','can_marginal']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
-            temp['result']=list(map(f.operation_pd, temp['maxmad'], temp['can_marginal']))
+            temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['can_marginal']))
             resultado = f.aggr_avg(temp['result'])
             resultado = np.cumsum(resultado)   
             curvas.at[i,'can_teorico'] = f.porcentaje(resultado)
             
             #prepagos teórico
-            temp = pd.merge(self.df_teorico[cortes+['CODSOLICITUD','COSECHA','maxmad','pre_marginal']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
-            temp['result']=list(map(f.operation_pd, temp['maxmad'], temp['pre_marginal']))
+            temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['pre_marginal']))
             resultado = f.aggr_avg(temp['result'])
             resultado = np.cumsum(resultado)
             curvas.at[i,'pre_teorico'] = f.porcentaje(resultado)

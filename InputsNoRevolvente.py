@@ -9,32 +9,30 @@ from InputsNoRevolventeReal import InputsNoRevolventeReal
 from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 
-
 #creación de la clase
 class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
     #constructor del objeto
-    def __init__(self,df_real,df_teorico,mincosecha='',maxcosecha='',completar=False):
-
-        if completar==False:
-            pass
-
-        InputsNoRevolventeReal.__init__(self,df_real,mincosecha,maxcosecha)
-        InputsNoRevolventeTeorico.__init__(self,df_teorico,mincosecha,maxcosecha)
+    def __init__(self,df_real,df_teorico,mincosecha='',maxcosecha='',completar=True):
+        if completar==True:
+            izquierda = df_real[['CODSOLICITUD','COSECHA','MAXMAD']+f.all_cortes(df_real)].copy()
+            df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODSOLICITUD'], right_on=['CODSOLICITUD'])
+        
+        InputsNoRevolventeReal.__init__(self,df=df_real,mincosecha=mincosecha,maxcosecha=maxcosecha)
+        InputsNoRevolventeTeorico.__init__(self,df=df_teorico,mincosecha=mincosecha,maxcosecha=maxcosecha)
 
 
     def condensar(self,cortes=[]):
 
         InputsNoRevolventeReal.condensar(self,cortes)
         InputsNoRevolventeTeorico.condensar(self,cortes)
-        
-        curvas = pd.merge(left=self.curvasR, right=self.curvasR, how='left', left_on=f.all_cortes(self.curvasR), right_on=f.all_cortes(self.curvasT))
+
+        curvas = pd.merge(left=self.curvasR, right=self.curvasT, how='left', left_on=f.all_cortes(self.curvasR), right_on=f.all_cortes(self.curvasT))
         curvas['check']=curvas['recuento_x']-curvas['recuento_y']
         curvas = curvas.rename(columns={'recuento_x':'recuento'}).drop('recuento_y',1)
-        
         stats = curvas[f.all_cortes(curvas)+['recuento']].copy()
-        
+
         for i in range(len(curvas)):
-            
+
             l=min(len(curvas.loc[i, 'pd_real']),len(curvas.loc[i, 'pd_teorico']))
             curvas.at[i, 'pd_real']=curvas.loc[i, 'pd_real'].copy()[:l]
             curvas.at[i, 'pd_teorico']=curvas.loc[i, 'pd_teorico'].copy()[:l]
@@ -150,7 +148,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
 
             minMAE = self.stats.loc[i, 'MAE_can'].copy()
             scalarMAE = 1
-            for s in np.arange(0,2,step):
+            for s in np.arange(0,10,step):
                 x = self.curvas.loc[i, 'pre_real'].copy()
                 y = self.curvas.loc[i, 'pre_teorico'].copy()
                 z = []
