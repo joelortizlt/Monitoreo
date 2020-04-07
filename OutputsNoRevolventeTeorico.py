@@ -36,8 +36,8 @@ class OutputsNoRevolventeTeorico():
         
         #si no se ingresa cortes espécificos, se usan todos
         if cortes==[]:
-            self.df_teorico['c_todos']=''
-            cortes=['c_todos']
+            self.df_teorico['C_TODOS']=''
+            cortes=['C_TODOS']
 
         #Creamos la 'plantilla'
         curvas = self.df_teorico.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
