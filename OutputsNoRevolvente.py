@@ -17,21 +17,19 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
             izquierda = df_real[['CODSOLICITUD','COSECHA','MAXMAD']+f.all_cortes(df_real)].copy()
             df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODSOLICITUD'], right_on=['CODSOLICITUD'])
         
-        InputsNoRevolventeReal.__init__(self,df=df_real,mincosecha=mincosecha,maxcosecha=maxcosecha)
-        InputsNoRevolventeTeorico.__init__(self,df=df_teorico,mincosecha=mincosecha,maxcosecha=maxcosecha)
+        OutputsNoRevolventeReal.__init__(self,df=df_real,mincosecha=mincosecha,maxcosecha=maxcosecha)
+        OutputsNoRevolventeTeorico.__init__(self,df=df_teorico,mincosecha=mincosecha,maxcosecha=maxcosecha)
 
 
+    def condensar(self,cortes=[]):
 
+        OutputsNoRevolventeReal.condensar(self,cortes)
+        OutputsNoRevolventeTeorico.condensar(self,cortes)
 
-
-    #constructor del objeto
-    def __init__(self,NRR,NRT): #se insumen 2 objetos (uno real y uno teorico)
-        curvas = pd.merge(left=NRR.curvas, right=NRT.curvas, how='left', left_on=f.all_cortes(NRR.curvas), right_on=f.all_cortes(NRT.curvas))
+        curvas = pd.merge(left=self.curvasR, right=self.curvasT, how='left', left_on=f.all_cortes(self.curvasR), right_on=f.all_cortes(self.curvasT))
         curvas['check']=curvas['recuento_x']-curvas['recuento_y']
         curvas = curvas.rename(columns={'recuento_x':'recuento'}).drop('recuento_y',1)
-        
         ratios = curvas[f.all_cortes(curvas)+['recuento']].copy()
-        
         stats = curvas[f.all_cortes(curvas)+['recuento']].copy()
         
         for i in range(len(curvas)):
@@ -64,7 +62,6 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
         self.stats = stats
     
     
-    
     def plotear(self,texto,optimo=False):
         cortes_temp = f.all_cortes(self.curvas)
         for i in range(len(self.curvas)):
@@ -77,11 +74,11 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
                 
             plt.xlabel('Periodo', fontsize=12)
             plt.ylabel(texto, fontsize=12)
-            plt.title(texto+': curva real vs. teórica para '+a[0:-3], fontsize=16)
+            plt.title(texto+': curva real vs. teórico para '+a[0:-3], fontsize=16)
             r = self.curvas[texto+'_real'][i]
             plt.plot(z,r,label = 'real')
             t = self.curvas[texto+'_teorico'][i]
-            plt.plot(z,t,label = 'teórica')
+            plt.plot(z,t,label = 'teórico')
             if optimo:
                 o = self.curvas[texto+'_optimo'][i]
                 plt.plot(z,o,label = 'óptimo')

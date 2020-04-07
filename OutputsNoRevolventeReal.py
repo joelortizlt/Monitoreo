@@ -11,18 +11,18 @@ import funciones as f
 #creación de la clase
 class OutputsNoRevolventeReal():
     #constructor del objeto
-    def __init__(self,csv,mincosecha='',maxcosecha=''): #se insume un documento de Excel
+    def __init__(self,df,mincosecha='',maxcosecha=''): #se insume un documento de Excel
         
         #tranformar la data de las hojas del excel en dataframes
-        df_real = pd.read_csv(csv)
+        df_real = df
         
         #colocar las curvas en una sola celda
-        df_real['if'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'IF_1'):f.encontrar_encabezado(df_real,'EF_1')].values.tolist()})
-        df_real['ef'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'EF_1'):f.encontrar_encabezado(df_real,'SALDO_1')].values.tolist()})
-        df_real['saldo'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'SALDO_1'):f.encontrar_encabezado(df_real,'if')].values.tolist()})
+        df_real['if'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'IF1'):f.encontrar_encabezado(df_real,'EF1')].values.tolist()})
+        df_real['ef'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'EF1'):f.encontrar_encabezado(df_real,'SALDO1')].values.tolist()})
+        df_real['saldo'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'SALDO1'):f.encontrar_encabezado(df_real,'if')].values.tolist()})
         
         #seleccionar solo la data relevante
-        df_real = df_real[f.all_cortes(df_real)+['CODSOLICITUD','COSECHA','maxmad','if','ef','saldo']]
+        df_real = df_real[f.all_cortes(df_real)+['CODSOLICITUD','COSECHA','MAXMAD','if','ef','saldo']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -35,8 +35,8 @@ class OutputsNoRevolventeReal():
         
         #si no se ingresa cortes espécificos, se usan todos
         if cortes==[]:
-            self.df_real['c_todos']=''
-            cortes=['c_todos']
+            self.df_real['C_TODOS']=''
+            cortes=['C_TODOS']
         
         #Creamos las 'plantillas'
         curvas = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
@@ -51,11 +51,11 @@ class OutputsNoRevolventeReal():
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODSOLICITUD','COSECHA','maxmad','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_real[cortes+['CODSOLICITUD','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             
-            temp['sum_if']=list(map(f.operation_pd, temp['maxmad'], temp['if']))
-            temp['sum_ef']=list(map(f.operation_pd, temp['maxmad'], temp['ef']))
-            temp['sum_saldo']=list(map(f.operation_pd, temp['maxmad'], temp['saldo']))
+            temp['sum_if']=list(map(f.operation_pd, temp['MAXMAD'], temp['if']))
+            temp['sum_ef']=list(map(f.operation_pd, temp['MAXMAD'], temp['ef']))
+            temp['sum_saldo']=list(map(f.operation_pd, temp['MAXMAD'], temp['saldo']))
             
             a = f.aggr_sum(temp['sum_if'])
             b = f.aggr_sum(temp['sum_ef'])
@@ -69,5 +69,5 @@ class OutputsNoRevolventeReal():
             ratios.at[i,'r_ef_real'] = round((1+(sum(b)/sum(c)))**12-1,6)*100
             ratios.at[i,'r_spread_real'] = round((1+((sum(a)+sum(b))/sum(c)))**12-1,6)*100
 
-        self.curvas = curvas
-        self.ratios = ratios
+        self.curvasR = curvas
+        self.ratiosR = ratios

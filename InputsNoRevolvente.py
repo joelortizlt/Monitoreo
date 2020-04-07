@@ -64,11 +64,11 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
                 
             plt.xlabel('Periodo', fontsize=12)
             plt.ylabel(texto, fontsize=12)
-            plt.title(texto+': curva real vs. teórica para '+a[0:-3], fontsize=16)
+            plt.title(texto+': curva real vs. teórico para '+a[0:-3], fontsize=16)
             r = self.curvas[texto+'_real'][i]
             plt.plot(z,r,label = 'real')
             t = self.curvas[texto+'_teorico'][i]
-            plt.plot(z,t,label = 'teórica')
+            plt.plot(z,t,label = 'teórico')
             if optimo:
                 o = self.curvas[texto+'_optimo'][i]
                 plt.plot(z,o,label = 'óptimo')

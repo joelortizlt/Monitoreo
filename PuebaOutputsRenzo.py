@@ -11,27 +11,22 @@ from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 from OutputsNoRevolvente import OutputsNoRevolvente
 
 #Se insumen los CSV
-csv_REAL_VEH = '/Users/renzomartinch/Downloads/IFEFSAL_REALES.csv'
-csv_IF_VEH = '/Users/renzomartinch/Downloads/IF_TEORICO.csv'
-csv_EF_VEH = '/Users/renzomartinch/Downloads/EF_TEORICO.csv'
-csv_SALDO_VEH = '/Users/renzomartinch/Downloads/SALDO_TEORICO.csv'
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Outputs_REAL.csv')
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Outputs_TEORICO.csv')
 #Se definen los cortes
-cortes = ['c_riesgo']
+cortes = ['C_SEGMENTO']
 
-vehicularR = OutputsNoRevolventeReal(csv_REAL_VEH)
-vehicularR.condensar(cortes)
-
-vehicularT = OutputsNoRevolventeTeorico(csvif = csv_IF_VEH, csvef = csv_EF_VEH, csvsaldo = csv_SALDO_VEH)
-vehicularT.condensar(cortes)
-
-vehicular = OutputsNoRevolvente(vehicularR,vehicularT)
+vehicular = OutputsNoRevolvente(REAL,TEORICO,completar=True)
+print(vehicular.df_real)
+print(vehicular.df_teorico)
+vehicular.condensar(cortes)
 print(vehicular.curvas)
-
-vehicular.plotear('saldo')
-vehicular.MAE('saldo')
+print(vehicular.stats)
+vehicular.plotear('ef')
+vehicular.MAE('ef')
 
 vehicular.optimizar()
 print(vehicular.curvas)
-
-vehicular.plotear('saldo',optimo=True)
-vehicular.MAE('saldo',optimo=True)
+print(vehicular.stats)
+vehicular.plotear('ef',optimo=True)
+vehicular.MAE('ef',optimo=True)
