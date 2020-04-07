@@ -19,7 +19,7 @@ vehicular = InputsNoRevolvente(REAL,TEORICO,completar=True)
 print(vehicular.df_real)
 print(vehicular.df_teorico)
 
-vehicular.condensar(cortes)
+vehicular.condensar()
 print(vehicular.curvas)
 print(vehicular.stats)
 vehicular.plotear('can')

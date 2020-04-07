@@ -172,6 +172,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
 
     def impactoTmin(self,df):
         cortes=f.all_cortes(self.stats)
+        df['C_TODOS']=''
         df = df[cortes+['CODSOLICITUD','COSECHA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']]
         Tmin = self.stats[cortes].copy()
 
