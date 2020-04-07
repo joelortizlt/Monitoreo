@@ -13,23 +13,23 @@ REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_REAL.csv')
 TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_TEORICO.csv')
 TMIN = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/TMIN.csv')
 #Se definen los cortes
-cortes = ['C_SEGMENTO']
+cortes = ['C_SEGMENTO','C_PLAZO']
 
 vehicular = InputsNoRevolvente(REAL,TEORICO,completar=True)
 print(vehicular.df_real)
 print(vehicular.df_teorico)
 
-vehicular.condensar()
+vehicular.condensar(cortes)
 print(vehicular.curvas)
 print(vehicular.stats)
-vehicular.plotear('can')
-vehicular.MAE('can')
+vehicular.plotear('pre')
+vehicular.MAE('pre')
 
 vehicular.optimizar()
 print(vehicular.curvas)
 print(vehicular.stats)
-vehicular.plotear('can',optimo=True)
-vehicular.MAE('can',optimo=True)
+vehicular.plotear('pre',optimo=True)
+vehicular.MAE('pre',optimo=True)
 
 vehicular.impactoTmin(TMIN)
 print(vehicular.Tmin)

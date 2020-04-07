@@ -146,9 +146,9 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.stats.at[i,'MAEop_can'] = minMAE
             tempcan = scalarMAE
 
-            minMAE = self.stats.loc[i, 'MAE_can'].copy()
+            minMAE = self.stats.loc[i, 'MAE_pre'].copy()
             scalarMAE = 1
-            for s in np.arange(0,10,step):
+            for s in np.arange(0,2,step):
                 x = self.curvas.loc[i, 'pre_real'].copy()
                 y = self.curvas.loc[i, 'pre_teorico'].copy()
                 z = []
