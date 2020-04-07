@@ -183,7 +183,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             Tmin.at[i,'delta_can']  = (f.weighted_average(temp,'CANTmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_can']-1)*10
             Tmin.at[i,'delta_pre']  = (f.weighted_average(temp,'PRETmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_pre']-1)*10
             Tmin.at[i,'Tmin_final']  = Tmin.loc[i,'Tmin_base']+Tmin.loc[i,'delta_pd']+Tmin.loc[i,'delta_can']+Tmin.loc[i,'delta_pre']
-            Tmin.at[i,'Monto'] = f.weighted_average(temp,'MTODESEMBOLSADO','MTODESEMBOLSADO')
+            Tmin.at[i,'Monto'] = temp['MTODESEMBOLSADO'].sum()
         self.Tmin = Tmin
 
         Tmin_base_prom = f.weighted_average(self.Tmin,'Tmin_base','Monto')
