@@ -21,7 +21,8 @@ from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 # 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
 
-xls_product = pd.ExcelFile('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\\6. Reporte_Monitoreo\Data\Vehicular.xlsx')
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_REAL.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_TEORICO.csv')
 
 pd_graph_list, can_graph_list, pre_graph_list = [], [], []
 pd_alertas_list, can_alertas_list, pre_alertas_list = [], [], []
@@ -35,8 +36,8 @@ MAE_titles = []
 
 # 2. Setting de Filtros
 
-filtro1 = 'c_riesgo'
-filtro2 = 'c_plazo'
+filtro1 = 'C_PLAZO'
+filtro2 = 'C_SEGMENTO'
 nro_comb_filtro1, nro_comb_filtro2, nro_comb_mixto = 0, 5, 10
 
 cortes =  [[[filtro1], nro_comb_filtro1], [[filtro2], nro_comb_filtro2], [[filtro1, filtro2], nro_comb_mixto]]
@@ -46,20 +47,19 @@ cortes =  [[[filtro1], nro_comb_filtro1], [[filtro2], nro_comb_filtro2], [[filtr
 MAE_list = [['MAE_pd', pd_MAE_graph_list], ['MAE_can', can_MAE_graph_list], ['MAE_pre', pre_MAE_graph_list]]
 
 for corte in cortes:
-    productR = InputsNoRevolventeReal(xls_product)
-    productR.condensar(corte[0])
-    productT = InputsNoRevolventeTeorico(xls_product)
-    productT.condensar(corte[0])
-    product = InputsNoRevolvente(productR,productT)
+    product = InputsNoRevolvente(REAL, TEORICO, completar=True)
+    product.condensar(corte[0])
+    product.plotear('can')
+    product.MAE('can')
     product.optimizar()
-    product.curvas
-    product.stats
+    product.plotear('can',optimo=True)
+    product.MAE('can',optimo=True)
 
-    if corte[0]==['c_plazo']:
-        product.curvas = product.curvas.drop(index=[5])
-    if corte[0]==['c_riesgo', 'c_plazo']:
-        product.curvas = product.curvas.drop(index=[5, 11, 17, 23, 29]) # Drop plazo 72 en todas las combinaciones
-        product.curvas.index = list(range(25))
+    # if corte[0]==['c_Pazo']:
+    #     product.curvas = product.curvas.drop(index=[5])
+    # if corte[0]==['c_riesgo', 'c_plazo']:
+    #     product.curvas = product.curvas.drop(index=[5, 11, 17, 23, 29]) # Drop plazo 72 en todas las combinaciones
+    #     product.curvas.index = list(range(25))
 
     # MAE - Barplots
     if corte[0]==[filtro1] or corte[0]==[filtro2]:

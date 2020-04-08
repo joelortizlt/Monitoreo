@@ -1,0 +1,89 @@
+# 0. Librerías 
+
+import numpy as np
+import pandas as pd
+import itertools as it
+import matplotlib.pyplot as plt
+from sklearn.metrics import mean_absolute_error
+from scipy.optimize import minimize
+
+#   Dash
+import pathlib
+import dash_core_components as dcc
+import dash_html_components as html
+
+#   Otros Scripts
+import funciones as f
+from utils import Header, get_header, Plotgraph, Barplot, Waterfallplot
+from InputsNoRevolvente import InputsNoRevolvente
+from InputsNoRevolventeReal import InputsNoRevolventeReal
+from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
+
+# 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
+
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_REAL.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_TEORICO.csv')
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\TMIN.csv')
+
+pd_MAE, can_MAE, pre_MAE = [], [], []
+
+product = InputsNoRevolvente(REAL, TEORICO, completar=True)
+product.condensar()
+product.optimizar()
+product.impactoTmin(TMIN)
+
+graph = Plotgraph(product.curvas)
+graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones')
+graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos')
+
+MAE_list = [['MAE_pd', pd_MAE], ['MAE_can', can_MAE], ['MAE_pre', pre_MAE]]
+
+for tipo_curva in MAE_list:
+    barplot = Barplot(product.stats, curva=tipo_curva[0], grupo='Todos')    
+    tipo_curva[1].append(barplot)
+
+waterfall = Waterfallplot(df=product.Tmin)
+
+aux = html.P('')
+
+report_list_resumen = [ [('Producto GAHI actualizado al 07-04-2020', aux, 'product')],
+                        [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', graph, 'six columns')],
+                        [('Curva de Cancelaciones', graph2, 'six columns'), ('Curva de Prepagos', graph3, 'six columns')],
+                        [('MAE - PD', pd_MAE[0], 'four columns'), ('MAE - Cancelaciones', can_MAE[0], 'four columns'), ('MAE - Prepagos', pre_MAE[0], 'four columns') ]
+]
+
+# 4. Dash
+
+import dash
+from dash.dependencies import Input, Output
+from pages import overview
+
+# get relative data folder
+PATH = pathlib.Path(__file__).parent
+DATA_PATH = PATH.joinpath('data').resolve()
+ASSETS_PATH = PATH.joinpath('assets').resolve()
+
+# 5. Layout
+
+# Application
+app = dash.Dash(
+    __name__, meta_tags=[{'name': 'viewport', 'content': 'width=device-width'}]
+)
+
+# Describe the layout/UI of the app
+app.layout = html.Div(
+    [dcc.Location(id='url', refresh=False), html.Div(id='page-content')]
+)
+
+# Update page
+@app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
+
+def display_page(pathname):
+    
+    return (
+        overview.create_layout(app, report_list_resumen),
+    )
+
+if __name__=='__main__':
+    app.run_server(debug=True)
+

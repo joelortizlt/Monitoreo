@@ -73,7 +73,7 @@ def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
                     '', '', '', '', '', value, '', '', '', '', '', value, '', '', '', '', '', value, '', '', '', '', '', value]
     
     curve_name = curvas.lower() # Lowercase
-    columns_aux = [curve_name + '_real', curve_name + '_teorica', curve_name + '_optima']
+    columns_aux = [curve_name + '_real', curve_name + '_teorico', curve_name + '_optimo']
     for column in columns_aux:
         plazo = len(df[column][corte]) - 1
         text = text_aux[:plazo]
@@ -161,14 +161,54 @@ def Barplot(df, curva='MAE_pd', grupo='c_riesgo'):
 
     curva_optima = curva[:3] + 'op' + curva[3:]
     
+    if grupo=='Todos':
+        ejey = ['Todos']
+    else:
+        ejey = df[grupo]
+    
     return dcc.Graph(
                 figure={'data': [go.Bar(x = df[curva], 
-                                        y = df[grupo],
+                                        y = ejey,
                                         orientation = 'h',
                                         name = curva[:3]),
                                 go.Bar(x=df[curva_optima],
-                                        y = df[grupo],
+                                        y = ejey,
                                         orientation = 'h',
                                         name = 'MAE Óptimo')],
                         'layout': go.Layout(yaxis={'type': 'category'})
-        })       
+        })
+
+def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False):
+
+    if archivo=='Inputs':
+        Curva1 = 'PD'
+        Curva2 = 'Cancelaciones'
+        Curva3 = 'Prepagos'
+    else:
+        Curva1 = 'Ingreso Financiero',
+        Curva2 = 'Egreso Financiero',
+        Curva3 = 'Saldos'
+
+    if mixto:
+        inicio = 2
+    else:
+        inicio = 1
+
+    return dcc.Graph(
+                figure={'data': [go.Waterfall(orientation = 'v',
+                                    measure = ['relative', 'relative', 'relative', 'relative', 'total'],
+                                    x = ['T min Inicial', 'Delta ' + Curva1, 'Delta ' + Curva2, 'Delta ' + Curva3, 'T min Final'],
+                                    textposition = 'outside',
+                                    text = [str(round(df.iloc[combinacion].values[inicio],4)), str(round(df.iloc[combinacion].values[inicio+1],4)),
+                                            str(round(df.iloc[combinacion].values[inicio+2],4)), str(round(df.iloc[combinacion].values[inicio+3],4)), 
+                                            str(round(df.iloc[combinacion].values[inicio+4],4)) ],
+                                    y = [df.iloc[combinacion].values[inicio], df.iloc[combinacion].values[inicio+1], df.iloc[combinacion].values[inicio+2],
+                                            df.iloc[combinacion].values[inicio+3], df.iloc[combinacion].values[inicio+4] ],
+                                    connector = {'line': {'color': 'rgb(63, 63, 63)'}},
+                                    decreasing = {"marker":{"color":"Maroon", "line":{"color":"red", "width":2}}},
+                                    increasing = {"marker":{"color":"Teal"}},
+                                    totals = {"marker":{"color":"deep sky blue", "line":{"color":'blue', "width":3}}}
+                                )],
+                        'layout': go.Layout(title = 'Impacto en Tasa Mínima',
+                                            showlegend = True)}
+    )          
