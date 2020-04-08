@@ -31,6 +31,7 @@ product = InputsNoRevolvente(REAL, TEORICO, completar=True)
 product.condensar()
 product.optimizar()
 product.impactoTmin(TMIN)
+print(product.stats)
 
 graph = Plotgraph(product.curvas)
 graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones')
@@ -38,18 +39,15 @@ graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos')
 
 MAE_list = [['MAE_pd', pd_MAE], ['MAE_can', can_MAE], ['MAE_pre', pre_MAE]]
 
-for tipo_curva in MAE_list:
-    barplot = Barplot(product.stats, curva=tipo_curva[0], grupo='Todos')    
-    tipo_curva[1].append(barplot)
+barplot = Barplot(product.stats, grupo='Todos')    
 
 waterfall = Waterfallplot(df=product.Tmin)
 
 aux = html.P('')
 
 report_list_resumen = [ [('Producto GAHI actualizado al 07-04-2020', aux, 'product')],
-                        [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', graph, 'six columns')],
-                        [('Curva de Cancelaciones', graph2, 'six columns'), ('Curva de Prepagos', graph3, 'six columns')],
-                        [('MAE - PD', pd_MAE[0], 'four columns'), ('MAE - Cancelaciones', can_MAE[0], 'four columns'), ('MAE - Prepagos', pre_MAE[0], 'four columns') ]
+                        [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', graph, 'six columns'), ('Curva de Cancelaciones', graph2, 'six columns')],
+                        [('MAE', barplot, 'six columns'), ('Curva de Prepagos', graph3, 'six columns')]
 ]
 
 # 4. Dash

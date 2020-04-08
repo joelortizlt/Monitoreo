@@ -115,7 +115,7 @@ def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
                                                             'family': 'flexo medium', 
                                                             'size': 10
                                                         },
-                                                        height = 180,
+                                                        height = 300,
                                                         width = 700,
                                                         hovermode = 'closest',
                                                         legend = {
@@ -162,20 +162,25 @@ def Barplot(df, curva='MAE_pd', grupo='c_riesgo'):
     curva_optima = curva[:3] + 'op' + curva[3:]
     
     if grupo=='Todos':
-        ejey = ['Todos']
+        ejey = ['PD', 'Cancelaciones', 'Prepagos']
+        ejex = [df['MAE_pd'][0], df['MAE_can'][0], df['MAE_pre'][0]]
+        ejexop = [df['MAEop_pd'][0], df['MAEop_can'][0], df['MAEop_pre'][0]]
     else:
         ejey = df[grupo]
+        ejex = df[curva]
+        ejexop = df[curva_optima]
     
     return dcc.Graph(
-                figure={'data': [go.Bar(x = df[curva], 
+                figure={'data': [go.Bar(x = ejex, 
                                         y = ejey,
                                         orientation = 'h',
                                         name = curva[:3]),
-                                go.Bar(x=df[curva_optima],
+                                go.Bar(x = ejexop,
                                         y = ejey,
                                         orientation = 'h',
                                         name = 'MAE Óptimo')],
-                        'layout': go.Layout(yaxis={'type': 'category'})
+                        'layout': go.Layout(yaxis = {'type': 'category'},
+                                            height = 300)
         })
 
 def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False):
@@ -195,7 +200,8 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False):
         inicio = 1
 
     return dcc.Graph(
-                figure={'data': [go.Waterfall(orientation = 'v',
+                figure={'data': [go.Waterfall(name = 'Variation',
+                                    orientation = 'v',
                                     measure = ['relative', 'relative', 'relative', 'relative', 'total'],
                                     x = ['T min Inicial', 'Delta ' + Curva1, 'Delta ' + Curva2, 'Delta ' + Curva3, 'T min Final'],
                                     textposition = 'outside',
@@ -210,5 +216,7 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False):
                                     totals = {"marker":{"color":"deep sky blue", "line":{"color":'blue', "width":3}}}
                                 )],
                         'layout': go.Layout(title = 'Impacto en Tasa Mínima',
-                                            showlegend = True)}
+                                            showlegend = True,
+                                            height = 600
+                                            )}
     )          
