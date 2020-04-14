@@ -63,7 +63,7 @@ def get_menu():
     return menu
 
 # Line Graph --> PD, Cancelaciones, Prepagos
-def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
+def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%', promedio=False):
 
     # Text
     text_list = []
@@ -83,7 +83,7 @@ def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
             if t%6==0:
                 range_text_aux.append(t)
         for t in range_text_aux:
-            text[t-1] = round(df[column][corte][t], 3)
+            text[t-1] = str(round(df[column][corte][t-1], 3)) + '%'
         
         text_list.append(text)
 
@@ -101,7 +101,7 @@ def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
                                 mode = 'lines+markers+text',
                                 text = text_list[name[0]],
                                 textposition = name[3],
-                                textfont = dict(size=10, color='black', family='flexo medium')
+                                textfont = dict(size=14, color=name[2], family='flexo medium')
         )
         data.append(curve_aux)
     
@@ -115,20 +115,33 @@ def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
                                                             'family': 'flexo medium', 
                                                             'size': 10
                                                         },
-                                                        height = 300,
+                                                        height = 260,
                                                         width = 700,
                                                         hovermode = 'closest',
-                                                        legend = {
-                                                            'x': -0.0277108433735,
-                                                            'y': -0.142606516291,
-                                                            'orientation': 'h',
-                                                        },
+                                                        # legend = {
+                                                        #     'x': -0.0277108433735,
+                                                        #     'y': -0.142606516291,
+                                                        #     'orientation': 'h',
+                                                        # },
                                                         margin = {
                                                             'r': 20,
                                                             't': 20,
                                                             'b': 20,
                                                             'l': 50
                                                         },
+                                                        legend = dict(
+                                                            x = 0,
+                                                            y = 1,
+                                                            traceorder = "normal",
+                                                            font = dict(
+                                                                family = "sans-serif",
+                                                                size = 14,
+                                                                color = "black"
+                                                            ),
+                                                            bgcolor = "LightSteelBlue",
+                                                            bordercolor = "Black",
+                                                            borderwidth = 2
+                                                        ),
                                                         showlegend = True,
                                                         xaxis = {
                                                             'autorange': True,
@@ -137,6 +150,7 @@ def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
                                                             'showgrid': False,
                                                             'showline': True,
                                                             'type': 'linear',
+                                                            'title': 'Plazo (Meses)'
                                                         },
                                                         yaxis = {
                                                             'autorange': True,
@@ -157,7 +171,7 @@ def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%'):
                         config = {"displayModeBar": False}
     ) 
     
-def Barplot(df, curva='MAE_pd', grupo='c_riesgo'):
+def Barplot(df, curva='MAE_pd', grupo='c_riesgo', inicio=0, step=3):
 
     curva_optima = curva[:3] + 'op' + curva[3:]
     
@@ -165,49 +179,67 @@ def Barplot(df, curva='MAE_pd', grupo='c_riesgo'):
         ejey = ['PD', 'Cancelaciones', 'Prepagos']
         ejex = [df['MAE_pd'][0], df['MAE_can'][0], df['MAE_pre'][0]]
         ejexop = [df['MAEop_pd'][0], df['MAEop_can'][0], df['MAEop_pre'][0]]
+        text_normal = [round(num, 4) for num in ejex]
+        text_op = [round(num, 4) for num in ejexop]
     else:
         ejey = df[grupo]
-        ejex = df[curva]
-        ejexop = df[curva_optima]
-    
+        ejex = df[curva][inicio:step]
+        ejexop = df[curva_optima][inicio:step]
+        text_normal = list(round(ejex, 4))
+        text_op = list(round(ejexop, 4))
+
+    aux=0
+    for elem in text_normal:
+        text_normal[aux] = str(text_normal[aux]) + '%'
+        text_op[aux] = str(text_op[aux]) + '%'
+        aux = aux +1
+
     return dcc.Graph(
                 figure={'data': [go.Bar(x = ejex, 
                                         y = ejey,
                                         orientation = 'h',
-                                        name = curva[:3]),
+                                        name = curva[:3],
+                                        text = text_normal,
+                                        textposition = 'inside'),
                                 go.Bar(x = ejexop,
                                         y = ejey,
                                         orientation = 'h',
-                                        name = 'MAE Óptimo')],
+                                        name = 'MAE Óptimo',
+                                        text = text_op,
+                                        textposition = 'inside',
+                                        textfont_size = 14)],
                         'layout': go.Layout(yaxis = {'type': 'category'},
-                                            height = 300)
+                                            height = 350)
         })
 
-def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False):
+def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=False):
 
     if archivo=='Inputs':
         Curva1 = 'PD'
-        Curva2 = 'Cancelaciones'
-        Curva3 = 'Prepagos'
+        Curva2 = 'Canc.'
+        Curva3 = 'Prep.'
     else:
-        Curva1 = 'Ingreso Financiero',
-        Curva2 = 'Egreso Financiero',
+        Curva1 = 'Ing. Fin.',
+        Curva2 = 'Egr. Fin.',
         Curva3 = 'Saldos'
 
-    if mixto:
-        inicio = 2
-    else:
-        inicio = 1
+    inicio = 2 if mixto else 1
+    height_number = 520 if promedio else 260
+    
+    limit = max(round(df.iloc[combinacion].values[inicio],4), round(df.iloc[combinacion].values[inicio+4],4)) + 0.03
 
     return dcc.Graph(
                 figure={'data': [go.Waterfall(name = 'Variation',
                                     orientation = 'v',
-                                    measure = ['relative', 'relative', 'relative', 'relative', 'total'],
-                                    x = ['T min Inicial', 'Delta ' + Curva1, 'Delta ' + Curva2, 'Delta ' + Curva3, 'T min Final'],
+                                    measure = ['absolute', 'relative', 'relative', 'relative', 'total'],
+                                    x = ['T min Inicial', 'Δ ' + Curva1, 'Δ ' + Curva2, 'Δ ' + Curva3, 'T min Final'],
                                     textposition = 'outside',
-                                    text = [str(round(df.iloc[combinacion].values[inicio],4)), str(round(df.iloc[combinacion].values[inicio+1],4)),
-                                            str(round(df.iloc[combinacion].values[inicio+2],4)), str(round(df.iloc[combinacion].values[inicio+3],4)), 
-                                            str(round(df.iloc[combinacion].values[inicio+4],4)) ],
+                                    textfont_size = 14,
+                                    text = [str(round(df.iloc[combinacion].values[inicio],4)) + '%',
+                                            str(round(df.iloc[combinacion].values[inicio+1],4)) + '%',
+                                            str(round(df.iloc[combinacion].values[inicio+2],4)) + '%', 
+                                            str(round(df.iloc[combinacion].values[inicio+3],4)) + '%', 
+                                            str(round(df.iloc[combinacion].values[inicio+4],4)) + '%'],
                                     y = [df.iloc[combinacion].values[inicio], df.iloc[combinacion].values[inicio+1], df.iloc[combinacion].values[inicio+2],
                                             df.iloc[combinacion].values[inicio+3], df.iloc[combinacion].values[inicio+4] ],
                                     connector = {'line': {'color': 'rgb(63, 63, 63)'}},
@@ -217,6 +249,7 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False):
                                 )],
                         'layout': go.Layout(title = 'Impacto en Tasa Mínima',
                                             showlegend = True,
-                                            height = 600
+                                            height = height_number,
+                                            yaxis = {'range': [0.015, limit], 'title': '%'}
                                             )}
     )          

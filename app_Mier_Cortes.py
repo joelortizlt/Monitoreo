@@ -54,7 +54,7 @@ for corte in cortes:
     # MAE - [filtro1], [filtro2] // Sin combinación
     if corte[0]==[filtro1] or corte[0]==[filtro2]:
         for curva_MAE in MAE_list:
-            barplot = Barplot(product.stats, curva=curva_MAE[0], grupo=corte[0])
+            barplot = Barplot(product.stats, curva=curva_MAE[0], grupo=corte[0][0], step=len(product.curvas.index))
             curva_MAE[1].append(barplot)
         comb_size.append(len(product.curvas.index))
         MAE_titles.append(str(corte[0][0])[2:].capitalize())
@@ -149,6 +149,7 @@ for corte in cortes:
 
             auxcorte = corte[1] + 0
             auxcorte2 = 3
+            auxcorte3 = 0
 
             nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
 
@@ -184,9 +185,9 @@ for corte in cortes:
                 for linea in nro_combinacion:
                     str2 = str(product.curvas[filtro2].values[linea]).capitalize()
                     report_list_aux.append([(str1 + ' ' + str2, title[2][auxcorte + linea], 'twelve columns')])
-                    # MAE
-                    barplot = Barplot(product.stats, curva=title[5], grupo=corte[0][1])
-                    title[4].append(barplot)
+                # MAE
+                barplot = Barplot(product.stats, curva=title[5], grupo=corte[0][1], inicio=auxcorte3, step=comb_size[1]+auxcorte3)
+                title[4].append(barplot)
 
                 title[3].append(report_list_aux)
 
@@ -200,6 +201,7 @@ for corte in cortes:
                     report_list_tmin.append(tmin_aux)
                 
                 auxcorte = auxcorte + 3
+                auxcorte3 = auxcorte3 + comb_size[1]
 
         if title[1]=='PD':
             resumen_descalibrados_pd = resumen_descalibrados_pd + aux_descal
@@ -297,10 +299,10 @@ def display_page(pathname):
         overview.create_layout(app, report_list_can[5]),
         overview.create_layout(app, report_list_pre[5]),
         overview.create_layout(app, report_list_tmin[5]),
-        overview.create_layout(app, report_list_MAE_pd[0]),
-        overview.create_layout(app, report_list_MAE_can[0]),
-        overview.create_layout(app, report_list_MAE_pre[0]),
-        overview.create_layout(app, report_list_resumen),
+        # overview.create_layout(app, report_list_MAE_pd[0]),
+        # overview.create_layout(app, report_list_MAE_can[0]),
+        # overview.create_layout(app, report_list_MAE_pre[0]),
+        # overview.create_layout(app, report_list_resumen),
     )
 
 if __name__=='__main__':

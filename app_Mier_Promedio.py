@@ -31,17 +31,16 @@ product = InputsNoRevolvente(REAL, TEORICO, completar=True)
 product.condensar()
 product.optimizar()
 product.impactoTmin(TMIN)
-print(product.stats)
 
-graph = Plotgraph(product.curvas)
-graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones')
-graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos')
+graph = Plotgraph(product.curvas, promedio=True)
+graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', promedio=True)
+graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', promedio=True)
 
 MAE_list = [['MAE_pd', pd_MAE], ['MAE_can', can_MAE], ['MAE_pre', pre_MAE]]
 
 barplot = Barplot(product.stats, grupo='Todos')    
 
-waterfall = Waterfallplot(df=product.Tmin)
+waterfall = Waterfallplot(df=product.Tmin, promedio=True)
 
 aux = html.P('')
 
