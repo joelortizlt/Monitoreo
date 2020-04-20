@@ -1,2 +1,2 @@
-import app_Mier_Promedio as flsk
+import app_PruebaClase as flsk
 flsk.app.run_server(debug=True)
