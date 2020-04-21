@@ -20,61 +20,51 @@ from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 class Reporte():
     
     # Constructor del Objeto
-    def __init__(self, Real, Teorico, Tmin, filtro1, filtro2, nro_comb_filtro1=0, nro_comb_filtro2=4, nro_comb_mixto=7 ):
-
-        cortes =  [[[filtro1], nro_comb_filtro1], [[filtro2], nro_comb_filtro2], [[filtro1, filtro2], nro_comb_mixto]]
-
-        pd_graph_list, can_graph_list, pre_graph_list = [], [], []
-        pd_alertas_list, can_alertas_list, pre_alertas_list = [], [], []
-        report_list_pd, report_list_can, report_list_pre  = [], [], []
-        pd_MAE_graph_list, can_MAE_graph_list, pre_MAE_graph_list = [], [], []
-        resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre = '', '', ''
-        resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
-        comb_size = []
-        report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre, report_list_tmin = [], [], [], []
-        MAE_titles = []
-        tmin_graph_list = []
-        MAE_list = [['MAE_pd', pd_MAE_graph_list], ['MAE_can', can_MAE_graph_list], ['MAE_pre', pre_MAE_graph_list]]
-
-        # 2. Generación de Objetos:
+    def __init__(self, Real, Teorico, Tmin, filtro1, filtro2):
 
         product = InputsNoRevolvente(Real, Teorico, completar=True)
-
+        product.condensar([filtro1])
+        nro_comb_filtro1, nro_comb_filtro2 = 0, len(product.curvas[filtro1].unique())
+        product.condensar([filtro2])
+        nro_comb_mixto = nro_comb_filtro2 + len(product.curvas[filtro2].unique())
+        cortes =  [[[filtro1], nro_comb_filtro1], [[filtro2], nro_comb_filtro2], [[filtro1, filtro2], nro_comb_mixto]] # Valores a usar
+        pd_graph_list, can_graph_list, pre_graph_list, comb_size, = [], [], [], []
+        report_list_pd, report_list_can, report_list_pre, report_list_tmin  = [], [], [], []
+        pd_MAE_graph_list, can_MAE_graph_list, pre_MAE_graph_list, tmin_graph_list, MAE_titles = [], [], [], [], []
+        MAE_list = [['MAE_pd', pd_MAE_graph_list], ['MAE_can', can_MAE_graph_list], ['MAE_pre', pre_MAE_graph_list]]
+        resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre = '', '', ''
+        pd_alertas_list, can_alertas_list, pre_alertas_list = [], [], []
+        resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
+        report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre = [], [], []
+        
+        # Generación de Objetos:
         for corte in cortes:
             product = InputsNoRevolvente(Real, Teorico, completar=True)
             product.condensar(corte[0])
             product.optimizar()
             product.impactoTmin(Tmin)
 
-            # MAE - [filtro1], [filtro2] // Sin combinación
-            if corte[0]==[filtro1] or corte[0]==[filtro2]:
+            if corte[0]==[filtro1] or corte[0]==[filtro2]: # MAE - [filtro1], [filtro2] // Sin combinación
                 for curva_MAE in MAE_list:
                     barplot = Barplot(product.stats, curva=curva_MAE[0], grupo=corte[0][0], step=len(product.curvas.index))
                     curva_MAE[1].append(barplot)
                 comb_size.append(len(product.curvas.index))
                 MAE_titles.append(str(corte[0][0])[2:].capitalize())
 
-            # Títulos MAE
-            if corte[0]==[filtro1]:
+            if corte[0]==[filtro1]: # Títulos MAE
                 valores = product.curvas[filtro1].values
             if corte[0]==[filtro2]:
                 for valor in valores:
                     MAE_titles.append(filtro1[2:].capitalize() + ' ' + str(valor))
             
             nro_combinaciones = len(product.curvas.index)
-
             for combinacion in list(range(nro_combinaciones)):
 
-                graph = Plotgraph(product.curvas, corte=combinacion)
-                pd_graph_list.append(graph)
-                graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', corte=combinacion)
-                can_graph_list.append(graph2)
-                graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', corte=combinacion)
-                pre_graph_list.append(graph3)
-                if corte[0]==[filtro1, filtro2]:
-                    waterfall = Waterfallplot(product.Tmin, combinacion=combinacion, mixto=True)
-                else:
-                    waterfall = Waterfallplot(product.Tmin, combinacion=combinacion, mixto=False)
+                pd_graph_list.append(Plotgraph(product.curvas, corte=combinacion)) # Plotgraph PD
+                can_graph_list.append(Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', corte=combinacion)) # Plotgraph Can
+                pre_graph_list.append( Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', corte=combinacion)) # Plotgraph Pre
+                waterfall_aux = True if corte[0]==[filtro1, filtro2] else False
+                waterfall = Waterfallplot(product.Tmin, combinacion=combinacion, mixto=waterfall_aux) # Waterfallplot
                 tmin_graph_list.append(waterfall)
 
                 # Listado de Alertas:
@@ -106,7 +96,6 @@ class Reporte():
                     for alerta in list(range(nro_combinaciones)):
                         if title[0][alerta + corte[1]]=='Descalibrado':
                             descalibrado = descalibrado + str(product.curvas[corte[0]].values[alerta][0]) + ', '
-
                         elif title[0][alerta + corte[1]]=='Revisión':
                             revision = revision + str(product.curvas[corte[0]].values[alerta][0]) + ', '
 
@@ -126,13 +115,12 @@ class Reporte():
 
                     str1 = str(corte[0][0])[2:].capitalize()
                     report_list_aux.append([(title[1] + ' por ' + str1, paragraph_html, 'product')])
-
                     for linea in list(range(nro_combinaciones)):
                         str2 = str(product.curvas[corte[0][0]].values[linea]).capitalize()
-                        report_list_aux.append([(str1 + ' ' + str2, title[2][corte[1] + linea], 'twelve columns')]) 
+                        report_list_aux.append([(str1 + ' ' + str2, title[2][corte[1] + linea], 'twelve columns')]) # Posicion en graph_list
                     title[3].append(report_list_aux)
 
-                    if title[1]=='PD':
+                    if title[1]=='PD': # Tasa Mínima -> Solo corre una vez (if title[1]=='PD')
                         tmin_aux = []
                         tmin_aux.append([('Impacto en Tasa Mínima por ' + str1, html_vacio, 'product')])
                         for linea in list(range(nro_combinaciones)):
@@ -140,13 +128,20 @@ class Reporte():
                             tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[corte[1] + linea], 'twelve columns')]) 
                         report_list_tmin.append(tmin_aux)
                 
-                else:
+                else: # Combinación
 
-                    auxcorte = corte[1] + 0
-                    auxcorte2 = 3
+                    auxcorte = corte[1] + 0 # auxcorte = Número de inicio
+                    auxcorte2 = nro_comb_mixto - nro_comb_filtro2 # auxcorte2 = Número de valores únicos del segundo filtro
                     auxcorte3 = 0
+                    index_size, contador, nro_combinaciones_comb = len(product.curvas.index), 0, []
+                    for comb in range(index_size):
+                        contador +=1
+                        if product.curvas[filtro1][contador]!=product.curvas[filtro1][contador-1]:
+                            nro_combinaciones_comb.append(list(range(contador)))
+                            contador = 0
+                    nro_combinaciones_comb.append(list(range(contador)))
 
-                    nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
+                    # nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
 
                     for nro_combinacion in nro_combinaciones_comb:
 
@@ -192,8 +187,8 @@ class Reporte():
                             auxcorte2 += 3
                             report_list_tmin.append(tmin_aux)
                         
-                        auxcorte += 3
-                        auxcorte3 += comb_size[1]
+                        auxcorte += max(nro_combinacion)
+                        auxcorte3 += max(nro_combinacion)
 
                 if title[1]=='PD':
                     resumen_descalibrados_pd = resumen_descalibrados_pd + aux_descal

@@ -46,10 +46,10 @@ app.layout = html.Div(
 
 def display_page(pathname):
     return (
-        overview.create_layout(app, ReporteStack[0][0][0]),
-        overview.create_layout(app, ReporteStack[0][0][1]),
-        overview.create_layout(app, ReporteStack[0][0][2]),
-        overview.create_layout(app, ReporteStack[0][0][3])
+        overview.create_layout(app, ReporteStack[0][2][0]),
+        overview.create_layout(app, ReporteStack[0][2][1]),
+        overview.create_layout(app, ReporteStack[0][2][12]),
+        overview.create_layout(app, ReporteStack[0][2][18])
         )
 
 if __name__=='__main__':
