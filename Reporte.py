@@ -1,13 +1,11 @@
 # Librerias
 import pandas as pd
 import numpy as np
-
 # Funciones de Apoyo
 import pathlib
 import dash_core_components as dcc
 import dash_html_components as html
 from utils import Plotgraph, Barplot, Waterfallplot
-
 # Clases
 from InputsNoRevolvente import InputsNoRevolvente
 from InputsNoRevolventeReal import InputsNoRevolventeReal
@@ -18,10 +16,8 @@ from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 
 # Class - Reporte
 class Reporte():
-    
     # Constructor del Objeto
     def __init__(self, Real, Teorico, Tmin, filtro1, filtro2):
-
         product = InputsNoRevolvente(Real, Teorico, completar=True)
         product.condensar([filtro1])
         nro_comb_filtro1, nro_comb_filtro2 = 0, len(product.curvas[filtro1].unique())
@@ -69,14 +65,12 @@ class Reporte():
 
                 # Listado de Alertas:
                 for mae in MAE_list:
-
                     if product.stats[mae[0]][combinacion] > 3:
                         aux_lista = 'Descalibrado'
                     elif product.stats[mae[0]][combinacion] >= 2.5 and product.stats[mae[0]][combinacion] < 3:
                         aux_lista = 'Revisión'
                     else:
                         aux_lista = 'Calibrado'
-
                     if mae[0]=='MAE_pd':
                         pd_alertas_list.append(aux_lista)
                     elif mae[0]=='MAE_can':
@@ -88,7 +82,6 @@ class Reporte():
                             [can_alertas_list, 'Cancelaciones', can_graph_list, report_list_can, can_MAE_graph_list, 'MAE_can'],
                             [pre_alertas_list, 'Prepagos', pre_graph_list, report_list_pre, pre_MAE_graph_list, 'MAE_pre'], 
                         ]
-
             for title in title_list:
                 paragraph, descalibrado, revision, aux_descal, aux_revision = '', '', '', '', ''
 
@@ -107,12 +100,10 @@ class Reporte():
                     if revision!='':
                         paragraph = paragraph + 'Necesitan revisión: ' + revision[:len(revision)-2] + '.'
                         aux_revision = aux_revision + revision
-
-                    paragraph_html = html.P(paragraph, style={"color": "#ffffff", "fontSize": "40"})
+                    paragraph_html = html.P(paragraph, style={"color": "#ffffff", "fontSize": "40"}) # To HTML
                     html_vacio = html.P('', style={"color": "#ffffff", "fontSize": "40"})
 
                     report_list_aux = []
-
                     str1 = str(corte[0][0])[2:].capitalize()
                     report_list_aux.append([(title[1] + ' por ' + str1, paragraph_html, 'product')])
                     for linea in list(range(nro_combinaciones)):
@@ -127,7 +118,7 @@ class Reporte():
                             str2 = str(product.curvas[corte[0][0]].values[linea]).capitalize()
                             tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[corte[1] + linea], 'twelve columns')]) 
                         report_list_tmin.append(tmin_aux)
-                
+
                 else: # Combinación
 
                     auxcorte = corte[1] + 0 # auxcorte = Número de inicio
@@ -139,9 +130,7 @@ class Reporte():
                         if product.curvas[filtro1][contador]!=product.curvas[filtro1][contador-1]:
                             nro_combinaciones_comb.append(list(range(contador)))
                             contador = 0
-                    nro_combinaciones_comb.append(list(range(contador)))
-
-                    # nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
+                    nro_combinaciones_comb.append(list(range(contador))) # nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
 
                     for nro_combinacion in nro_combinaciones_comb:
 
@@ -162,8 +151,7 @@ class Reporte():
                         if revision!='':
                             paragraph = paragraph + 'Necesitan revisión: ' + revision[:len(revision)-2] + '.'
                             aux_revision = aux_revision + revision
-
-                        paragraph_html = html.P(paragraph, style={"color": "#ffffff", "fontSize": "40"})
+                        paragraph_html = html.P(paragraph, style={"color": "#ffffff", "fontSize": "40"}) # To HTML
                         
                         report_list_aux = []
                         str0 = str(corte[0][0])[2:].capitalize()
@@ -200,15 +188,13 @@ class Reporte():
                     resumen_descalibrados_pre = resumen_revision_pre + aux_descal
                     resumen_revision_pre = resumen_revision_pre + aux_revision
 
-        # To html
         aux_resumen = [resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre, resumen_revision_pd, resumen_revision_can,
-                        resumen_revision_pre]
+                        resumen_revision_pre] # To html
         for aux in aux_resumen:
             if aux!='':
                 aux = html.P(aux, style={"color": "#ffffff", "fontSize": "40"}, className='row')
             else:
                 aux = html.P('Todos los cortes están calibrados', style={"color": "#ffffff", "fontSize": "40"})
-
         aux2 = html.P(' ', style={"color": "#ffffff", "fontSize": "40"}, className='row')
 
         report_list_resumen = [ [('Resumen de Alertas por Riesgo y Plazo', aux2,'product')],
