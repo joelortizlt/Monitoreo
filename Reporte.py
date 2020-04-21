@@ -1,12 +1,10 @@
-# Librerias
+# Librerias, Clases y FUnciones de Apoyo
 import pandas as pd
 import numpy as np
-# Funciones de Apoyo
 import pathlib
 import dash_core_components as dcc
 import dash_html_components as html
 from utils import Plotgraph, Barplot, Waterfallplot
-# Clases
 from InputsNoRevolvente import InputsNoRevolvente
 from InputsNoRevolventeReal import InputsNoRevolventeReal
 from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico

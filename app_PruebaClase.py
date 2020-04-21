@@ -1,8 +1,6 @@
 # Librerias
-
 import numpy as np
 import pandas as pd
-
 import pathlib
 import dash
 import dash_core_components as dcc
@@ -16,7 +14,9 @@ ReporteStack = [] # Lista donde se añaden los 3 report_list (Corte1, Corte2, Co
 lista = [  ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_REAL.csv',
             'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_TEORICO.csv',
             'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\TMIN.csv',
-            'C_SEGMENTO', 'C_PLAZO'] ] # Se pueden añadir más listas para una segunda iteración del "elem"
+            'C_SEGMENTO', 'C_PLAZO']
+            ]
+            # Se pueden añadir más listas para una segunda iteración del "elem"
 
 for elem in lista:
     REAL, TEORICO, TMIN = pd.read_csv(elem[0]), pd.read_csv(elem[1]), pd.read_csv(elem[2])
@@ -44,12 +44,13 @@ app.layout = html.Div(
 @app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
 
 def display_page(pathname):
-    return (
-        overview.create_layout(app, ReporteStack[0][2][0]),
-        overview.create_layout(app, ReporteStack[0][2][1]),
-        overview.create_layout(app, ReporteStack[0][2][12]),
-        overview.create_layout(app, ReporteStack[0][2][18])
-        )
+
+    resultado = list()
+    for hoja in range(len(ReporteStack[0][1])): # [producto][#Reporte] --> [Corte1, Corte2, Completo]
+        resultado.append(overview.create_layout(app, ReporteStack[0][0][hoja]))
+
+    return tuple(resultado)
 
 if __name__=='__main__':
     app.run_server(debug=True)
+
