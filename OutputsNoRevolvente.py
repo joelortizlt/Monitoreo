@@ -123,14 +123,17 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
         self.curvas['if_optimo'] = ''
         self.curvas['ef_optimo'] = ''
         self.curvas['saldo_optimo'] = ''
+        self.stats['MAEop_if'] = ''
+        self.stats['MAEop_ef'] = ''
+        self.stats['MAEop_saldo'] = ''
         
         for i in range(len(self.stats)):
             
             minMAE = self.stats.loc[i, 'MAE_if'].copy()
             scalarMAE = 1
+            x = self.curvas.loc[i, 'if_real'].copy()
+            y = self.curvas.loc[i, 'if_teorico'].copy()
             for s in np.arange(0,2,step):
-                x = self.curvas.loc[i, 'if_real'].copy()
-                y = self.curvas.loc[i, 'if_teorico'].copy()
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -138,15 +141,21 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
                 if tempMAE <= minMAE:
                     minMAE = tempMAE
                     scalarMAE = s
-                    ypd = z
+                    yopt = z
+            if scalarMAE==0:
+                minMAE = mean_absolute_error(x, y)
+                scalarMAE = 1
+                yopt = y
             self.stats.at[i,'MAEop_if'] = minMAE
-            temppd = scalarMAE
+            self.stats.at[i,'scalar_if'] = scalarMAE
+            self.curvas.at[i,'if_optimo'] = [round(x,4) for x in yopt]
+
             
             minMAE = self.stats.loc[i, 'MAE_ef'].copy()
             scalarMAE = 1
+            x = self.curvas.loc[i, 'ef_real'].copy()
+            y = self.curvas.loc[i, 'ef_teorico'].copy()
             for s in np.arange(0,2,step):
-                x = self.curvas.loc[i, 'ef_real'].copy()
-                y = self.curvas.loc[i, 'ef_teorico'].copy()
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -154,15 +163,21 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
                 if tempMAE <= minMAE:
                     minMAE = tempMAE
                     scalarMAE = s
-                    ycan = z
+                    yopt = z
+            if scalarMAE==0:
+                minMAE = mean_absolute_error(x, y)
+                scalarMAE = 1
+                yopt = y
             self.stats.at[i,'MAEop_ef'] = minMAE
-            tempcan = scalarMAE
+            self.stats.at[i,'scalar_ef'] = scalarMAE
+            self.curvas.at[i,'ef_optimo'] = [round(x,4) for x in yopt]
+
 
             minMAE = self.stats.loc[i, 'MAE_saldo'].copy()
             scalarMAE = 1
+            x = self.curvas.loc[i, 'saldo_real'].copy()
+            y = self.curvas.loc[i, 'saldo_teorico'].copy()
             for s in np.arange(0,2,step):
-                x = self.curvas.loc[i, 'saldo_real'].copy()
-                y = self.curvas.loc[i, 'saldo_teorico'].copy()
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -170,14 +185,11 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
                 if tempMAE <= minMAE:
                     minMAE = tempMAE
                     scalarMAE = s
-                    ypre = z
+                    yopt = z
+            if scalarMAE==0:
+                minMAE = mean_absolute_error(x, y)
+                scalarMAE = 1
+                yopt = y
             self.stats.at[i,'MAEop_saldo'] = minMAE
-            temppre = scalarMAE
-            
-            self.stats.at[i,'scalar_if'] = temppd
-            self.stats.at[i,'scalar_ef'] = tempcan
-            self.stats.at[i,'scalar_saldo'] = temppre
-            
-            self.curvas.at[i,'if_optimo'] = [round(x,4) for x in ypd]
-            self.curvas.at[i,'ef_optimo'] = [round(x,4) for x in ycan]
-            self.curvas.at[i,'saldo_optimo'] = [round(x,4) for x in ypre]
+            self.stats.at[i,'scalar_saldo'] = scalarMAE
+            self.curvas.at[i,'saldo_optimo'] = [round(x,4) for x in yopt]
