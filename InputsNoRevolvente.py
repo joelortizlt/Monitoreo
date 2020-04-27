@@ -111,14 +111,17 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         self.curvas['pd_optimo'] = ''
         self.curvas['can_optimo'] = ''
         self.curvas['pre_optimo'] = ''
+        self.stats['MAEop_pd'] = ''
+        self.stats['MAEop_can'] = ''
+        self.stats['MAEop_pre'] = ''
         
         for i in range(len(self.stats)):
             
             minMAE = self.stats.loc[i, 'MAE_pd'].copy()
             scalarMAE = 1
+            x = self.curvas.loc[i, 'pd_real'].copy()
+            y = self.curvas.loc[i, 'pd_teorico'].copy()
             for s in np.arange(0,2,step):
-                x = self.curvas.loc[i, 'pd_real'].copy()
-                y = self.curvas.loc[i, 'pd_teorico'].copy()
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -126,15 +129,21 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
                 if tempMAE <= minMAE:
                     minMAE = tempMAE
                     scalarMAE = s
-                    ypd = z
+                    yopt = z
+            if scalarMAE==0:
+                minMAE = mean_absolute_error(x, y)
+                scalarMAE = 1
+                yopt = y
             self.stats.at[i,'MAEop_pd'] = minMAE
-            temppd = scalarMAE
+            self.stats.at[i,'scalar_pd'] = scalarMAE
+            self.curvas.at[i,'pd_optimo'] = [round(x,4) for x in yopt]
+
             
             minMAE = self.stats.loc[i, 'MAE_can'].copy()
             scalarMAE = 1
+            x = self.curvas.loc[i, 'can_real'].copy()
+            y = self.curvas.loc[i, 'can_teorico'].copy()
             for s in np.arange(0,2,step):
-                x = self.curvas.loc[i, 'can_real'].copy()
-                y = self.curvas.loc[i, 'can_teorico'].copy()
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -142,15 +151,21 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
                 if tempMAE <= minMAE:
                     minMAE = tempMAE
                     scalarMAE = s
-                    ycan = z
+                    yopt = z
+            if scalarMAE==0:
+                minMAE = mean_absolute_error(x, y)
+                scalarMAE = 1
+                yopt = y
             self.stats.at[i,'MAEop_can'] = minMAE
-            tempcan = scalarMAE
+            self.stats.at[i,'scalar_can'] = scalarMAE
+            self.curvas.at[i,'can_optimo'] = [round(x,4) for x in yopt]
+
 
             minMAE = self.stats.loc[i, 'MAE_pre'].copy()
             scalarMAE = 1
+            x = self.curvas.loc[i, 'pre_real'].copy()
+            y = self.curvas.loc[i, 'pre_teorico'].copy()
             for s in np.arange(0,2,step):
-                x = self.curvas.loc[i, 'pre_real'].copy()
-                y = self.curvas.loc[i, 'pre_teorico'].copy()
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -158,17 +173,15 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
                 if tempMAE <= minMAE:
                     minMAE = tempMAE
                     scalarMAE = s
-                    ypre = z
+                    yopt = z
+            if scalarMAE==0:
+                minMAE = mean_absolute_error(x, y)
+                scalarMAE = 1
+                yopt = y
             self.stats.at[i,'MAEop_pre'] = minMAE
-            temppre = scalarMAE
-            
-            self.stats.at[i,'scalar_pd'] = temppd
-            self.stats.at[i,'scalar_can'] = tempcan
-            self.stats.at[i,'scalar_pre'] = temppre
-            
-            self.curvas.at[i,'pd_optimo'] = [round(x,4) for x in ypd]
-            self.curvas.at[i,'can_optimo'] = [round(x,4) for x in ycan]
-            self.curvas.at[i,'pre_optimo'] = [round(x,4) for x in ypre]
+            self.stats.at[i,'scalar_pre'] = scalarMAE
+            self.curvas.at[i,'pre_optimo'] = [round(x,4) for x in yopt]
+
 
     def impactoTmin(self,df):
         cortes=f.all_cortes(self.stats)
