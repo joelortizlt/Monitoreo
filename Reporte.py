@@ -1,4 +1,3 @@
-# Librerias, Clases y FUnciones de Apoyo
 import pandas as pd
 import numpy as np
 import pathlib
@@ -12,10 +11,9 @@ from OutputsNoRevolvente import OutputsNoRevolvente
 from OutputsNoRevolventeReal import OutputsNoRevolventeReal
 from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 
-# Class - Reporte
 class Reporte():
     # Constructor del Objeto
-    def __init__(self, Real, Teorico, Tmin, filtro1, filtro2):
+    def __init__(self, Real, Teorico, Tmin, filtro1, filtro2, Producto='XXX', Fecha='XXX'):
         product = InputsNoRevolvente(Real, Teorico, completar=True)
         product.condensar([filtro1])
         nro_comb_filtro1, nro_comb_filtro2 = 0, len(product.curvas[filtro1].unique())
@@ -31,7 +29,25 @@ class Reporte():
         resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
         report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre = [], [], []
         
-        # Generación de Objetos:
+        # Producto General
+        product = InputsNoRevolvente(Real, Teorico, completar=True)
+        product.condensar()
+        product.optimizar()
+        product.impactoTmin(Tmin)
+
+        graph = Plotgraph(product.curvas, promedio=True)
+        graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', promedio=True)
+        graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', promedio=True)
+        barplot = Barplot(product.stats, grupo='Todos')    
+        waterfall = Waterfallplot(df=product.Tmin, promedio=True)
+        aux = html.P('')
+
+        Lista = [ [('Producto ' + str(Producto) + ' actualizado al ' + str(Fecha), aux, 'product')],
+                [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', graph, 'six columns'), ('Curva de Cancelaciones', graph2, 'six columns')],
+                [('MAE', barplot, 'six columns'), ('Curva de Prepagos', graph3, 'six columns')]
+        ]
+
+        # Producto por Cortes
         for corte in cortes:
             product = InputsNoRevolvente(Real, Teorico, completar=True)
             product.condensar(corte[0])
@@ -196,17 +212,12 @@ class Reporte():
         aux2 = html.P(' ', style={"color": "#ffffff", "fontSize": "40"}, className='row')
 
         report_list_resumen = [ [('Resumen de Alertas por Riesgo y Plazo', aux2,'product')],
-                                [('Curvas de PD - Descalibrados', resumen_descalibrados_pd, 'product')],
-                                [('Curvas de PD - Revisión', resumen_revision_pd, 'product')],
-                                [('Curvas de Cancelaciones - Descalibrados', resumen_descalibrados_can, 'product')],
-                                [('Curvas de Cancelaciones - Revisión', resumen_revision_can, 'product')],
-                                [('Curvas de Prepagos - Descalibrados', resumen_descalibrados_pre, 'product')],
-                                [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]
-        ]
+                                [('Curvas de PD - Descalibrados', resumen_descalibrados_pd, 'product')], [('Curvas de PD - Revisión', resumen_revision_pd, 'product')],
+                                [('Curvas de Cancelaciones - Descalibrados', resumen_descalibrados_can, 'product')], [('Curvas de Cancelaciones - Revisión', resumen_revision_can, 'product')],
+                                [('Curvas de Prepagos - Descalibrados', resumen_descalibrados_pre, 'product')], [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]   ]
 
         report_list_MAE = [[report_list_MAE_pd, 'PD', pd_MAE_graph_list], [report_list_MAE_can, 'Cancelaciones', can_MAE_graph_list], 
                             [report_list_MAE_pre, 'Prepagos', pre_MAE_graph_list]]
-
         for report_list in report_list_MAE:
             range_MAE = [ [0], [1], list(range(2, comb_size[0]+2)) ]
             report_list_aux = []
@@ -216,23 +227,24 @@ class Reporte():
                     report_list_aux.append( [(MAE_titles[rango2], report_list[2][rango2], 'twelve columns')] )
             report_list[0].append(report_list_aux)
 
-        ListaCompleta = [report_list_resumen, report_list_pd[0], report_list_can[0], report_list_pre[0], report_list_tmin[0],
-                        report_list_pd[1], report_list_can[1], report_list_pre[1], report_list_tmin[1],
-                        report_list_pd[2], report_list_can[2], report_list_pre[2], report_list_tmin[2],
-                        report_list_pd[3], report_list_can[3], report_list_pre[3], report_list_tmin[3],
-                        report_list_pd[4], report_list_can[4], report_list_pre[4], report_list_tmin[4],
-                        report_list_pd[5], report_list_can[5], report_list_pre[5], report_list_tmin[5],
-                        report_list_MAE_pd[0], report_list_MAE_can[0], report_list_MAE_pre[0]   ]
+        ListaCompleta = [] # Reporte Completo
+        ListaCompleta.append(report_list_resumen)
+        for elem in range(len(report_list_tmin)):
+            ListaCompleta.append(report_list_pd[elem])
+            ListaCompleta.append(report_list_can[elem])
+            ListaCompleta.append(report_list_pre[elem])
+            ListaCompleta.append(report_list_tmin[elem])
 
-        ListaCorte1, ListaCorte2 = [], []
+        ListaCorte1, ListaCorte2 = [], [] # Reporte por Corte1 / Corte2
         for lista in range(1, 5):
             ListaCorte1.append(ListaCompleta[lista])
         for lista in range(5, 9):
             ListaCorte2.append(ListaCompleta[lista])
 
+        self.ReporteProducto = Lista
         self.ReporteCompleto = ListaCompleta
         self.ReporteCorte1 = ListaCorte1
         self.ReporteCorte2 = ListaCorte2
 
     def Stack(self, Stacker):
-        Stacker.append([self.ReporteCorte1, self.ReporteCorte2, self.ReporteCompleto])
+        Stacker.append([self.ReporteProducto, self.ReporteCorte1, self.ReporteCorte2, self.ReporteCompleto])

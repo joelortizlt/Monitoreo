@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output
 from pages import overview
 from Reporte import Reporte
 
-ReporteStack = [] # Lista donde se añaden los 3 report_list (Corte1, Corte2, Completo)
+ReporteStack= [] # Lista donde se añaden los 4 report_list (Producto, Corte1, Corte2, Completo)
 
 lista = [  ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_REAL.csv',
             'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_TEORICO.csv',
@@ -20,7 +20,7 @@ lista = [  ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_R
 
 for elem in lista:
     REAL, TEORICO, TMIN = pd.read_csv(elem[0]), pd.read_csv(elem[1]), pd.read_csv(elem[2])
-    reporte = Reporte(Real=REAL, Teorico=TEORICO, Tmin=TMIN, filtro1=elem[3], filtro2=elem[4])
+    reporte = Reporte(Real=REAL, Teorico=TEORICO, Tmin=TMIN, filtro1=elem[3], filtro2=elem[4], Producto='GAHI', Fecha='XXXX')
     reporte.Stack(ReporteStack)
 
 # get relative data folder
@@ -46,11 +46,12 @@ app.layout = html.Div(
 def display_page(pathname):
 
     resultado = list()
-    for hoja in range(len(ReporteStack[0][1])): # [producto][#Reporte] --> [Corte1, Corte2, Completo]
-        resultado.append(overview.create_layout(app, ReporteStack[0][0][hoja]))
+    for hoja in range(len(ReporteStack[0][2])): # [producto][#Reporte] --> [Producto, Corte1, Corte2, Completo]
+        resultado.append(overview.create_layout(app, ReporteStack[0][2][hoja]))
+
+    # resultado.append(overview.create_layout(app, ReporteStack[0][0]))
 
     return tuple(resultado)
 
 if __name__=='__main__':
     app.run_server(debug=True)
-
