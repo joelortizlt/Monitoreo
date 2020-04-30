@@ -183,7 +183,12 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.curvas.at[i,'pre_optimo'] = [round(x,4) for x in yopt]
 
 
-    def impactoTmin(self,df):
+    def impactoTmin(self,df_tmin,completar=True):
+
+        if completar==True:
+            izquierda = self.df_real[['CODCLAVEOPECTA']+f.all_cortes(self.df_real)].copy()
+            df = pd.merge(left=izquierda, right=df_tmin, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
+        
         cortes=f.all_cortes(self.stats)
         df['C_TODOS']=''
         df = df[cortes+['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']]

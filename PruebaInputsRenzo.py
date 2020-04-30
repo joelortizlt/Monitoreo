@@ -31,5 +31,5 @@ print(vehicular.stats)
 vehicular.plotear('can',optimo=True)
 vehicular.MAE('can',optimo=True)
 
-vehicular.impactoTmin(TMIN)
+vehicular.impactoTmin(TMIN,completar=True)
 print(vehicular.Tmin)
