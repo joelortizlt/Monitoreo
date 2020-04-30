@@ -22,7 +22,7 @@ class InputsNoRevolventeTeorico():
         df_teorico['pre_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PRE1'):f.encontrar_encabezado(df_teorico,'pd_marginal')].values.tolist()})
  
         #seleccionar solo la data relevante
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODSOLICITUD','COSECHA','MAXMAD','pd_marginal', 'can_marginal', 'pre_marginal']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal', 'can_marginal', 'pre_marginal']]
         
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
@@ -48,7 +48,7 @@ class InputsNoRevolventeTeorico():
         #TEÓRICOS
         for i in range(len(curvas)):
             
-            temp = pd.merge(self.df_teorico[cortes+['CODSOLICITUD','COSECHA','MAXMAD','pd_marginal','can_marginal','pre_marginal']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
+            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal','can_marginal','pre_marginal']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
             #pd teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['pd_marginal']))
             resultado = f.aggr_avg(temp['result'])

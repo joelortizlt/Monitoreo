@@ -20,7 +20,7 @@ class InputsNoRevolventeReal():
         df_real['desembolso'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1'):f.encontrar_encabezado(df_real,'prepagos')].values.tolist()})
         
         #seleccionar solo la data relevante
-        df_real = df_real[f.all_cortes(df_real)+['CODSOLICITUD','COSECHA','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
+        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -44,7 +44,7 @@ class InputsNoRevolventeReal():
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODSOLICITUD','COSECHA','MAXMAD','FAIL_TYPE','SURVIVAL','prepagos','desembolso']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
+            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','FAIL_TYPE','SURVIVAL','prepagos','desembolso']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
             
             #pd y cancelaciones reales
             vector = pd.DataFrame()

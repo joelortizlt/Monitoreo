@@ -22,7 +22,7 @@ class OutputsNoRevolventeReal():
         df_real['saldo'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'SALDO1'):f.encontrar_encabezado(df_real,'if')].values.tolist()})
         
         #seleccionar solo la data relevante
-        df_real = df_real[f.all_cortes(df_real)+['CODSOLICITUD','COSECHA','MAXMAD','if','ef','saldo']]
+        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -51,7 +51,7 @@ class OutputsNoRevolventeReal():
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODSOLICITUD','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             
             temp['sum_if']=list(map(f.operation_pd, temp['MAXMAD'], temp['if']))
             temp['sum_ef']=list(map(f.operation_pd, temp['MAXMAD'], temp['ef']))

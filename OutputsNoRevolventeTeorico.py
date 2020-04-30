@@ -22,7 +22,7 @@ class OutputsNoRevolventeTeorico():
         df_teorico['saldo'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'SALDO1'):f.encontrar_encabezado(df_teorico,'if')].values.tolist()})
  
         #seleccionar solo la data relevante
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODSOLICITUD','COSECHA','MAXMAD','if','ef','saldo']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']]
 
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
@@ -52,7 +52,7 @@ class OutputsNoRevolventeTeorico():
         #TEÓRICAS
         for i in range(len(curvas)):
             
-            temp = pd.merge(self.df_teorico[cortes+['CODSOLICITUD','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             #IF teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['if']))
             a = f.aggr_sum(temp['result'])

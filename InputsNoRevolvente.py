@@ -14,8 +14,8 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
     #constructor del objeto
     def __init__(self,df_real,df_teorico,mincosecha='',maxcosecha='',completar=True):
         if completar==True:
-            izquierda = df_real[['CODSOLICITUD','COSECHA','MAXMAD']+f.all_cortes(df_real)].copy()
-            df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODSOLICITUD'], right_on=['CODSOLICITUD'])
+            izquierda = df_real[['CODCLAVEOPECTA','COSECHA','MAXMAD']+f.all_cortes(df_real)].copy()
+            df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
         
         InputsNoRevolventeReal.__init__(self,df=df_real,mincosecha=mincosecha,maxcosecha=maxcosecha)
         InputsNoRevolventeTeorico.__init__(self,df=df_teorico,mincosecha=mincosecha,maxcosecha=maxcosecha)
@@ -186,7 +186,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
     def impactoTmin(self,df):
         cortes=f.all_cortes(self.stats)
         df['C_TODOS']=''
-        df = df[cortes+['CODSOLICITUD','COSECHA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']]
+        df = df[cortes+['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']]
         Tmin = self.stats[cortes].copy()
 
         for i in range(len(Tmin)):
