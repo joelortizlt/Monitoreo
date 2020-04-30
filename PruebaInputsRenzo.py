@@ -9,9 +9,9 @@ import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 
 #Se insumen los CSV
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_REAL.csv')
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/INPUTS_TEORICO.csv')
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/TMIN.csv')
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/CHIP/Hipot_Reales.csv')
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/CHIP/Hipot_Inputs.csv')
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/CHIP/Hipot_Precios.csv')
 #Se definen los cortes
 cortes = ['C_SEGMENTO']
 
