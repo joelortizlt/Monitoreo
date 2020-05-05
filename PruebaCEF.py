@@ -1,5 +1,5 @@
 #%%
-#Se impoortan la librerías necesarias
+#Se importan la librerías necesarias
 import numpy as np
 import pandas as pd
 import itertools as it
@@ -16,25 +16,14 @@ TMIN = pd.read_csv('/Users/renzomartinch/Downloads/CEF/CEFCB_Precios.csv')
 
 #%%
 #Se definen los cortes
-cortes = []
-
+cortes = ['C_PLAZO']
 #Se crea el objeto
 product = InputsNoRevolvente(REAL,TEORICO,completar=True)
+#Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 
 #%%
-product.curvas
-
-#%%
-product.stats
-
-#%%
-product.plotear('pd')
-product.plotear('can')
-product.plotear('pre')
-#product.MAE('can')
-
-#%%
+#Se puede optimizar
 product.optimizar()
 
 #%%
@@ -42,6 +31,15 @@ product.curvas
 
 #%%
 product.stats
+
+#%%
+product.intervalos
+
+#%%
+product.plotear('pd')
+product.plotear('can')
+product.plotear('pre')
+#product.MAE('can')
 
 #%%
 product.plotear('pd',optimo=True)

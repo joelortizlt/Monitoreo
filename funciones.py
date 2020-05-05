@@ -19,13 +19,6 @@ def aggr_sum(result_col):
     filt = list(map(avg, it.zip_longest(*result_col)))
     return filt
 
-def aggr_sd(result_col):
-    def avg(x):
-        x = [i for i in x if i is not None]
-        return sum(x, 0.0000)
-    filt = list(map(avg, it.zip_longest(*result_col)))
-    return filt
-
 #Esta función permite encontrar la posición de un encabezado espeífico (a) en un dataframe (df)
 def encontrar_encabezado(df,a):
     n=0

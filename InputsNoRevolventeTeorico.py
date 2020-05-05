@@ -52,7 +52,7 @@ class InputsNoRevolventeTeorico():
             #pd teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['pd_marginal']))
             resultado = f.aggr_avg(temp['result'])
-            resultado = np.cumsum(resultado)  
+            resultado = np.cumsum(resultado)
             curvas.at[i,'pd_teorico'] = f.porcentaje(resultado)
             
             #cancelaciones teórico
