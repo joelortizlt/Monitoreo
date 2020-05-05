@@ -185,12 +185,14 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
 
     def impactoTmin(self,df_tmin,completar=True):
 
-        if completar==True:
-            izquierda = self.df_real[['CODCLAVEOPECTA']+f.all_cortes(self.df_real)].copy()
-            df = pd.merge(left=izquierda, right=df_tmin, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
-        
         cortes=f.all_cortes(self.stats)
-        df['C_TODOS']=''
+        if completar==True:
+            izquierda = self.df_real[['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO']+f.all_cortes(self.df_real)].copy()
+            derecha = df_tmin[['CODCLAVEOPECTA','Tmin','PDTmin','CANTmin','PRETmin']].copy()
+            df = pd.merge(left=izquierda, right=derecha, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
+        
+        if cortes==['C_TODOS']:
+            df['C_TODOS']=''
         df = df[cortes+['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']]
         Tmin = self.stats[cortes].copy()
 
