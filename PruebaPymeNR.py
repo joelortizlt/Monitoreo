@@ -10,9 +10,9 @@ from InputsNoRevolvente import InputsNoRevolvente
 
 #%%
 #Se insumen los CSV
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Reales.csv')
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Inputs.csv')
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Precios.csv')
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Reales.csv')
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Inputs.csv')
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Precios.csv')
 
 #%%
 #Se crea el objeto
@@ -24,7 +24,7 @@ product.df_teorico
 
 #%%
 #Se definen los cortes
-cortes = ['C_SEGMENTO']
+cortes = ['C_PRODUCTO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 product.curvas
@@ -33,7 +33,7 @@ product.curvas
 product.stats
 
 #%%
-product.ci_pd
+product.intervalos
 
 #%%
 product.plotear('pd')

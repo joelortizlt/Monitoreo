@@ -10,9 +10,9 @@ from InputsNoRevolvente import InputsNoRevolvente
 
 #%%
 #Se insumen los CSV
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Reales.csv')
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Inputs.csv')
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Precios.csv')
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/MiVivienda/MiVivienda_Reales.csv')
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/MiVivienda/MiVivienda_Inputs.csv')
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/MiVivienda/MiVivienda_Precios.csv')
 
 #%%
 #Se crea el objeto
@@ -33,7 +33,7 @@ product.curvas
 product.stats
 
 #%%
-product.ci_pd
+product.intervalos
 
 #%%
 product.plotear('pd')

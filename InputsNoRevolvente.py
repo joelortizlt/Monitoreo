@@ -31,44 +31,34 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         curvas = curvas.rename(columns={'recuento_x':'recuento'}).drop('recuento_y',1)
         stats = curvas[f.all_cortes(curvas)+['recuento']].copy()
         #intervalos
-        intervalos = curvas[f.all_cortes(curvas)+['recuento']].copy()
-        intervalos['pd_real_u90']=''
-        intervalos['pd_real_d90']=''
-        intervalos['pd_real_u95']=''
-        intervalos['pd_real_d95']=''
-        intervalos['pd_real_u99']=''
-        intervalos['pd_real_d99']=''
-        intervalos['pd_teorico_u90']=''
-        intervalos['pd_teorico_d90']=''
-        intervalos['pd_teorico_u95']=''
-        intervalos['pd_teorico_d95']=''
-        intervalos['pd_teorico_u99']=''
-        intervalos['pd_teorico_d99']=''
-        intervalos['can_real_u90']=''
-        intervalos['can_real_d90']=''
-        intervalos['can_real_u95']=''
-        intervalos['can_real_d95']=''
-        intervalos['can_real_u99']=''
-        intervalos['can_real_d99']=''
-        intervalos['can_teorico_u90']=''
-        intervalos['can_teorico_d90']=''
-        intervalos['can_teorico_u95']=''
-        intervalos['can_teorico_d95']=''
-        intervalos['can_teorico_u99']=''
-        intervalos['can_teorico_d99']=''
-        intervalos['pre_real_u90']=''
-        intervalos['pre_real_d90']=''
-        intervalos['pre_real_u95']=''
-        intervalos['pre_real_d95']=''
-        intervalos['pre_real_u99']=''
-        intervalos['pre_real_d99']=''
-        intervalos['pre_teorico_u90']=''
-        intervalos['pre_teorico_d90']=''
-        intervalos['pre_teorico_u95']=''
-        intervalos['pre_teorico_d95']=''
-        intervalos['pre_teorico_u99']=''
-        intervalos['pre_teorico_d99']=''
-
+        ci_pd = curvas[f.all_cortes(curvas)+['recuento']].copy()
+        ci_pd['y_real']=''
+        ci_pd['y_pred']=''
+        ci_pd['CI:5.0-95.0']=''
+        ci_pd['CI:5.0-95.0_u']=''
+        ci_pd['CI:2.5-97.5']=''
+        ci_pd['CI:2.5-97.5_u']=''
+        ci_pd['CI:0.5-99.5']=''
+        ci_pd['CI:0.5-99.5_u']=''
+        ci_can = curvas[f.all_cortes(curvas)+['recuento']].copy()
+        ci_can['y_real']=''
+        ci_can['y_pred']=''
+        ci_can['CI:5.0-95.0']=''
+        ci_can['CI:5.0-95.0_u']=''
+        ci_can['CI:2.5-97.5']=''
+        ci_can['CI:2.5-97.5_u']=''
+        ci_can['CI:0.5-99.5']=''
+        ci_can['CI:0.5-99.5_u']=''
+        ci_pre = curvas[f.all_cortes(curvas)+['recuento']].copy()
+        ci_pre['y_real']=''
+        ci_pre['y_pred']=''
+        ci_pre['CI:5.0-95.0']=''
+        ci_pre['CI:5.0-95.0_u']=''
+        ci_pre['CI:2.5-97.5']=''
+        ci_pre['CI:2.5-97.5_u']=''
+        ci_pre['CI:0.5-99.5']=''
+        ci_pre['CI:0.5-99.5_u']=''
+       
 
         for i in range(len(curvas)):
 
@@ -77,38 +67,25 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             curvas.at[i, 'pd_teorico']=curvas.loc[i, 'pd_teorico'].copy()[:l]
             stats.at[i,'MAE_pd'] = mean_absolute_error(curvas.loc[i, 'pd_real'], curvas.loc[i, 'pd_teorico'])
             #intervalos
-            intervalos.at[i, 'pd_real_u90']=curvas.at[i, 'pd_real'].copy()
-            intervalos.at[i, 'pd_real_d90']=curvas.at[i, 'pd_real'].copy()
-            intervalos.at[i, 'pd_real_u95']=curvas.at[i, 'pd_real'].copy()
-            intervalos.at[i, 'pd_real_d95']=curvas.at[i, 'pd_real'].copy()
-            intervalos.at[i, 'pd_real_u99']=curvas.at[i, 'pd_real'].copy()
-            intervalos.at[i, 'pd_real_d99']=curvas.at[i, 'pd_real'].copy()
-            intervalos.at[i, 'pd_teorico_u90']=curvas.at[i, 'pd_teorico'].copy()
-            intervalos.at[i, 'pd_teorico_d90']=curvas.at[i, 'pd_teorico'].copy()
-            intervalos.at[i, 'pd_teorico_u95']=curvas.at[i, 'pd_teorico'].copy()
-            intervalos.at[i, 'pd_teorico_d95']=curvas.at[i, 'pd_teorico'].copy()
-            intervalos.at[i, 'pd_teorico_u99']=curvas.at[i, 'pd_teorico'].copy()
-            intervalos.at[i, 'pd_teorico_d99']=curvas.at[i, 'pd_teorico'].copy()
-            n = intervalos.at[i, 'recuento']
+            ci_pd.at[i, 'y_real']=curvas.at[i, 'pd_real'].copy()
+            ci_pd.at[i, 'y_pred']=curvas.at[i, 'pd_teorico'].copy()
+            ci_pd.at[i, 'CI:5.0-95.0']=curvas.at[i, 'pd_real'].copy()
+            ci_pd.at[i, 'CI:5.0-95.0_u']=curvas.at[i, 'pd_real'].copy()
+            ci_pd.at[i, 'CI:2.5-97.5']=curvas.at[i, 'pd_real'].copy()
+            ci_pd.at[i, 'CI:2.5-97.5_u']=curvas.at[i, 'pd_real'].copy()
+            ci_pd.at[i, 'CI:0.5-99.5']=curvas.at[i, 'pd_real'].copy()
+            ci_pd.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'pd_real'].copy()
+            n = ci_pd.at[i, 'recuento']
             for j in range(l):
                 p = curvas.at[i, 'pd_real'][j]/100
                 m = curvas.at[i, 'pd_real'][j]/100
                 sd = (p*(1-p)/n)**0.5
-                intervalos.at[i, 'pd_real_u90'][j]=round((m+sd*1.645)*100,4)
-                intervalos.at[i, 'pd_real_d90'][j]=round((m-sd*1.645)*100,4)
-                intervalos.at[i, 'pd_real_u95'][j]=round((m+sd*1.96)*100,4)
-                intervalos.at[i, 'pd_real_d95'][j]=round((m-sd*1.96)*100,4)
-                intervalos.at[i, 'pd_real_u99'][j]=round((m+sd*2.575)*100,4)
-                intervalos.at[i, 'pd_real_d99'][j]=round((m-sd*2.575)*100,4)
-                p = curvas.at[i, 'pd_teorico'][j]/100
-                m = curvas.at[i, 'pd_teorico'][j]/100
-                sd = (p*(1-p)/n)**0.5
-                intervalos.at[i, 'pd_teorico_u90'][j]=round((m+sd*1.645)*100,4)
-                intervalos.at[i, 'pd_teorico_d90'][j]=round((m-sd*1.645)*100,4)
-                intervalos.at[i, 'pd_teorico_u95'][j]=round((m+sd*1.96)*100,4)
-                intervalos.at[i, 'pd_teorico_d95'][j]=round((m-sd*1.96)*100,4)
-                intervalos.at[i, 'pd_teorico_u99'][j]=round((m+sd*2.575)*100,4)
-                intervalos.at[i, 'pd_teorico_d99'][j]=round((m-sd*2.575)*100,4)
+                ci_pd.at[i, 'CI:5.0-95.0'][j]=round((m-sd*1.645)*100,4)
+                ci_pd.at[i, 'CI:5.0-95.0_u'][j]=round((m+sd*1.645)*100,4)
+                ci_pd.at[i, 'CI:2.5-97.5'][j]=round((m-sd*1.96)*100,4)
+                ci_pd.at[i, 'CI:2.5-97.5_u'][j]=round((m+sd*1.96)*100,4)
+                ci_pd.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
+                ci_pd.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
                 
             
             l=min(len(curvas.loc[i, 'can_real']),len(curvas.loc[i, 'can_teorico']))
@@ -116,38 +93,25 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             curvas.at[i, 'can_teorico']=curvas.loc[i, 'can_teorico'].copy()[:l]
             stats.at[i,'MAE_can'] = mean_absolute_error(curvas.loc[i, 'can_real'], curvas.loc[i, 'can_teorico']) 
             #intervalos
-            intervalos.at[i, 'can_real_u90']=curvas.at[i, 'can_real'].copy()
-            intervalos.at[i, 'can_real_d90']=curvas.at[i, 'can_real'].copy()
-            intervalos.at[i, 'can_real_u95']=curvas.at[i, 'can_real'].copy()
-            intervalos.at[i, 'can_real_d95']=curvas.at[i, 'can_real'].copy()
-            intervalos.at[i, 'can_real_u99']=curvas.at[i, 'can_real'].copy()
-            intervalos.at[i, 'can_real_d99']=curvas.at[i, 'can_real'].copy()
-            intervalos.at[i, 'can_teorico_u90']=curvas.at[i, 'can_teorico'].copy()
-            intervalos.at[i, 'can_teorico_d90']=curvas.at[i, 'can_teorico'].copy()
-            intervalos.at[i, 'can_teorico_u95']=curvas.at[i, 'can_teorico'].copy()
-            intervalos.at[i, 'can_teorico_d95']=curvas.at[i, 'can_teorico'].copy()
-            intervalos.at[i, 'can_teorico_u99']=curvas.at[i, 'can_teorico'].copy()
-            intervalos.at[i, 'can_teorico_d99']=curvas.at[i, 'can_teorico'].copy()
-            n = intervalos.at[i, 'recuento']
+            ci_can.at[i, 'y_real']=curvas.at[i, 'can_real'].copy()
+            ci_can.at[i, 'y_pred']=curvas.at[i, 'can_teorico'].copy()
+            ci_can.at[i, 'CI:5.0-95.0']=curvas.at[i, 'can_real'].copy()
+            ci_can.at[i, 'CI:5.0-95.0_u']=curvas.at[i, 'can_real'].copy()
+            ci_can.at[i, 'CI:2.5-97.5']=curvas.at[i, 'can_real'].copy()
+            ci_can.at[i, 'CI:2.5-97.5_u']=curvas.at[i, 'can_real'].copy()
+            ci_can.at[i, 'CI:0.5-99.5']=curvas.at[i, 'can_real'].copy()
+            ci_can.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'can_real'].copy()
+            n = ci_can.at[i, 'recuento']
             for j in range(l):
                 p = curvas.at[i, 'can_real'][j]/100
                 m = curvas.at[i, 'can_real'][j]/100
                 sd = (p*(1-p)/n)**0.5
-                intervalos.at[i, 'can_real_u90'][j]=round((m+sd*1.645)*100,4)
-                intervalos.at[i, 'can_real_d90'][j]=round((m-sd*1.645)*100,4)
-                intervalos.at[i, 'can_real_u95'][j]=round((m+sd*1.96)*100,4)
-                intervalos.at[i, 'can_real_d95'][j]=round((m-sd*1.96)*100,4)
-                intervalos.at[i, 'can_real_u99'][j]=round((m+sd*2.575)*100,4)
-                intervalos.at[i, 'can_real_d99'][j]=round((m-sd*2.575)*100,4)
-                p = curvas.at[i, 'can_teorico'][j]/100
-                m = curvas.at[i, 'can_teorico'][j]/100
-                sd = (p*(1-p)/n)**0.5
-                intervalos.at[i, 'can_teorico_u90'][j]=round((m+sd*1.645)*100,4)
-                intervalos.at[i, 'can_teorico_d90'][j]=round((m-sd*1.645)*100,4)
-                intervalos.at[i, 'can_teorico_u95'][j]=round((m+sd*1.96)*100,4)
-                intervalos.at[i, 'can_teorico_d95'][j]=round((m-sd*1.96)*100,4)
-                intervalos.at[i, 'can_teorico_u99'][j]=round((m+sd*2.575)*100,4)
-                intervalos.at[i, 'can_teorico_d99'][j]=round((m-sd*2.575)*100,4)
+                ci_can.at[i, 'CI:5.0-95.0'][j]=round((m-sd*1.645)*100,4)
+                ci_can.at[i, 'CI:5.0-95.0_u'][j]=round((m+sd*1.645)*100,4)
+                ci_can.at[i, 'CI:2.5-97.5'][j]=round((m-sd*1.96)*100,4)
+                ci_can.at[i, 'CI:2.5-97.5_u'][j]=round((m+sd*1.96)*100,4)
+                ci_can.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
+                ci_can.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
 
 
             l=min(len(curvas.loc[i, 'pre_real']),len(curvas.loc[i, 'pre_teorico']))
@@ -155,42 +119,31 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             curvas.at[i, 'pre_teorico']=curvas.loc[i, 'pre_teorico'].copy()[:l]
             stats.at[i,'MAE_pre'] = mean_absolute_error(curvas.loc[i, 'pre_real'], curvas.loc[i, 'pre_teorico']) 
             #intervalos
-            intervalos.at[i, 'pre_real_u90']=curvas.at[i, 'pre_real'].copy()
-            intervalos.at[i, 'pre_real_d90']=curvas.at[i, 'pre_real'].copy()
-            intervalos.at[i, 'pre_real_u95']=curvas.at[i, 'pre_real'].copy()
-            intervalos.at[i, 'pre_real_d95']=curvas.at[i, 'pre_real'].copy()
-            intervalos.at[i, 'pre_real_u99']=curvas.at[i, 'pre_real'].copy()
-            intervalos.at[i, 'pre_real_d99']=curvas.at[i, 'pre_real'].copy()
-            intervalos.at[i, 'pre_teorico_u90']=curvas.at[i, 'pre_teorico'].copy()
-            intervalos.at[i, 'pre_teorico_d90']=curvas.at[i, 'pre_teorico'].copy()
-            intervalos.at[i, 'pre_teorico_u95']=curvas.at[i, 'pre_teorico'].copy()
-            intervalos.at[i, 'pre_teorico_d95']=curvas.at[i, 'pre_teorico'].copy()
-            intervalos.at[i, 'pre_teorico_u99']=curvas.at[i, 'pre_teorico'].copy()
-            intervalos.at[i, 'pre_teorico_d99']=curvas.at[i, 'pre_teorico'].copy()
-            n = intervalos.at[i, 'recuento']
+            ci_pre.at[i, 'y_real']=curvas.at[i, 'pre_real'].copy()
+            ci_pre.at[i, 'y_pred']=curvas.at[i, 'pre_teorico'].copy()
+            ci_pre.at[i, 'CI:5.0-95.0']=curvas.at[i, 'pre_real'].copy()
+            ci_pre.at[i, 'CI:5.0-95.0_u']=curvas.at[i, 'pre_real'].copy()
+            ci_pre.at[i, 'CI:2.5-97.5']=curvas.at[i, 'pre_real'].copy()
+            ci_pre.at[i, 'CI:2.5-97.5_u']=curvas.at[i, 'pre_real'].copy()
+            ci_pre.at[i, 'CI:0.5-99.5']=curvas.at[i, 'pre_real'].copy()
+            ci_pre.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'pre_real'].copy()
+            n = ci_pre.at[i, 'recuento']
             for j in range(l):
                 p = curvas.at[i, 'pre_real'][j]/100
                 m = curvas.at[i, 'pre_real'][j]/100
                 sd = (p*(1-p)/n)**0.5
-                intervalos.at[i, 'pre_real_u90'][j]=round((m+sd*1.645)*100,4)
-                intervalos.at[i, 'pre_real_d90'][j]=round((m-sd*1.645)*100,4)
-                intervalos.at[i, 'pre_real_u95'][j]=round((m+sd*1.96)*100,4)
-                intervalos.at[i, 'pre_real_d95'][j]=round((m-sd*1.96)*100,4)
-                intervalos.at[i, 'pre_real_u99'][j]=round((m+sd*2.575)*100,4)
-                intervalos.at[i, 'pre_real_d99'][j]=round((m-sd*2.575)*100,4)
-                p = curvas.at[i, 'pre_teorico'][j]/100
-                m = curvas.at[i, 'pre_teorico'][j]/100
-                sd = (p*(1-p)/n)**0.5
-                intervalos.at[i, 'pre_teorico_u90'][j]=round((m+sd*1.645)*100,4)
-                intervalos.at[i, 'pre_teorico_d90'][j]=round((m-sd*1.645)*100,4)
-                intervalos.at[i, 'pre_teorico_u95'][j]=round((m+sd*1.96)*100,4)
-                intervalos.at[i, 'pre_teorico_d95'][j]=round((m-sd*1.96)*100,4)
-                intervalos.at[i, 'pre_teorico_u99'][j]=round((m+sd*2.575)*100,4)
-                intervalos.at[i, 'pre_teorico_d99'][j]=round((m-sd*2.575)*100,4)
+                ci_pre.at[i, 'CI:5.0-95.0'][j]=round((m-sd*1.645)*100,4)
+                ci_pre.at[i, 'CI:5.0-95.0_u'][j]=round((m+sd*1.645)*100,4)
+                ci_pre.at[i, 'CI:2.5-97.5'][j]=round((m-sd*1.96)*100,4)
+                ci_pre.at[i, 'CI:2.5-97.5_u'][j]=round((m+sd*1.96)*100,4)
+                ci_pre.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
+                ci_pre.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
 
         self.curvas = curvas
         self.stats = stats
-        self.intervalos = intervalos
+        self.ci_pd = ci_pd
+        self.ci_can = ci_can
+        self.ci_pre = ci_pre
     
     
     def plotear(self,texto,optimo=False):

@@ -24,7 +24,7 @@ product.df_teorico
 
 #%%
 #Se definen los cortes
-cortes = ['C_PLAZO']
+cortes = ['C_SEGMENTO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 product.curvas
@@ -67,3 +67,5 @@ product.Tmin
 
 #%%
 product.TminProm
+
+# %%
