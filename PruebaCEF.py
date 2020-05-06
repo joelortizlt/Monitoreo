@@ -10,9 +10,9 @@ from InputsNoRevolvente import InputsNoRevolvente
 
 #%%
 #Se insumen los CSV
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Reales.csv')
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Inputs.csv')
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/CEFCB/CEFCB_Precios.csv')
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv')
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv')
 
 #%%
 #Se crea el objeto

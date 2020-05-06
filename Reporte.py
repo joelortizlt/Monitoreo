@@ -3,7 +3,7 @@ import numpy as np
 import pathlib
 import dash_core_components as dcc
 import dash_html_components as html
-from utils import Plotgraph, Barplot, Waterfallplot
+from utils import Plotgraph, Barplot, Waterfallplot, FanChart
 from InputsNoRevolvente import InputsNoRevolvente
 from InputsNoRevolventeReal import InputsNoRevolventeReal
 from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
@@ -13,8 +13,9 @@ from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 
 class Reporte():
     # Constructor del Objeto
-    def __init__(self, Real, Teorico, Tmin, filtro1, filtro2, Producto='XXX', Fecha='XXX'):
-        product = InputsNoRevolvente(Real, Teorico, completar=True)
+    def __init__(self, Real, Teorico, Tmin, MinCosecha='', MaxCosecha='', filtro1='C_SEGMENTO', 
+                    filtro2='C_PLAZO', Producto='XXX', Fecha='XXX', colorListRGB= [ [200,222,255], [153,212,255], [0,99,174] ]):
+        product = InputsNoRevolvente(Real, Teorico, MinCosecha, MaxCosecha, completar=True)
         product.condensar([filtro1])
         nro_comb_filtro1, nro_comb_filtro2 = 0, len(product.curvas[filtro1].unique())
         product.condensar([filtro2])
@@ -28,6 +29,7 @@ class Reporte():
         pd_alertas_list, can_alertas_list, pre_alertas_list = [], [], []
         resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
         report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre = [], [], []
+        pd_fanChart, can_fanChart, pre_fanChart = [], [], []
         
         # Producto General
         product = InputsNoRevolvente(Real, Teorico, completar=True)
@@ -40,11 +42,14 @@ class Reporte():
         graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', promedio=True)
         barplot = Barplot(product.stats, grupo='Todos')    
         waterfall = Waterfallplot(df=product.Tmin, promedio=True)
+        fanchart, fanchart2 = FanChart(df=product.ci_pd), FanChart(df=product.ci_can, nombre='Cancelaciones')
+        fanchart3 = FanChart(df=product.ci_pre, nombre='Prepagos')
+
         aux = html.P('')
 
         Lista = [ [('Producto ' + str(Producto) + ' actualizado al ' + str(Fecha), aux, 'product')],
-                [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', graph, 'six columns'), ('Curva de Cancelaciones', graph2, 'six columns')],
-                [('MAE', barplot, 'six columns'), ('Curva de Prepagos', graph3, 'six columns')]
+                [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', fanchart, 'six columns'), ('Curva de Cancelaciones', fanchart2, 'six columns')],
+                [('Intervalos de confianza', barplot, 'six columns'), ('Curva de Prepagos', fanchart3, 'six columns')]
         ]
 
         # Producto por Cortes
@@ -76,6 +81,9 @@ class Reporte():
                 waterfall_aux = True if corte[0]==[filtro1, filtro2] else False
                 waterfall = Waterfallplot(product.Tmin, combinacion=combinacion, mixto=waterfall_aux) # Waterfallplot
                 tmin_graph_list.append(waterfall)
+                pd_fanChart.append(FanChart(product.ci_pd, corte=combinacion))
+                can_fanChart.append(FanChart(product.ci_can, nombre='Cancelaciones', corte=combinacion))
+                pre_fanChart.append(FanChart(product.ci_pre, nombre='Prepagos', corte=combinacion))
 
                 # Listado de Alertas:
                 for mae in MAE_list:
@@ -144,7 +152,7 @@ class Reporte():
                         if product.curvas[filtro1][contador]!=product.curvas[filtro1][contador-1]:
                             nro_combinaciones_comb.append(list(range(contador)))
                             contador = 0
-                    nro_combinaciones_comb.append(list(range(contador))) # nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
+                    # nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
 
                     for nro_combinacion in nro_combinaciones_comb:
 
@@ -211,21 +219,23 @@ class Reporte():
                 aux = html.P('Todos los cortes están calibrados', style={"color": "#ffffff", "fontSize": "40"})
         aux2 = html.P(' ', style={"color": "#ffffff", "fontSize": "40"}, className='row')
 
-        report_list_resumen = [ [('Resumen de Alertas por Riesgo y Plazo', aux2,'product')],
+        start_date, end_date = str(MinCosecha)[4:] + '-' + str(MinCosecha)[:4], str(MaxCosecha)[4:] + '-' + str(MaxCosecha)[:4] # Fechas de Evaluación
+        report_list_resumen = [ [('Resumen de Alertas por Riesgo y Plazo ' + start_date + ' al ' + end_date, aux2,'product')],
                                 [('Curvas de PD - Descalibrados', resumen_descalibrados_pd, 'product')], [('Curvas de PD - Revisión', resumen_revision_pd, 'product')],
                                 [('Curvas de Cancelaciones - Descalibrados', resumen_descalibrados_can, 'product')], [('Curvas de Cancelaciones - Revisión', resumen_revision_can, 'product')],
                                 [('Curvas de Prepagos - Descalibrados', resumen_descalibrados_pre, 'product')], [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]   ]
 
-        report_list_MAE = [[report_list_MAE_pd, 'PD', pd_MAE_graph_list], [report_list_MAE_can, 'Cancelaciones', can_MAE_graph_list], 
-                            [report_list_MAE_pre, 'Prepagos', pre_MAE_graph_list]]
-        for report_list in report_list_MAE:
-            range_MAE = [ [0], [1], list(range(2, comb_size[0]+2)) ]
-            report_list_aux = []
-            report_list_aux.append( [('Gráficos MAE - '+ report_list[1], aux2, 'product')] )
-            for rango in range_MAE:
-                for rango2 in rango:
-                    report_list_aux.append( [(MAE_titles[rango2], report_list[2][rango2], 'twelve columns')] )
-            report_list[0].append(report_list_aux)
+        # # Hoja de MAE: (PD - Cancelaciones - Prepagos)
+        # report_list_MAE = [[report_list_MAE_pd, 'PD', pd_MAE_graph_list], [report_list_MAE_can, 'Cancelaciones', can_MAE_graph_list], 
+        #                     [report_list_MAE_pre, 'Prepagos', pre_MAE_graph_list]]
+        # for report_list in report_list_MAE:
+        #     range_MAE = [ [0], [1], list(range(2, len(report_list[2]) + 2)) ] # [Primer filtro]
+        #     report_list_aux = []
+        #     report_list_aux.append( [('Gráficos MAE - '+ report_list[1], aux2, 'product')] )
+        #     for rango in range_MAE:
+        #         for rango2 in rango:
+        #             report_list_aux.append( [(MAE_titles[rango2], report_list[2][0], 'twelve columns')] )
+        #     report_list[0].append(report_list_aux)
 
         ListaCompleta = [] # Reporte Completo
         ListaCompleta.append(report_list_resumen)
@@ -234,7 +244,10 @@ class Reporte():
             ListaCompleta.append(report_list_can[elem])
             ListaCompleta.append(report_list_pre[elem])
             ListaCompleta.append(report_list_tmin[elem])
-
+        # ListaCompleta.append(report_list_MAE_pd)
+        # ListaCompleta.append(report_list_MAE_can)
+        # ListaCompleta.append(report_list_MAE_pre)
+        
         ListaCorte1, ListaCorte2 = [], [] # Reporte por Corte1 / Corte2
         for lista in range(1, 5):
             ListaCorte1.append(ListaCompleta[lista])

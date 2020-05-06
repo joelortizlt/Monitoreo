@@ -1,3 +1,4 @@
+#%%
 # 0. Librerías 
 
 import numpy as np
@@ -21,13 +22,18 @@ from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 # 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
 
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_REAL.csv')
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_TEORICO.csv')
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\TMIN.csv')
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv')
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv')
 
-filtro1, filtro2 = 'C_SEGMENTO', 'C_PLAZO'
-nro_comb_filtro1, nro_comb_filtro2, nro_comb_mixto = 0, 4, 7
+filtro1, filtro2 = 'C_MALAVENTA', 'C_SEGMENTO'
+product = InputsNoRevolvente(REAL, TEORICO, TMIN, completar=True)
+product.condensar([filtro1])
+nro_comb_filtro1, nro_comb_filtro2 = 0, len(product.curvas[filtro1].unique())
+product.condensar([filtro2])
+nro_comb_mixto = nro_comb_filtro2 + len(product.curvas[filtro2].unique())
 cortes =  [[[filtro1], nro_comb_filtro1], [[filtro2], nro_comb_filtro2], [[filtro1, filtro2], nro_comb_mixto]]
+
 
 pd_graph_list, can_graph_list, pre_graph_list = [], [], []
 pd_alertas_list, can_alertas_list, pre_alertas_list = [], [], []
@@ -42,8 +48,6 @@ tmin_graph_list = []
 MAE_list = [['MAE_pd', pd_MAE_graph_list], ['MAE_can', can_MAE_graph_list], ['MAE_pre', pre_MAE_graph_list]]
 
 # 2. Generación de Objetos:
-
-product = InputsNoRevolvente(REAL, TEORICO, completar=True)
 
 for corte in cortes:
     product = InputsNoRevolvente(REAL, TEORICO, completar=True)
@@ -304,3 +308,5 @@ def display_page(pathname):
 
 if __name__=='__main__':
     app.run_server(debug=True)
+
+# %%

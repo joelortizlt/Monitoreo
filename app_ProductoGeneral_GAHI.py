@@ -14,16 +14,16 @@ import dash_html_components as html
 
 #   Otros Scripts
 import funciones as f
-from utils import Header, get_header, Plotgraph, Barplot, Waterfallplot
+from utils import Header, get_header, Plotgraph, Barplot, Waterfallplot, FanChart
 from InputsNoRevolvente import InputsNoRevolvente
 from InputsNoRevolventeReal import InputsNoRevolventeReal
 from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 # 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
 
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_REAL.csv')
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\INPUTS_TEORICO.csv')
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\TMIN.csv')
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv')
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv')
 
 pd_MAE, can_MAE, pre_MAE = [], [], []
 
@@ -36,6 +36,9 @@ graph = Plotgraph(product.curvas, promedio=True)
 graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', promedio=True)
 graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', promedio=True)
 
+fanchart, fanchart2 = FanChart(df=product.ci_pd), FanChart(df=product.ci_can, nombre='Cancelaciones')
+fanchart3 = FanChart(df=product.ci_pre, nombre='Prepagos')
+
 MAE_list = [['MAE_pd', pd_MAE], ['MAE_can', can_MAE], ['MAE_pre', pre_MAE]]
 
 barplot = Barplot(product.stats, grupo='Todos')    
@@ -45,8 +48,8 @@ waterfall = Waterfallplot(df=product.Tmin, promedio=True)
 aux = html.P('')
 
 report_list_resumen = [ [('Producto GAHI actualizado al 07-04-2020', aux, 'product')],
-                        [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', graph, 'six columns'), ('Curva de Cancelaciones', graph2, 'six columns')],
-                        [('MAE', barplot, 'six columns'), ('Curva de Prepagos', graph3, 'six columns')]
+                        [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', fanchart, 'six columns'), ('Curva de Cancelaciones', fanchart2, 'six columns')],
+                        [('MAE', barplot, 'six columns'), ('Curva de Prepagos', fanchart3, 'six columns')]
 ]
 
 # 4. Dash

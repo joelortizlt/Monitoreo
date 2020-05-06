@@ -1,10 +1,12 @@
 # Librerias
-
+# %%
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-
+import pandas
+import matplotlib
+# %%
 # Funciones de Apoyo - Reporting
 
 def get_header(app):
@@ -182,11 +184,11 @@ def Barplot(df, curva='MAE_pd', grupo='c_riesgo', inicio=0, step=3):
         text_normal = [round(num, 4) for num in ejex]
         text_op = [round(num, 4) for num in ejexop]
     else:
-        ejey = df[grupo]
-        ejex = df[curva][inicio:step]
-        ejexop = df[curva_optima][inicio:step]
-        text_normal = list(round(ejex, 4))
-        text_op = list(round(ejexop, 4))
+        ejey = list(df[grupo].values)
+        ejex = list(df[curva][inicio:step].values)
+        ejexop = list(df[curva_optima][inicio:step].values)
+        text_normal = [round(num, 4) for num in ejex]
+        text_op = [round(num, 4) for num in ejexop]
 
     aux=0
     for elem in text_normal:
@@ -252,4 +254,123 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=Fal
                                             height = height_number,
                                             yaxis = {'range': [0.015, limit], 'title': '%'}
                                             )}
-    )          
+    )
+
+def FanChart(df, nombre='PD', corte=0, dot_name='Real', line_name='Teórica', colorListRGB= [ [0,99,174], [153,212,255], [200,222,255] ]):
+
+    columns = df.columns
+    start_position = df.columns.get_loc('recuento')
+    x = list(range(len(df[columns[start_position + 1]][corte])))
+    yreal = df[columns[start_position + 1]][corte]
+    ypred = df[columns[start_position + 2]][corte]
+    yIntervLimits = list()
+    intervNames = list()
+
+    for ii in range(start_position + 3, len(columns), 2):
+        yIntervLimits.append(df[columns[ii]][corte])
+        yIntervLimits.append( [x1 - x2 for (x1, x2) in zip(df[columns[ii+1]][corte], df[columns[ii]][corte])] )
+        intervNames.append(columns[ii])
+
+    data = list()
+    # Otros intervalos
+    nn = 0
+    for ii in range(0,len(yIntervLimits),2):
+    # Nivel base
+        data_aux = go.Scatter(
+                x=x,
+                y=  yIntervLimits[ii],
+                hoverinfo='x+y',
+                mode='lines',
+                name='',
+                fillcolor='rgba(255,255,255,0.0)',
+                opacity=0.0,
+                showlegend=False,
+                line=dict(width=0.0, color='rgba(255, 255, 255, 0.0)'),
+                stackgroup='level'+str(ii)
+        )
+    
+        data.append(data_aux)
+    # Nivel sombra
+        color = 'rgb({d[0]}, {d[1]}, {d[2]})'.format(d=colorListRGB[nn])
+        # ii+=1
+        data_aux2 = go.Scatter(
+                x=x,
+                y= yIntervLimits[ii+1] ,
+                hoverinfo='x+y',
+                mode='lines',
+                name=intervNames[nn],
+                opacity=1,
+                line=dict(width=0.5, color=color),
+                stackgroup='level'+str(ii)
+        )
+        nn+=1
+        data.append(data_aux2)
+
+    # puntos
+    data_aux3 = go.Scatter(
+            x=x,y=  yreal,
+            mode='markers',
+            name=dot_name,
+            opacity=1,
+            line=dict(width=.1, color='rgb(200, 10, 10)'),
+            # stackgroup='one'
+    )
+    data.append(data_aux3)
+    
+    # line of y point estimation
+    data_aux4 = go.Scatter(
+            x=x,y=  ypred,
+            mode='lines',
+            name=line_name,
+            opacity=0.7,
+            line=dict(width=3, color='rgb(10, 10, 10)'),
+            # stackgroup='one'
+    )
+    data.append(data_aux4)
+    
+    return dcc.Graph( figure={
+                        'data': data,
+                        'layout': go.Layout( 
+                            xaxis_title='Plazo',
+                            yaxis_title=nombre,
+                            xaxis=dict(
+                                showline=True,
+                                showgrid=False,
+                                showticklabels=True,
+                                linecolor='rgb(204, 204, 204)',
+                                linewidth=2,
+                                ticks='outside',
+                                tickfont=dict(
+                                    family='Arial',
+                                    size=12,
+                                    color='rgb(82, 82, 82)',
+                                ),
+                            ),
+                            yaxis=dict(
+                                showgrid=False,
+                                zeroline=False,
+                                showline=True,
+                                showticklabels=True,
+                                linecolor='rgb(204, 204, 204)',
+                                linewidth=2,
+                                ticks='outside',
+                                tickfont=dict(
+                                    family='Arial',
+                                    size=12,
+                                    color='rgb(82, 82, 82)',
+                                ),    
+                            ),
+                            height = 400,
+                            width = 700,
+                            autosize = False,
+                            margin=dict(
+                                autoexpand=True,
+                                l=100,
+                                r=20,
+                                t=110,
+                            ),
+                            showlegend=True,
+                            plot_bgcolor='white',
+                        )
+                }       
+    )

@@ -1,2 +1,2 @@
-import app_PruebaClase as flsk
+import app_ProductoGeneral_GAHI as flsk
 flsk.app.run_server(debug=True)
