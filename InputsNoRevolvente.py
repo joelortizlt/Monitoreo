@@ -129,8 +129,8 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             ci_pre.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'pre_real'].copy()
             n = ci_pre.at[i, 'recuento']
             for j in range(l):
-                p = curvas.at[i, 'teorico'][j]/100
-                m = curvas.at[i, 'teorico'][j]/100
+                p = curvas.at[i, 'pre_teorico'][j]/100
+                m = curvas.at[i, 'pre_teorico'][j]/100
                 sd = (p*(1-p)/n)**0.5
                 ci_pre.at[i, 'CI:5.0-95.0'][j]=round((m-sd*1.645)*100,4)
                 ci_pre.at[i, 'CI:5.0-95.0_u'][j]=round((m+sd*1.645)*100,4)
