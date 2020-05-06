@@ -211,7 +211,14 @@ def Barplot(df, curva='MAE_pd', grupo='c_riesgo', inicio=0, step=3):
                                         textposition = 'inside',
                                         textfont_size = 14)],
                         'layout': go.Layout(yaxis = {'type': 'category'},
-                                            height = 350)
+                                            height = 350,
+                                            font = {'family': 'flexo medium'},
+                                            margin=dict(
+                                                            autoexpand=True,
+                                                            l=100,
+                                                            r=20,
+                                                            t=20,
+                                                        ))
         })
 
 def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=False):
@@ -249,12 +256,19 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=Fal
                                     increasing = {"marker":{"color":"Teal"}},
                                     totals = {"marker":{"color":"deep sky blue", "line":{"color":'blue', "width":3}}}
                                 )],
-                        'layout': go.Layout(title = 'Impacto en Tasa Mínima',
-                                            showlegend = True,
+                        'layout': go.Layout(showlegend = True,
                                             height = height_number,
-                                            yaxis = {'range': [0.015, limit], 'title': '%'}
-                                            )}
-    )
+                                            yaxis = {'range': [0.015, limit], 'title': '%'},
+                                            font = {'family': 'flexo medium'},
+                                            margin=dict(
+                                                            autoexpand=True,
+                                                            l=100,
+                                                            r=20,
+                                                            t=20,
+                                                        )
+                                            )
+                }
+        )
 
 def FanChart(df, nombre='PD', corte=0, dot_name='Real', line_name='Teórica', colorListRGB= [ [0,99,174], [153,212,255], [200,222,255] ]):
 
@@ -299,7 +313,7 @@ def FanChart(df, nombre='PD', corte=0, dot_name='Real', line_name='Teórica', co
                 hoverinfo='x+y',
                 mode='lines',
                 name=intervNames[nn],
-                opacity=1,
+                opacity=1,  
                 line=dict(width=0.5, color=color),
                 stackgroup='level'+str(ii)
         )
@@ -360,17 +374,17 @@ def FanChart(df, nombre='PD', corte=0, dot_name='Real', line_name='Teórica', co
                                     color='rgb(82, 82, 82)',
                                 ),    
                             ),
-                            height = 400,
+                            height = 260,
                             width = 700,
                             autosize = False,
                             margin=dict(
                                 autoexpand=True,
                                 l=100,
                                 r=20,
-                                t=110,
+                                t=20,
                             ),
                             showlegend=True,
                             plot_bgcolor='white',
-                        )
-                }       
-    )
+                            font = {'family': 'flexo medium', 'size': 12})
+                    }                   
+            )       

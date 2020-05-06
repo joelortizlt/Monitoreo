@@ -20,15 +20,15 @@ lista = [
            ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv',
             'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv',
             'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv',
-            '', '', 'C_SEGMENTO', 'C_PLAZO', 'GAHI']
+            201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'GAHI'],
         #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
         #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
         #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
         #     201701, 201712, 'C_SEGMENTO', 'C_MALAVENTA', 'Crédito Efectivo'],
-        #   ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
-        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
-        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
-        #     201701, 201712, 'C_SEGMENTO', 'C_MALAVENTA', 'Vehicular']
+          ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
+            201701, 201912, 'C_SEGMENTO', 'C_MALAVENTA', 'Vehicular']
             ]
             # Se pueden añadir más listas para una segunda iteración del "elem"
 
@@ -60,8 +60,8 @@ app.layout = html.Div(
 def display_page(pathname):
 
     resultado = list()
-    for hoja in range(len(ReporteStack[0][3])): # [producto][#Reporte] --> [Producto, Corte1, Corte2, Completo]
-        resultado.append(overview.create_layout(app, ReporteStack[0][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
+    for hoja in range(len(ReporteStack[1][3])): # [producto][#Reporte] --> [Producto, Corte1, Corte2, Completo]
+        resultado.append(overview.create_layout(app, ReporteStack[1][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
 
     # resultado.append(overview.create_layout(app, ReporteStack[0][0]))
 

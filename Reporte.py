@@ -30,6 +30,7 @@ class Reporte():
         resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
         report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre = [], [], []
         pd_fanChart, can_fanChart, pre_fanChart = [], [], []
+        report_list_PDFAN, report_list_CANFAN, report_list_PREFAN = [], [], []
         
         # Producto General
         product = InputsNoRevolvente(Real, Teorico, completar=True)
@@ -85,7 +86,7 @@ class Reporte():
                 can_fanChart.append(FanChart(product.ci_can, nombre='Cancelaciones', corte=combinacion))
                 pre_fanChart.append(FanChart(product.ci_pre, nombre='Prepagos', corte=combinacion))
 
-                # Listado de Alertas:
+                # Listado de Alertas -> append al mismo vector -> 
                 for mae in MAE_list:
                     if product.stats[mae[0]][combinacion] > 3:
                         aux_lista = 'Descalibrado'
@@ -99,22 +100,23 @@ class Reporte():
                         can_alertas_list.append(aux_lista)
                     elif mae[0]=='MAE_pre':
                         pre_alertas_list.append(aux_lista)
-
-            title_list = [[pd_alertas_list, 'PD', pd_graph_list, report_list_pd, pd_MAE_graph_list, 'MAE_pd'], 
-                            [can_alertas_list, 'Cancelaciones', can_graph_list, report_list_can, can_MAE_graph_list, 'MAE_can'],
-                            [pre_alertas_list, 'Prepagos', pre_graph_list, report_list_pre, pre_MAE_graph_list, 'MAE_pre'], 
+            # Añadiendo Gráficos de Best Fit, MAE y FanChart [0, 1, 2 - Plotgraph, 3, 4 - BarPlot, 5, 6 - FanChart, 7]
+            title_list = [[pd_alertas_list, 'PD', pd_graph_list, report_list_pd, pd_MAE_graph_list, 'MAE_pd', pd_fanChart, report_list_PDFAN], 
+                            [can_alertas_list, 'Cancelaciones', can_graph_list, report_list_can, can_MAE_graph_list, 'MAE_can', can_fanChart, report_list_CANFAN],
+                            [pre_alertas_list, 'Prepagos', pre_graph_list, report_list_pre, pre_MAE_graph_list, 'MAE_pre', pre_fanChart, report_list_PREFAN]
                         ]
             for title in title_list:
                 paragraph, descalibrado, revision, aux_descal, aux_revision = '', '', '', '', ''
 
+                # CORTE 1 Y CORTE 2 (SIN COMBINACIONES):
                 if corte[0]==[filtro1] or corte[0]==[filtro2]:
-                    for alerta in list(range(nro_combinaciones)):
+                    # Listado de Alertas:
+                    for alerta in list(range(nro_combinaciones)): # Análisis gráfico por gráfico
                         if title[0][alerta + corte[1]]=='Descalibrado':
                             descalibrado = descalibrado + str(product.curvas[corte[0]].values[alerta][0]) + ', '
                         elif title[0][alerta + corte[1]]=='Revisión':
                             revision = revision + str(product.curvas[corte[0]].values[alerta][0]) + ', '
-
-                    if descalibrado=='' and revision=='':
+                    if descalibrado=='' and revision=='': # Agregando análisis de Hoja (Corte Específico)
                         paragraph = 'Todos los cortes están calibrados.'
                     if descalibrado!='':
                         paragraph = 'Necesitan calibración: ' + descalibrado[:len(descalibrado)-2] +'. '
@@ -125,46 +127,52 @@ class Reporte():
                     paragraph_html = html.P(paragraph, style={"color": "#ffffff", "fontSize": "40"}) # To HTML
                     html_vacio = html.P('', style={"color": "#ffffff", "fontSize": "40"})
 
-                    report_list_aux = []
+                    # Generación de vector para overview (visualización en Dash)
+                    report_list_aux, report_list_aux2 = [], []
                     str1 = str(corte[0][0])[2:].capitalize()
-                    report_list_aux.append([(title[1] + ' por ' + str1, paragraph_html, 'product')])
+                    report_list_aux.append([(title[1] + ' por ' + str1, paragraph_html, 'product')]) # Tit. Hoja Plotgraph
+                    report_list_aux2.append([(title[1] + ' por ' + str1 + ' - Intervalos de Confianza', html_vacio, 'product')]) # Tit. Hoja FanChart
                     for linea in list(range(nro_combinaciones)):
-                        str2 = str(product.curvas[corte[0][0]].values[linea]).capitalize()
-                        report_list_aux.append([(str1 + ' ' + str2, title[2][corte[1] + linea], 'twelve columns')]) # Posicion en graph_list
-                    title[3].append(report_list_aux)
+                        str2 = str(product.curvas[corte[0][0]].values[linea]).capitalize() # Título de Gráfico
+                        report_list_aux.append([(str1 + ' ' + str2, title[2][corte[1] + linea], 'twelve columns')]) # Plotgraph
+                        report_list_aux2.append([(str1 + ' ' + str2, title[6][corte[1] + linea], 'twelve columns')]) # FanChart
+                    title[3].append(report_list_aux) # Añadiendo hoja a su stack (report_list) para formar luego reportes específicos
+                    title[7].append(report_list_aux2) # Añadiendo hoja a su stack (report_list_FAN) para formar luego reportes específicos  
 
-                    if title[1]=='PD': # Tasa Mínima -> Solo corre una vez (if title[1]=='PD')
+                    # Tasa Mínima -> Solo corre una vez (if title[1]=='PD') - Generación de vector para overview (visualización en Dash)
+                    if title[1]=='PD': 
                         tmin_aux = []
                         tmin_aux.append([('Impacto en Tasa Mínima por ' + str1, html_vacio, 'product')])
                         for linea in list(range(nro_combinaciones)):
                             str2 = str(product.curvas[corte[0][0]].values[linea]).capitalize()
                             tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[corte[1] + linea], 'twelve columns')]) 
-                        report_list_tmin.append(tmin_aux)
+                        report_list_tmin.append(tmin_aux) # Añadiendo hoja a su stack (report_list_TMIN) para formar luego reportes específicos
 
-                else: # Combinación
+                # COMBINACIONES DE CORTE 1 Y CORTE 2 (ANÁLISIS GRANULAR)
+                else: 
 
                     auxcorte = corte[1] + 0 # auxcorte = Número de inicio
                     auxcorte2 = nro_comb_mixto - nro_comb_filtro2 # auxcorte2 = Número de valores únicos del segundo filtro
                     auxcorte3 = 0
                     index_size, contador, nro_combinaciones_comb = len(product.curvas.index), 0, []
-                    for comb in range(index_size):
+                    for comb in range(index_size): # Vector de número de combinaciones existentes para cada cruce
                         contador +=1
                         if product.curvas[filtro1][contador]!=product.curvas[filtro1][contador-1]:
                             nro_combinaciones_comb.append(list(range(contador)))
-                            contador = 0
-                    # nro_combinaciones_comb = [list(range(3)), list(range(3)), list(range(3)), list(range(2))]  
-
-                    for nro_combinacion in nro_combinaciones_comb:
+                            contador = 0 
+                    
+                    # Recorrido granular para cada combinación posible entre ambos filtros:
+                    for nro_combinacion in nro_combinaciones_comb: # for 0, 1, 2 ..., n in range(n):
 
                         paragraph, descalibrado, revision = '', '', ''
                         filtro1value = product.curvas[filtro1].values[auxcorte-7]
 
+                        # Listado de Alertas - Hoja Plotgraph
                         for alerta in nro_combinacion:
                             if title[0][alerta + auxcorte]=='Descalibrado':
                                 descalibrado = descalibrado + filtro1value + ' - ' + str(product.curvas[filtro2].values[alerta]) + ', '
                             elif title[0][alerta + auxcorte]=='Revisión':
                                 revision = revision + filtro1value + ' - ' + str(product.curvas[filtro2].values[alerta]) + ', '
-
                         if descalibrado=='' and revision=='':
                             paragraph = 'Todos los cortes están calibrados.'
                         if descalibrado!='':
@@ -175,18 +183,21 @@ class Reporte():
                             aux_revision = aux_revision + revision
                         paragraph_html = html.P(paragraph, style={"color": "#ffffff", "fontSize": "40"}) # To HTML
                         
-                        report_list_aux = []
-                        str0 = str(corte[0][0])[2:].capitalize()
-                        str1 = str(corte[0][1])[2:].capitalize()
-                        report_list_aux.append([(title[1] + ' para ' + str0 + ' ' + filtro1value + ' por ' + str1, paragraph_html, 'product')])
+                        report_list_aux, report_list_aux2 = [], []
+                        str0, str1 = str(corte[0][0])[2:].capitalize(), str(corte[0][1])[2:].capitalize()
+                        report_list_aux.append([(title[1] + ' para ' + str0 + ' ' + filtro1value + ' por ' + str1, paragraph_html, 'product')]) # Tit. Hoja Plotgraph
+                        report_list_aux2.append([(title[1] + ' para ' + str0 + ' ' + filtro1value + ' por ' + str1 + ' - Intervalos de COnfianza',
+                                                     paragraph_html, 'product')]) # Tit. Hoja Fanchart
                         for linea in nro_combinacion:
                             str2 = str(product.curvas[filtro2].values[linea]).capitalize()
-                            report_list_aux.append([(str1 + ' ' + str2, title[2][auxcorte + linea], 'twelve columns')])
+                            report_list_aux.append([(str1 + ' ' + str2, title[2][auxcorte + linea], 'twelve columns')]) # Plotgraph
+                            report_list_aux2.append([(str1 + ' ' + str2, title[6][auxcorte + linea], 'twelve columns')]) # FanChart
                         # MAE
                         barplot = Barplot(product.stats, curva=title[5], grupo=corte[0][1], inicio=auxcorte3, step=comb_size[1]+auxcorte3)
                         title[4].append(barplot)
 
                         title[3].append(report_list_aux)
+                        title[7].append(report_list_aux2)
 
                         if title[1]=='PD':
                             tmin_aux = []
@@ -194,7 +205,7 @@ class Reporte():
                             for linea in nro_combinacion:
                                 str2 = str(product.curvas[filtro2].values[linea]).capitalize()
                                 tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[auxcorte2 + linea], 'twelve columns')]) 
-                            auxcorte2 += 3
+                            auxcorte2 += nro_combinacion[-1]
                             report_list_tmin.append(tmin_aux)
                         
                         auxcorte += max(nro_combinacion)
@@ -217,10 +228,10 @@ class Reporte():
                 aux = html.P(aux, style={"color": "#ffffff", "fontSize": "40"}, className='row')
             else:
                 aux = html.P('Todos los cortes están calibrados', style={"color": "#ffffff", "fontSize": "40"})
-        aux2 = html.P(' ', style={"color": "#ffffff", "fontSize": "40"}, className='row')
 
         start_date, end_date = str(MinCosecha)[4:] + '-' + str(MinCosecha)[:4], str(MaxCosecha)[4:] + '-' + str(MaxCosecha)[:4] # Fechas de Evaluación
-        report_list_resumen = [ [('Resumen de Alertas por Riesgo y Plazo ' + start_date + ' al ' + end_date, aux2,'product')],
+        report_list_resumen = [ [('Resumen de Alertas por '+str0+' y '+str1+' para el Producto '+Producto+' - '+start_date+' al '+end_date, 
+                                            html_vacio,'product')],
                                 [('Curvas de PD - Descalibrados', resumen_descalibrados_pd, 'product')], [('Curvas de PD - Revisión', resumen_revision_pd, 'product')],
                                 [('Curvas de Cancelaciones - Descalibrados', resumen_descalibrados_can, 'product')], [('Curvas de Cancelaciones - Revisión', resumen_revision_can, 'product')],
                                 [('Curvas de Prepagos - Descalibrados', resumen_descalibrados_pre, 'product')], [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]   ]
@@ -237,21 +248,18 @@ class Reporte():
         #             report_list_aux.append( [(MAE_titles[rango2], report_list[2][0], 'twelve columns')] )
         #     report_list[0].append(report_list_aux)
 
-        ListaCompleta = [] # Reporte Completo
-        ListaCompleta.append(report_list_resumen)
+        # Reporte Completo
+        ListaCompleta = []
+        ListaCompleta.append(report_list_resumen) # ListaCompleta[0] = Resumen
+        ListaReportes = [report_list_pd, report_list_can, report_list_pre, report_list_PDFAN, report_list_CANFAN, report_list_PREFAN, report_list_tmin]
         for elem in range(len(report_list_tmin)):
-            ListaCompleta.append(report_list_pd[elem])
-            ListaCompleta.append(report_list_can[elem])
-            ListaCompleta.append(report_list_pre[elem])
-            ListaCompleta.append(report_list_tmin[elem])
-        # ListaCompleta.append(report_list_MAE_pd)
-        # ListaCompleta.append(report_list_MAE_can)
-        # ListaCompleta.append(report_list_MAE_pre)
+            for lista in ListaReportes:
+                ListaCompleta.append(lista[elem])
         
         ListaCorte1, ListaCorte2 = [], [] # Reporte por Corte1 / Corte2
-        for lista in range(1, 5):
+        for lista in range(1, 8): # Primeros 7 elementos -> Corte 1
             ListaCorte1.append(ListaCompleta[lista])
-        for lista in range(5, 9):
+        for lista in range(8, 15): # Segundos 7 elementos -> Corte 2
             ListaCorte2.append(ListaCompleta[lista])
 
         self.ReporteProducto = Lista

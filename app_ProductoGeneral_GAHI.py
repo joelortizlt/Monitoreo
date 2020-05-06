@@ -21,33 +21,49 @@ from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 # 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
 
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv')
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv')
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv')
+# Elección de Producto
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv')
+# MinCosecha, MaxCosecha = 201701, 201912
+# producto = 'Hipotecario'
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv')
+# MinCosecha, MaxCosecha = 201701, 201912
+# producto = 'GAHI'
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv')
+# TEORICO  = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv')
+# MinCosecha, MaxCosecha = 201701, 201912
+# producto = 'Crédito Efectivo'
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv')
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv')
+MinCosecha, MaxCosecha = 201701, 201912
+producto = 'Vehicular'
 
+# Generación del Reporte General por Producto
 pd_MAE, can_MAE, pre_MAE = [], [], []
 
-product = InputsNoRevolvente(REAL, TEORICO, completar=True)
+product = InputsNoRevolvente(REAL, TEORICO, mincosecha=MinCosecha, maxcosecha=MaxCosecha, completar=True)
 product.condensar()
 product.optimizar()
 product.impactoTmin(TMIN)
 
+# Gráficos
 graph = Plotgraph(product.curvas, promedio=True)
 graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', promedio=True)
 graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', promedio=True)
-
 fanchart, fanchart2 = FanChart(df=product.ci_pd), FanChart(df=product.ci_can, nombre='Cancelaciones')
 fanchart3 = FanChart(df=product.ci_pre, nombre='Prepagos')
-
 MAE_list = [['MAE_pd', pd_MAE], ['MAE_can', can_MAE], ['MAE_pre', pre_MAE]]
-
 barplot = Barplot(product.stats, grupo='Todos')    
-
 waterfall = Waterfallplot(df=product.Tmin, promedio=True)
 
-aux = html.P('')
-
-report_list_resumen = [ [('Producto GAHI actualizado al 07-04-2020', aux, 'product')],
+aux = html.P('') # 
+start_date, end_date = str(MinCosecha)[4:] + '-' + str(MinCosecha)[:4], str(MaxCosecha)[4:] + '-' + str(MaxCosecha)[:4] # Fechas de Evaluación
+report_list_resumen = [ [('Producto ' + producto + ' del ' + start_date + ' al ' + end_date, aux, 'product')],
                         [('Impacto en tasas', waterfall, 'six columns'), ('Curva de PD', fanchart, 'six columns'), ('Curva de Cancelaciones', fanchart2, 'six columns')],
                         [('MAE', barplot, 'six columns'), ('Curva de Prepagos', fanchart3, 'six columns')]
 ]
