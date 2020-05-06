@@ -33,7 +33,7 @@ product.curvas
 product.stats
 
 #%%
-product.intervalos
+product.ci_pd
 
 #%%
 product.plotear('pd')
