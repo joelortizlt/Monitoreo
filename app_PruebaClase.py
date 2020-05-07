@@ -12,24 +12,56 @@ from Reporte import Reporte
 
 ReporteStack= [] # Lista donde se añaden los 4 report_list (Producto, Corte1, Corte2, Completo)
 
+# Reunión Viernes Daniela:
+# CEF: Plazo, Segmento, Moneda
+# Hipotecario: Plazo, Segmento, Moneda
+# Pyme Reactivo: Combinaciones [Inmueble, Mueble, Multipropósito, CT] - Rango de PD
+# Vehicular: Plazo, Segmento, Moneda
+# GAHI: Plazo, Segmento, Moneda
+# Mi Vivienda: Plazo, Segmento
+
 lista = [  
         #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
         #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
         #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
-        #     201701, 201712, 'C_SEGMENTO', 'C_MALAVENTA', 'Hipotecario'],
-           ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv',
-            201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'GAHI'],
-        #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
-        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
-        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
-        #     201701, 201712, 'C_SEGMENTO', 'C_MALAVENTA', 'Crédito Efectivo'],
-          ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
-            201701, 201912, 'C_SEGMENTO', 'C_MALAVENTA', 'Vehicular']
-            ]
+        #     201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Hipotecario'], 
+            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
+            # 201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'Hipotecario'],
+        #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv',
+        #     201701, 201912, 'C_PRODUCTO', 'C_RANGOPD', 'Pyme Reactivo'],
+            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
+            # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Vehicular'], 
+            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
+            # 201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'Vehicular']
+        #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv',
+        #     201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'GAHI'],
+        #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv',
+        #     201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'GAHI'],
+            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Reales.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Inputs.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Precios.csv',
+            # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Mi Vivienda'],
+           ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
+            201701, 201712, 'C_SEGMENTO', 'C_PLAZO', 'Crédito Efectivo'],
+            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
+            # 201701, 201712, 'C_SEGMENTO', 'C_MONEDA', 'Crédito Efectivo']
+            ]  
             # Se pueden añadir más listas para una segunda iteración del "elem"
 
 for elem in lista:
@@ -60,8 +92,8 @@ app.layout = html.Div(
 def display_page(pathname):
 
     resultado = list()
-    for hoja in range(len(ReporteStack[1][3])): # [producto][#Reporte] --> [Producto, Corte1, Corte2, Completo]
-        resultado.append(overview.create_layout(app, ReporteStack[1][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
+    for hoja in range(len(ReporteStack[0][3])): # [producto][#Reporte] --> [Producto, Corte1, Corte2, Completo]
+        resultado.append(overview.create_layout(app, ReporteStack[0][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
 
     # resultado.append(overview.create_layout(app, ReporteStack[0][0]))
 
