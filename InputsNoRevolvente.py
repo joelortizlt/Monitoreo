@@ -16,7 +16,6 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         if completar==True:
             izquierda = df_real[['CODCLAVEOPECTA','COSECHA','MAXMAD']+f.all_cortes(df_real)].copy()
             df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
-        
         InputsNoRevolventeReal.__init__(self,df=df_real,mincosecha=mincosecha,maxcosecha=maxcosecha)
         InputsNoRevolventeTeorico.__init__(self,df=df_teorico,mincosecha=mincosecha,maxcosecha=maxcosecha)
 
@@ -25,11 +24,11 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
 
         InputsNoRevolventeReal.condensar(self,cortes)
         InputsNoRevolventeTeorico.condensar(self,cortes)
-
         curvas = pd.merge(left=self.curvasR, right=self.curvasT, how='left', left_on=f.all_cortes(self.curvasR), right_on=f.all_cortes(self.curvasT))
-        curvas['check']=curvas['recuento_x']-curvas['recuento_y']
+        #curvas['check']=curvas['recuento_x']-curvas['recuento_y']
         curvas = curvas.rename(columns={'recuento_x':'recuento'}).drop('recuento_y',1)
         stats = curvas[f.all_cortes(curvas)+['recuento']].copy()
+        promedios = curvas[f.all_cortes(curvas)+['recuento']].copy()
         #intervalos
         ci_pd = curvas[f.all_cortes(curvas)+['recuento']].copy()
         ci_pd['y_real']=''
@@ -59,7 +58,6 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         ci_pre['CI:0.5-99.5']=''
         ci_pre['CI:0.5-99.5_u']=''
        
-
         for i in range(len(curvas)):
 
             l=min(len(curvas.loc[i, 'pd_real']),len(curvas.loc[i, 'pd_teorico']))
@@ -87,7 +85,6 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
                 ci_pd.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
                 ci_pd.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
                 
-            
             l=min(len(curvas.loc[i, 'can_real']),len(curvas.loc[i, 'can_teorico']))
             curvas.at[i, 'can_real']=curvas.loc[i, 'can_real'].copy()[:l]
             curvas.at[i, 'can_teorico']=curvas.loc[i, 'can_teorico'].copy()[:l]
@@ -112,7 +109,6 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
                 ci_can.at[i, 'CI:2.5-97.5_u'][j]=round((m+sd*1.96)*100,4)
                 ci_can.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
                 ci_can.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
-
 
             l=min(len(curvas.loc[i, 'pre_real']),len(curvas.loc[i, 'pre_teorico']))
             curvas.at[i, 'pre_real']=curvas.loc[i, 'pre_real'].copy()[:l]
@@ -139,8 +135,16 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
                 ci_pre.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
                 ci_pre.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
 
+            promedios.at[i, 'pd_real'] = sum(curvas.at[i, 'pd_real'])/len(curvas.at[i, 'pd_real'])   
+            promedios.at[i, 'can_real'] = sum(curvas.at[i, 'can_real'])/len(curvas.at[i, 'can_real'])
+            promedios.at[i, 'pre_real'] = sum(curvas.at[i, 'pre_real'])/len(curvas.at[i, 'pre_real'])
+            promedios.at[i, 'pd_teorico'] = sum(curvas.at[i, 'pd_teorico'])/len(curvas.at[i, 'pd_teorico'])
+            promedios.at[i, 'can_teorico'] = sum(curvas.at[i, 'can_teorico'])/len(curvas.at[i, 'can_teorico'])
+            promedios.at[i, 'pre_teorico'] = sum(curvas.at[i, 'pre_teorico'])/len(curvas.at[i, 'pre_teorico'])
+
         self.curvas = curvas
         self.stats = stats
+        self.promedios = promedios
         self.ci_pd = ci_pd
         self.ci_can = ci_can
         self.ci_pre = ci_pre
@@ -231,8 +235,8 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.stats.at[i,'MAEop_pd'] = minMAE
             self.stats.at[i,'scalar_pd'] = scalarMAE
             self.curvas.at[i,'pd_optimo'] = [round(x,4) for x in yopt]
+            self.promedios.at[i, 'pd_optimo'] = sum(self.curvas.at[i, 'pd_optimo'])/len(self.curvas.at[i, 'pd_optimo'])
 
-            
             minMAE = self.stats.loc[i, 'MAE_can'].copy()
             scalarMAE = 1
             x = self.curvas.loc[i, 'can_real'].copy()
@@ -253,7 +257,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.stats.at[i,'MAEop_can'] = minMAE
             self.stats.at[i,'scalar_can'] = scalarMAE
             self.curvas.at[i,'can_optimo'] = [round(x,4) for x in yopt]
-
+            self.promedios.at[i, 'can_optimo'] = sum(self.curvas.at[i, 'can_optimo'])/len(self.curvas.at[i, 'can_optimo'])
 
             minMAE = self.stats.loc[i, 'MAE_pre'].copy()
             scalarMAE = 1
@@ -275,6 +279,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.stats.at[i,'MAEop_pre'] = minMAE
             self.stats.at[i,'scalar_pre'] = scalarMAE
             self.curvas.at[i,'pre_optimo'] = [round(x,4) for x in yopt]
+            self.promedios.at[i, 'pre_optimo'] = sum(self.curvas.at[i, 'pre_optimo'])/len(self.curvas.at[i, 'pre_optimo'])
 
 
     def impactoTmin(self,df_tmin,completar=True):
