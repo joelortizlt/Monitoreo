@@ -219,7 +219,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             scalarMAE = 1
             x = self.curvas.loc[i, 'pd_real'].copy()
             y = self.curvas.loc[i, 'pd_teorico'].copy()
-            for s in np.arange(0,2,step):
+            for s in np.arange(0,5,step):
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -241,7 +241,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             scalarMAE = 1
             x = self.curvas.loc[i, 'can_real'].copy()
             y = self.curvas.loc[i, 'can_teorico'].copy()
-            for s in np.arange(0,2,step):
+            for s in np.arange(0,5,step):
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -263,7 +263,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             scalarMAE = 1
             x = self.curvas.loc[i, 'pre_real'].copy()
             y = self.curvas.loc[i, 'pre_teorico'].copy()
-            for s in np.arange(0,2,step):
+            for s in np.arange(0,5,step):
                 z = []
                 for k in range(len(y)):
                     z.append(y[k]*s)
@@ -291,9 +291,9 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             df = pd.merge(left=izquierda, right=derecha, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
         
         if cortes==['C_TODOS']:
-            df['C_TODOS']=''
+            df.loc[:,'C_TODOS']=''
         df = df[cortes+['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']]
-        Tmin = self.stats[cortes].copy()
+        Tmin = self.curvas[f.all_cortes(self.curvas)+['recuento']].copy()
 
         for i in range(len(Tmin)):
             temp = pd.merge(df, pd.DataFrame([Tmin.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)    

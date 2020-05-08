@@ -36,7 +36,7 @@ class InputsNoRevolventeTeorico():
         
         #si no se ingresa cortes espécificos, se usan todos
         if cortes==[]:
-            self.df_teorico['C_TODOS']=''
+            self.df_teorico.loc[:,'C_TODOS']=''
             cortes=['C_TODOS']
 
         #Creamos la 'plantilla'

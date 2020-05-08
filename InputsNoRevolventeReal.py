@@ -33,7 +33,7 @@ class InputsNoRevolventeReal():
         
         #si no se ingresa cortes espécificos, se usan todos
         if cortes==[]:
-            self.df_real['C_TODOS']=''
+            self.df_real.loc[:,'C_TODOS']=''
             cortes=['C_TODOS']
         
         #Creamos la 'plantilla'
