@@ -17,7 +17,7 @@ for i in range(len(lista_nombres)):
     REAL = pd.read_csv(ruta_real[i])
     TEORICO = pd.read_csv(ruta_teorico[i])
     TMIN = pd.read_csv(ruta_tmin[i])
-    product = InputsNoRevolvente(REAL,TEORICO,completar=True)
+    product = InputsNoRevolvente(REAL,TEORICO,completar=True)#,mincosecha=201907,maxcosecha=201912)
     
     for j in range(5):
         if i<5:
