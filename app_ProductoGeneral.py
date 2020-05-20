@@ -37,11 +37,21 @@ from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 # TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv')
 # MinCosecha, MaxCosecha = 201701, 201912
 # producto = 'Crédito Efectivo'
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv')
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv')
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv')
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv')
+# MinCosecha, MaxCosecha = 201701, 201912
+# producto = 'Vehicular'
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv')
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv')
 MinCosecha, MaxCosecha = 201701, 201912
-producto = 'Vehicular'
+producto = 'Pyme Reactivo'
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Precios.csv')
+# MinCosecha, MaxCosecha = 201701, 201912
+# producto = 'Mi Vivienda'
 
 # Generación del Reporte General por Producto
 pd_MAE, can_MAE, pre_MAE = [], [], []

@@ -1,4 +1,4 @@
-# %%
+
 # Librerias
 import numpy as np
 import pandas as pd
@@ -29,10 +29,10 @@ lista = [
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
             # 201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'Hipotecario'],
-        #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv',
-        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv',
-        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv',
-        #     201701, 201912, 'C_PRODUCTO', 'C_RANGOPD', 'Pyme Reactivo'],
+           ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv',
+            201701, 201912, 'C_PRODUCTO', 'C_RANGOPD', 'Pyme Reactivo'],
             # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
@@ -53,10 +53,10 @@ lista = [
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Inputs.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Precios.csv',
             # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Mi Vivienda'],
-           ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
-            201701, 201712, 'C_SEGMENTO', 'C_PLAZO', 'Crédito Efectivo'],
+        #    ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
+        #     'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
+        #     201701, 201712, 'C_SEGMENTO', 'C_PLAZO', 'Crédito Efectivo'],
             # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
@@ -92,10 +92,10 @@ app.layout = html.Div(
 def display_page(pathname):
 
     resultado = list()
-    for hoja in range(len(ReporteStack[0][3])): # [producto][#Reporte] --> [Producto, Corte1, Corte2, Completo]
+    for hoja in range(len(ReporteStack[0][3])): # [Producto][Reporte] --> [Producto, Corte1, Corte2, Completo] -- 1 - 3 --> 1 [REPCORTE1, REPCORTE2, COMPLETO]
         resultado.append(overview.create_layout(app, ReporteStack[0][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
 
-    # resultado.append(overview.create_layout(app, ReporteStack[0][0]))
+    # resultado.append(overview.create_layout(app, ReporteStack[0][0])
 
     return tuple(resultado)
 
