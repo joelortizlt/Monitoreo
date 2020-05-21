@@ -59,8 +59,9 @@ lista = [
 
 for elem in lista:
     REAL, TEORICO, TMIN = pd.read_csv(elem[0]), pd.read_csv(elem[1]), pd.read_csv(elem[2])
+    fecha = str(elem[4])[4:] + ' - ' + str(elem[4])[:4] 
     reporte = Reporte(Real=REAL, Teorico=TEORICO, Tmin=TMIN, mincosecha=elem[3] , maxcosecha=elem[4] , 
-                        filtro1=elem[5], filtro2=elem[6], Producto=elem[7], Fecha='XXX')
+                        filtro1=elem[5], filtro2=elem[6], Producto=elem[7], Fecha=fecha)
     reporte.Stack(ReporteStack)
 
 # get relative data folder
