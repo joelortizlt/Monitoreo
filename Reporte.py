@@ -13,9 +13,9 @@ from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 
 class Reporte():
     # Constructor del Objeto
-    def __init__(self, Real, Teorico, Tmin, MinCosecha='', MaxCosecha='', filtro1='C_SEGMENTO', 
+    def __init__(self, Real, Teorico, Tmin, mincosecha='', maxcosecha='', filtro1='C_SEGMENTO', 
                     filtro2='C_PLAZO', Producto='XXX', Fecha='XXX', colorListRGB= [ [200,222,255], [153,212,255], [0,99,174] ]):
-        product = InputsNoRevolvente(Real, Teorico, MinCosecha, MaxCosecha, completar=True)
+        product = InputsNoRevolvente(Real, Teorico, mincosecha=mincosecha, maxcosecha=maxcosecha, completar=True)
         product.condensar([filtro1])
         nro_comb_filtro1, nro_comb_filtro2 = 0, len(product.curvas[filtro1].unique())
         product.condensar([filtro2])
@@ -33,7 +33,7 @@ class Reporte():
         report_list_PDFAN, report_list_CANFAN, report_list_PREFAN = [], [], []
         
         # Producto General
-        product = InputsNoRevolvente(Real, Teorico, completar=True)
+        product = InputsNoRevolvente(Real, Teorico, mincosecha=mincosecha, maxcosecha=maxcosecha, completar=True)
         product.condensar()
         product.optimizar()
         product.impactoTmin(Tmin)
@@ -42,7 +42,7 @@ class Reporte():
         graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', promedio=True)
         graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', promedio=True)
         barplot = Barplot(product.stats, grupo='Todos')    
-        waterfall = Waterfallplot(df=product.Tmin, promedio=True)
+        waterfall = Waterfallplot(df=product.TminProm, promedio=True)
         fanchart, fanchart2 = FanChart(df=product.ci_pd), FanChart(df=product.ci_can, nombre='Cancelaciones')
         fanchart3 = FanChart(df=product.ci_pre, nombre='Prepagos')
 
@@ -55,7 +55,7 @@ class Reporte():
 
         # Producto por Cortes
         for corte in cortes:
-            product = InputsNoRevolvente(Real, Teorico, completar=True)
+            product = InputsNoRevolvente(Real, Teorico, mincosecha=mincosecha, maxcosecha=maxcosecha, completar=True)
             product.condensar(corte[0])
             product.optimizar()
             product.impactoTmin(Tmin)
@@ -229,7 +229,7 @@ class Reporte():
             else:
                 aux = html.P('Todos los cortes están calibrados', style={"color": "#ffffff", "fontSize": "40"})
 
-        start_date, end_date = str(MinCosecha)[4:] + '-' + str(MinCosecha)[:4], str(MaxCosecha)[4:] + '-' + str(MaxCosecha)[:4] # Fechas de Evaluación
+        start_date, end_date = str(mincosecha)[4:] + '-' + str(mincosecha)[:4], str(maxcosecha)[4:] + '-' + str(maxcosecha)[:4] # Fechas de Evaluación
         report_list_resumen = [ [('Resumen de Alertas por '+str0+' y '+str1+' para el Producto '+Producto+' - '+start_date+' al '+end_date, 
                                             html_vacio,'product')],
                                 [('Curvas de PD - Descalibrados', resumen_descalibrados_pd, 'product')], [('Curvas de PD - Revisión', resumen_revision_pd, 'product')],
@@ -262,7 +262,7 @@ class Reporte():
         for lista in range(8, 15): # Segundos 7 elementos -> Corte 2
             ListaCorte2.append(ListaCompleta[lista])
 
-        self.ReporteProducto = Lista
+        self.ReporteProducto = [Lista]
         self.ReporteCompleto = ListaCompleta
         self.ReporteCorte1 = ListaCorte1
         self.ReporteCorte2 = ListaCorte2

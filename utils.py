@@ -232,10 +232,29 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=Fal
         Curva2 = 'Egr. Fin.',
         Curva3 = 'Saldos'
 
-    inicio = 2 if mixto else 1
-    height_number = 520 if promedio else 260
+    inicio = 3 if mixto else 2
     
-    limit = max(round(df.iloc[combinacion].values[inicio],4), round(df.iloc[combinacion].values[inicio+4],4)) + 0.03
+    if promedio:
+        inicio = 0
+        height_number = 520
+        text =  [str(round(df['Valor'].values[inicio],4)) + '%',
+                str(round(df['Valor'].values[inicio+1],4)) + '%',
+                str(round(df['Valor'].values[inicio+2],4)) + '%', 
+                str(round(df['Valor'].values[inicio+3],4)) + '%', 
+                str(round(df['Valor'].values[inicio+4],4)) + '%']
+        y = [df['Valor'].values[inicio], df['Valor'].values[inicio+1], df['Valor'].values[inicio+2],
+            df['Valor'].values[inicio+3], df['Valor'].values[inicio+4] ]
+        limit = max(round(df['Valor'].values[inicio],4), round(df['Valor'].values[inicio+4],4)) + 0.03
+    else:
+        height_number = 260
+        text =  [str(round(df.iloc[combinacion].values[inicio],4)) + '%',
+                str(round(df.iloc[combinacion].values[inicio+1],4)) + '%',
+                str(round(df.iloc[combinacion].values[inicio+2],4)) + '%', 
+                str(round(df.iloc[combinacion].values[inicio+3],4)) + '%', 
+                str(round(df.iloc[combinacion].values[inicio+4],4)) + '%']
+        y =  [df.iloc[combinacion].values[inicio], df.iloc[combinacion].values[inicio+1], df.iloc[combinacion].values[inicio+2],
+            df.iloc[combinacion].values[inicio+3], df.iloc[combinacion].values[inicio+4] ]
+        limit = max(round(df.iloc[combinacion].values[inicio],4), round(df.iloc[combinacion].values[inicio+4],4)) + 0.03
 
     return dcc.Graph(
                 figure={'data': [go.Waterfall(name = 'Variation',
@@ -244,13 +263,8 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=Fal
                                     x = ['T min Inicial', 'Δ ' + Curva1, 'Δ ' + Curva2, 'Δ ' + Curva3, 'T min Final'],
                                     textposition = 'outside',
                                     textfont_size = 14,
-                                    text = [str(round(df.iloc[combinacion].values[inicio],4)) + '%',
-                                            str(round(df.iloc[combinacion].values[inicio+1],4)) + '%',
-                                            str(round(df.iloc[combinacion].values[inicio+2],4)) + '%', 
-                                            str(round(df.iloc[combinacion].values[inicio+3],4)) + '%', 
-                                            str(round(df.iloc[combinacion].values[inicio+4],4)) + '%'],
-                                    y = [df.iloc[combinacion].values[inicio], df.iloc[combinacion].values[inicio+1], df.iloc[combinacion].values[inicio+2],
-                                            df.iloc[combinacion].values[inicio+3], df.iloc[combinacion].values[inicio+4] ],
+                                    text = text,
+                                    y = y,
                                     connector = {'line': {'color': 'rgb(63, 63, 63)'}},
                                     decreasing = {"marker":{"color":"Maroon", "line":{"color":"red", "width":2}}},
                                     increasing = {"marker":{"color":"Teal"}},

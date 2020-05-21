@@ -17,29 +17,29 @@ from InputsNoRevolvente import InputsNoRevolvente
 # TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv')
 
 # Hipotecario
-# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv', low_memory=False)
-# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv', low_memory=False)
-# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv', low_memory=False)
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv', low_memory=False)
 
 # GAHI
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Gahi_Reales.csv')
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Gahi_Inputs.csv')
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Gahi_Precios.csv')
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv')
 
 # Mi Vivienda
-# REAL = pd.read_csv('/Users/renzomartinch/Downloads/MiVivienda/MiVivienda_Reales.csv')
-# TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/MiVivienda/MiVivienda_Inputs.csv')
-# TMIN = pd.read_csv('/Users/renzomartinch/Downloads/MiVivienda/MiVivienda_Precios.csv')
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Precios.csv')
 
 # Pyme No Revolvente
-# REAL = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Reales.csv')
-# TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Inputs.csv')
-# TMIN = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Precios.csv')
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv')
 
 # Vehicular
-# REAL = pd.read_csv('/Users/renzomartinch/Downloads/VEH/Vehicular_Reales.csv')
-# TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/VEH/Vehicular_Inputs.csv')
-# TMIN = pd.read_csv('/Users/renzomartinch/Downloads/VEH/Vehicular_Precios.csv')
+# REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv')
+# TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv')
+# TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv')
 
 #%%
 #Se crea el objeto
@@ -89,7 +89,7 @@ product.MAE('can',optimo=True)
 product.MAE('pre',optimo=True)
 
 #%%
-product.impactoTmin(TMIN,completar=True)
+product.impactoTmin(TMIN, completar=True)
 product.Tmin
 
 #%%
