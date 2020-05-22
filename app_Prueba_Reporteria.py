@@ -14,10 +14,10 @@ ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, 
 
 # [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto]
 lista = [  
-            ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
-            201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Hipotecario'], 
+            ['/Users/renzomartinch/Downloads/Comite_1105/CEFCB_Reales_Pauta.csv',
+            '/Users/renzomartinch/Downloads/Comite_1105/CEFCB_Inputs.csv',
+            '/Users/renzomartinch/Downloads/Comite_1105/CEFCB_Precios.csv',
+            201901, 201912, 'C_PLAZO', 'C_MALAVENTA', 'CEF'], 
             # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
