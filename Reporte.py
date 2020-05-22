@@ -170,9 +170,9 @@ class Reporte():
                         # Listado de Alertas - Hoja Plotgraph
                         for alerta in nro_combinacion:
                             if title[0][alerta + auxcorte]=='Descalibrado':
-                                descalibrado = descalibrado + filtro1value + ' - ' + str(product.curvas[filtro2].values[alerta]) + ', '
+                                descalibrado = descalibrado + str(filtro1value) + ' - ' + str(product.curvas[filtro2].values[alerta]) + ', '
                             elif title[0][alerta + auxcorte]=='Revisión':
-                                revision = revision + filtro1value + ' - ' + str(product.curvas[filtro2].values[alerta]) + ', '
+                                revision = revision + str(filtro1value) + ' - ' + str(product.curvas[filtro2].values[alerta]) + ', '
                         if descalibrado=='' and revision=='':
                             paragraph = 'Todos los cortes están calibrados.'
                         if descalibrado!='':
@@ -185,8 +185,8 @@ class Reporte():
                         
                         report_list_aux, report_list_aux2 = [], []
                         str0, str1 = str(corte[0][0])[2:].capitalize(), str(corte[0][1])[2:].capitalize()
-                        report_list_aux.append([(title[1] + ' para ' + str0 + ' ' + filtro1value + ' por ' + str1, paragraph_html, 'product')]) # Tit. Hoja Plotgraph
-                        report_list_aux2.append([(title[1] + ' para ' + str0 + ' ' + filtro1value + ' por ' + str1 + ' - Intervalos de COnfianza',
+                        report_list_aux.append([(title[1] + ' para ' + str0 + ' ' + str(filtro1value) + ' por ' + str1, paragraph_html, 'product')]) # Tit. Hoja Plotgraph
+                        report_list_aux2.append([(title[1] + ' para ' + str0 + ' ' + str(filtro1value) + ' por ' + str1 + ' - Intervalos de COnfianza',
                                                      paragraph_html, 'product')]) # Tit. Hoja Fanchart
                         for linea in nro_combinacion:
                             str2 = str(product.curvas[filtro2].values[linea]).capitalize()
@@ -201,7 +201,7 @@ class Reporte():
 
                         if title[1]=='PD':
                             tmin_aux = []
-                            tmin_aux.append([('Impacto en Tasa Mínima para ' + str0 + ' ' + filtro1value + ' por ' + str1, html_vacio, 'product')])
+                            tmin_aux.append([('Impacto en Tasa Mínima para ' + str0 + ' ' + str(filtro1value) + ' por ' + str1, html_vacio, 'product')])
                             for linea in nro_combinacion:
                                 str2 = str(product.curvas[filtro2].values[linea]).capitalize()
                                 tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[auxcorte2 + linea], 'twelve columns')]) 

@@ -13,7 +13,7 @@ from Reporte import Reporte
 ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, Corte1, Corte2, Completo)
 
 # Para correr:
-# --> 1. Rutas [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto] # Filtros = 'C_FILTRO'
+# --> 1. Settear [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto] // Filtros = 'C_FILTRO'
 # --> 2. Nro de Reporte --> display_page (lines 93 y 94)
 
 lista = [  
@@ -86,12 +86,12 @@ app.layout = html.Div(
 # Update page
 @app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
 
-# Cambiar para visualizar
+# Cambiar para visualizar [0] [1] [2] [3]
 def display_page(pathname):
 
     resultado = list()
-    for hoja in range(len(ReporteStack[0][1])): # [Producto][Reporte] --> [Producto, Corte1, Corte2, Completo] -- 1 - 3 --> 1 [REPCORTE1, REPCORTE2, COMPLETO]
-        resultado.append(overview.create_layout(app, ReporteStack[0][1][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
+    for hoja in range(len(ReporteStack[0][3])): # [Producto][Reporte] --> [Producto, Corte1, Corte2, Completo] -- 1 - 3 --> 1 [REPCORTE1, REPCORTE2, COMPLETO]
+        resultado.append(overview.create_layout(app, ReporteStack[0][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
 
     # resultado.append(overview.create_layout(app, ReporteStack[0][0])
 
