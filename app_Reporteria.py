@@ -12,20 +12,23 @@ from Reporte import Reporte
 
 ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, Corte1, Corte2, Completo)
 
-# [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto]
+# Para correr:
+# --> 1. Rutas [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto] # Filtros = 'C_FILTRO'
+# --> 2. Nro de Reporte --> display_page (lines 93 y 94)
+
 lista = [  
-            ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
-            201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Hipotecario'], 
+            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
+            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
+            # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Hipotecario'], 
             # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
             # 201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'Hipotecario'],
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv',
-            # 201701, 201912, 'C_PRODUCTO', 'C_RANGOPD', 'Pyme Reactivo'],
+            ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv',
+            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv',
+            201701, 201912, 'C_PRODUCTO', 'C_RANGOPD', 'Pyme Reactivo'],
             # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
@@ -83,11 +86,12 @@ app.layout = html.Div(
 # Update page
 @app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
 
+# Cambiar para visualizar
 def display_page(pathname):
 
     resultado = list()
-    for hoja in range(len(ReporteStack[0][3])): # [Producto][Reporte] --> [Producto, Corte1, Corte2, Completo] -- 1 - 3 --> 1 [REPCORTE1, REPCORTE2, COMPLETO]
-        resultado.append(overview.create_layout(app, ReporteStack[0][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
+    for hoja in range(len(ReporteStack[0][1])): # [Producto][Reporte] --> [Producto, Corte1, Corte2, Completo] -- 1 - 3 --> 1 [REPCORTE1, REPCORTE2, COMPLETO]
+        resultado.append(overview.create_layout(app, ReporteStack[0][1][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
 
     # resultado.append(overview.create_layout(app, ReporteStack[0][0])
 
