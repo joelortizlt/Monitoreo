@@ -7,7 +7,6 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 
 
-
 #creación de la clase
 class InputsNoRevolventeTeorico():
     #constructor del objeto
@@ -23,7 +22,6 @@ class InputsNoRevolventeTeorico():
  
         #seleccionar solo la data relevante
         df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal', 'can_marginal', 'pre_marginal']]
-        
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -44,27 +42,33 @@ class InputsNoRevolventeTeorico():
         curvas['pd_teorico'] = ''
         curvas['can_teorico'] = ''
         curvas['pre_teorico'] = ''
+        n = curvas.copy()
         
         #TEÓRICOS
         for i in range(len(curvas)):
             
             temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal','can_marginal','pre_marginal']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
+            
             #pd teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['pd_marginal']))
             resultado = f.aggr_avg(temp['result'])
             resultado = np.cumsum(resultado)
             curvas.at[i,'pd_teorico'] = f.porcentaje(resultado)
+            n.at[i,'pd_teorico']= f.aggr_count(temp['result'])
             
             #cancelaciones teórico
             temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['can_marginal']))
             resultado = f.aggr_avg(temp['result'])
             resultado = np.cumsum(resultado)   
             curvas.at[i,'can_teorico'] = f.porcentaje(resultado)
+            n.at[i,'can_teorico']= f.aggr_count(temp['result'])
             
             #prepagos teórico
             temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['pre_marginal']))
             resultado = f.aggr_avg(temp['result'])
             resultado = np.cumsum(resultado)
             curvas.at[i,'pre_teorico'] = f.porcentaje(resultado)
+            n.at[i,'pre_teorico']= f.aggr_count(temp['result'])
 
         self.curvasT = curvas
+        self.nT = n

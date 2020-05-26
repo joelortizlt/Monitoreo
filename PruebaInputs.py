@@ -10,9 +10,9 @@ from InputsNoRevolvente import InputsNoRevolvente
 
 #%%
 #Se insumen los CSV
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/CHIP/Hipot_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/CHIP/Hipot_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/CHIP/Hipot_Precios.csv', low_memory=False)
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/Comite_1105/Hipot_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/Comite_1105/Hipot_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/Comite_1105/Hipot_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
@@ -28,6 +28,9 @@ cortes = ['C_SEGMENTO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 product.curvas
+
+#%%
+product.nT
 
 #%%
 product.stats
