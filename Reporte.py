@@ -83,7 +83,7 @@ class Reporte():
                 waterfall = Waterfallplot(product.Tmin, combinacion=combinacion, mixto=waterfall_aux) # Waterfallplot
                 tmin_graph_list.append(waterfall)
 
-                # Listado de Alertas -> append al mismo vector -> 
+                # Listado de Alertas -> append a la lista correspondiente 
                 for mae in MAE_list:
                     if product.stats[mae[0]][combinacion] > 3:
                         aux_lista = 'Descalibrado'
@@ -206,17 +206,15 @@ class Reporte():
                                 [('Curvas de Prepagos - Descalibrados', resumen_descalibrados_pre, 'product')], [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]   ]
 
         # Hoja de MAE: (PD - Cancelaciones - Prepagos)
-        # report_list_MAE = [[report_list_MAE_pd, 'PD', pd_MAE_graph_list], [report_list_MAE_can, 'Cancelaciones', can_MAE_graph_list], 
-        #                     [report_list_MAE_pre, 'Prepagos', pre_MAE_graph_list]]
-        # range_MAE_title = range(2, len(report_list_MAE[0][2]) + 2)
-        # for report_list in report_list_MAE:
-        #     report_list_aux = []
-        #     report_list_aux.append( [('Gráficos MAE - '+ report_list[1], html_vacio, 'product' ) ] )
-        #     report_list_aux.append( [(MAE_titles[0], report_list[2][0], 'twelve columns')])
-        #     report_list_aux.append( [(MAE_titles[1], report_list[2][1], 'twelve columns')])
-        #     for rango in range_MAE_title:
-        #         report_list_aux.append( [(MAE_titles[rango], report_list[2][rango-2], 'twelve columns')] )
-        #     report_list[0].append(report_list_aux)
+        report_list_MAE = [[report_list_MAE_pd, 'PD', pd_MAE_graph_list], [report_list_MAE_can, 'Cancelaciones', can_MAE_graph_list], 
+                            [report_list_MAE_pre, 'Prepagos', pre_MAE_graph_list]]
+        range_MAE_title = range(len(report_list_MAE[0][2]))
+        for report_list in report_list_MAE:
+            report_list_aux = []
+            report_list_aux.append( [('Gráficos MAE - '+ report_list[1], html_vacio, 'product' ) ] )
+            for rango in range_MAE_title:
+                report_list_aux.append( [(MAE_titles[rango], report_list[2][rango], 'twelve columns')] )
+            report_list[0].append(report_list_aux)
 
         # Reporte Completo
         ListaCompleta = []
@@ -225,7 +223,10 @@ class Reporte():
         for combinacion in range(len(report_list_tmin)): # in range(número listas final: 2 + numero de combinaciones entre ambos cortes)
             for lista in ListaReportes:
                 ListaCompleta.append(lista[combinacion])
-        
+        ListaCompleta.append(report_list_MAE_pd[0])
+        ListaCompleta.append(report_list_MAE_can[0])
+        ListaCompleta.append(report_list_MAE_pre[0])
+
         ListaCorte1, ListaCorte2 = [], [] # Reporte por Corte1 / Corte2
         for lista in range(1, 8): # Primeros 7 elementos -> Corte 1
             ListaCorte1.append(ListaCompleta[lista])
