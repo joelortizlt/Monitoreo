@@ -198,10 +198,9 @@ class Reporte():
             else:
                 aux = html.P('Todos los cortes están calibrados', style={"color": "#ffffff", "fontSize": "40"})
 
-        ayuda_ERROR_MAE = html.P(str(len(pd_MAE_graph_list)), style={"color": "#ffffff", "fontSize": "40"}, className='row')
         start_date, end_date = str(mincosecha)[4:] + '-' + str(mincosecha)[:4], str(maxcosecha)[4:] + '-' + str(maxcosecha)[:4] # Fechas de Evaluación
         report_list_resumen = [ [('Resumen de Alertas por '+str0+' y '+str1+' para el Producto '+Producto+' - '+start_date+' al '+end_date, 
-                                            ayuda_ERROR_MAE,'product')],
+                                            html_vacio,'product')],
                                 [('Curvas de PD - Descalibrados', resumen_descalibrados_pd, 'product')], [('Curvas de PD - Revisión', resumen_revision_pd, 'product')],
                                 [('Curvas de Cancelaciones - Descalibrados', resumen_descalibrados_can, 'product')], [('Curvas de Cancelaciones - Revisión', resumen_revision_can, 'product')],
                                 [('Curvas de Prepagos - Descalibrados', resumen_descalibrados_pre, 'product')], [('Curvas de Prepagos - Revisión', resumen_revision_pre, 'product')]   ]
