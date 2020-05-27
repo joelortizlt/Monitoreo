@@ -64,6 +64,31 @@ def get_menu():
     )
     return menu
 
+def paragraph_alertas(df, alert_list, range_nro_hojas, parametro1, parametro2, compilador_descal, compilador_rev,
+                        Combinacion=False, ValorFiltro1=''):
+    paragraph, descalibrado, revision = '', '', ''
+    for alerta in range_nro_hojas: # Análisis gráfico por gráfico
+        if alert_list[alerta + parametro1]=='Descalibrado':
+            if Combinacion:
+                descalibrado = descalibrado + str(ValorFiltro1) + ' - ' + str(df[parametro2].values[alerta]) + ', '
+            else:
+                descalibrado = descalibrado + str(df[parametro2].values[alerta][0]) + ', '
+        elif alert_list[alerta + parametro1]=='Revisión':
+            if Combinacion:
+                revision = revision + str(ValorFiltro1) + ' - ' + str(df[parametro2].values[alerta]) + ', '
+            else:
+                revision = revision + str(df[parametro2].values[alerta][0]) + ', '
+    if descalibrado=='' and revision=='': # Agregando análisis de Hoja (Corte Específico)
+        paragraph = 'Todos los cortes están calibrados.'
+    if descalibrado!='':
+        paragraph = 'Necesitan calibración: ' + descalibrado[:len(descalibrado)-2] +'. '
+        compilador_descal += descalibrado
+    if revision!='':
+        paragraph = paragraph + 'Necesitan revisión: ' + revision[:len(revision)-2] + '.'
+        compilador_rev += revision
+    paragraph_html = html.P(paragraph, style={"color": "#ffffff", "fontSize": "40"}) # To HTML
+    return paragraph_html, compilador_descal, compilador_rev
+    
 # Line Graph --> PD, Cancelaciones, Prepagos
 def Plotgraph(df, curvas='PD', nombre='PD', corte=0, y_title='%', promedio=False):
 

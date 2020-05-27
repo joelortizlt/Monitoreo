@@ -38,9 +38,9 @@ from InputsNoRevolvente import InputsNoRevolvente
     # TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv')
 
 # Hipotecario
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv', low_memory=False)
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
@@ -52,9 +52,9 @@ product.df_teorico
 
 #%%
 #Se definen los cortes
-cortes = ['C_SEGMENTO']
+cortes = ['C_PRODUCTO', 'C_RANGOPD']
 #Se agrupa en base a los cortes definidos
-product.condensar() # (cortes)
+product.condensar(cortes) # (cortes)
 product.curvas
 
 #%%
