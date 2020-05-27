@@ -31,33 +31,18 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         promedios = curvas[f.all_cortes(curvas)+['recuento']].copy()
         #intervalos
         ci_pd = curvas[f.all_cortes(curvas)+['recuento']].copy()
-        ci_pd['y_real']=''
-        ci_pd['y_pred']=''
-        ci_pd['CI:5.0-95.0']=''
-        ci_pd['CI:5.0-95.0_u']=''
-        ci_pd['CI:2.5-97.5']=''
-        ci_pd['CI:2.5-97.5_u']=''
-        ci_pd['CI:0.5-99.5']=''
-        ci_pd['CI:0.5-99.5_u']=''
         ci_can = curvas[f.all_cortes(curvas)+['recuento']].copy()
-        ci_can['y_real']=''
-        ci_can['y_pred']=''
-        ci_can['CI:5.0-95.0']=''
-        ci_can['CI:5.0-95.0_u']=''
-        ci_can['CI:2.5-97.5']=''
-        ci_can['CI:2.5-97.5_u']=''
-        ci_can['CI:0.5-99.5']=''
-        ci_can['CI:0.5-99.5_u']=''
         ci_pre = curvas[f.all_cortes(curvas)+['recuento']].copy()
-        ci_pre['y_real']=''
-        ci_pre['y_pred']=''
-        ci_pre['CI:5.0-95.0']=''
-        ci_pre['CI:5.0-95.0_u']=''
-        ci_pre['CI:2.5-97.5']=''
-        ci_pre['CI:2.5-97.5_u']=''
-        ci_pre['CI:0.5-99.5']=''
-        ci_pre['CI:0.5-99.5_u']=''
-       
+        for ci in [ci_pd,ci_can,ci_pre]:
+            ci['y_real']=''
+            ci['y_pred']=''
+            ci['CI:5.0-95.0']=''
+            ci['CI:5.0-95.0_u']=''
+            ci['CI:2.5-97.5']=''
+            ci['CI:2.5-97.5_u']=''
+            ci['CI:0.5-99.5']=''
+            ci['CI:0.5-99.5_u']=''
+
         for i in range(len(curvas)):
 
             l=min(len(curvas.loc[i, 'pd_real']),len(curvas.loc[i, 'pd_teorico']))
@@ -73,17 +58,16 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             ci_pd.at[i, 'CI:2.5-97.5_u']=curvas.at[i, 'pd_real'].copy()
             ci_pd.at[i, 'CI:0.5-99.5']=curvas.at[i, 'pd_real'].copy()
             ci_pd.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'pd_real'].copy()
-            n = ci_pd.at[i, 'recuento']
             for j in range(l):
                 p = curvas.at[i, 'pd_teorico'][j]/100
-                m = curvas.at[i, 'pd_teorico'][j]/100
+                n = self.nT.at[i, 'pd_teorico'][j]
                 sd = (p*(1-p)/n)**0.5
-                ci_pd.at[i, 'CI:5.0-95.0'][j]=round((m-sd*1.645)*100,4)
-                ci_pd.at[i, 'CI:5.0-95.0_u'][j]=round((m+sd*1.645)*100,4)
-                ci_pd.at[i, 'CI:2.5-97.5'][j]=round((m-sd*1.96)*100,4)
-                ci_pd.at[i, 'CI:2.5-97.5_u'][j]=round((m+sd*1.96)*100,4)
-                ci_pd.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
-                ci_pd.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
+                ci_pd.at[i, 'CI:5.0-95.0'][j]=round((p-sd*1.645)*100,4)
+                ci_pd.at[i, 'CI:5.0-95.0_u'][j]=round((p+sd*1.645)*100,4)
+                ci_pd.at[i, 'CI:2.5-97.5'][j]=round((p-sd*1.96)*100,4)
+                ci_pd.at[i, 'CI:2.5-97.5_u'][j]=round((p+sd*1.96)*100,4)
+                ci_pd.at[i, 'CI:0.5-99.5'][j]=round((p-sd*2.575)*100,4)
+                ci_pd.at[i, 'CI:0.5-99.5_u'][j]=round((p+sd*2.575)*100,4)
                 
             l=min(len(curvas.loc[i, 'can_real']),len(curvas.loc[i, 'can_teorico']))
             curvas.at[i, 'can_real']=curvas.loc[i, 'can_real'].copy()[:l]
@@ -98,17 +82,16 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             ci_can.at[i, 'CI:2.5-97.5_u']=curvas.at[i, 'can_real'].copy()
             ci_can.at[i, 'CI:0.5-99.5']=curvas.at[i, 'can_real'].copy()
             ci_can.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'can_real'].copy()
-            n = ci_can.at[i, 'recuento']
             for j in range(l):
                 p = curvas.at[i, 'can_teorico'][j]/100
-                m = curvas.at[i, 'can_teorico'][j]/100
+                n = self.nT.at[i, 'can_teorico'][j]
                 sd = (p*(1-p)/n)**0.5
-                ci_can.at[i, 'CI:5.0-95.0'][j]=round((m-sd*1.645)*100,4)
-                ci_can.at[i, 'CI:5.0-95.0_u'][j]=round((m+sd*1.645)*100,4)
-                ci_can.at[i, 'CI:2.5-97.5'][j]=round((m-sd*1.96)*100,4)
-                ci_can.at[i, 'CI:2.5-97.5_u'][j]=round((m+sd*1.96)*100,4)
-                ci_can.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
-                ci_can.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
+                ci_can.at[i, 'CI:5.0-95.0'][j]=round((p-sd*1.645)*100,4)
+                ci_can.at[i, 'CI:5.0-95.0_u'][j]=round((p+sd*1.645)*100,4)
+                ci_can.at[i, 'CI:2.5-97.5'][j]=round((p-sd*1.96)*100,4)
+                ci_can.at[i, 'CI:2.5-97.5_u'][j]=round((p+sd*1.96)*100,4)
+                ci_can.at[i, 'CI:0.5-99.5'][j]=round((p-sd*2.575)*100,4)
+                ci_can.at[i, 'CI:0.5-99.5_u'][j]=round((p+sd*2.575)*100,4)
 
             l=min(len(curvas.loc[i, 'pre_real']),len(curvas.loc[i, 'pre_teorico']))
             curvas.at[i, 'pre_real']=curvas.loc[i, 'pre_real'].copy()[:l]
@@ -123,17 +106,16 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             ci_pre.at[i, 'CI:2.5-97.5_u']=curvas.at[i, 'pre_real'].copy()
             ci_pre.at[i, 'CI:0.5-99.5']=curvas.at[i, 'pre_real'].copy()
             ci_pre.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'pre_real'].copy()
-            n = ci_pre.at[i, 'recuento']
             for j in range(l):
                 p = curvas.at[i, 'pre_teorico'][j]/100
-                m = curvas.at[i, 'pre_teorico'][j]/100
+                n = self.nT.at[i, 'pre_teorico'][j]
                 sd = (p*(1-p)/n)**0.5
-                ci_pre.at[i, 'CI:5.0-95.0'][j]=round((m-sd*1.645)*100,4)
-                ci_pre.at[i, 'CI:5.0-95.0_u'][j]=round((m+sd*1.645)*100,4)
-                ci_pre.at[i, 'CI:2.5-97.5'][j]=round((m-sd*1.96)*100,4)
-                ci_pre.at[i, 'CI:2.5-97.5_u'][j]=round((m+sd*1.96)*100,4)
-                ci_pre.at[i, 'CI:0.5-99.5'][j]=round((m-sd*2.575)*100,4)
-                ci_pre.at[i, 'CI:0.5-99.5_u'][j]=round((m+sd*2.575)*100,4)
+                ci_pre.at[i, 'CI:5.0-95.0'][j]=round((p-sd*1.645)*100,4)
+                ci_pre.at[i, 'CI:5.0-95.0_u'][j]=round((p+sd*1.645)*100,4)
+                ci_pre.at[i, 'CI:2.5-97.5'][j]=round((p-sd*1.96)*100,4)
+                ci_pre.at[i, 'CI:2.5-97.5_u'][j]=round((p+sd*1.96)*100,4)
+                ci_pre.at[i, 'CI:0.5-99.5'][j]=round((p-sd*2.575)*100,4)
+                ci_pre.at[i, 'CI:0.5-99.5_u'][j]=round((p+sd*2.575)*100,4)
 
             promedios.at[i, 'pd_real'] = sum(curvas.at[i, 'pd_real'])/len(curvas.at[i, 'pd_real'])   
             promedios.at[i, 'can_real'] = sum(curvas.at[i, 'can_real'])/len(curvas.at[i, 'can_real'])
@@ -282,7 +264,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.promedios.at[i, 'pre_optimo'] = sum(self.curvas.at[i, 'pre_optimo'])/len(self.curvas.at[i, 'pre_optimo'])
 
 
-    def impactoTmin(self,df_tmin,completar=True):
+    def impactoTmin(self,df_tmin,completar=True,TIR=False):
 
         cortes=f.all_cortes(self.stats)
         if completar==True:
@@ -314,4 +296,3 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         data = [['Tmin_base_prom', Tmin_base_prom], ['delta_pd_prom', delta_pd_prom], ['delta_can_prom', delta_can_prom], ['delta_pre_prom', delta_pre_prom], ['Tmin_final_prom', Tmin_final_prom]]  
         TminProm = pd.DataFrame(data, columns = ['Campo', 'Valor'])
         self.TminProm = TminProm
-
