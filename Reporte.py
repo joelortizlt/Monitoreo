@@ -22,7 +22,6 @@ class Reporte():
         product.condensar([filtro2])
         inicio_comb_mixto = inicio_comb_filtro2 + len(product.curvas[filtro2].unique())
         cortes =  [[[filtro1], 0], [[filtro2], inicio_comb_filtro2], [[filtro1, filtro2], inicio_comb_mixto]] # <-- Valores a usar
-
         # Listas que se van a rellenar con los bucles (se muestran en el reporte los report_list)
         pd_graph_list, can_graph_list, pre_graph_list, comb_size, = [], [], [], []
         pd_MAE_graph_list, can_MAE_graph_list, pre_MAE_graph_list, tmin_graph_list = [], [], [], []
