@@ -264,13 +264,12 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.promedios.at[i, 'pre_optimo'] = sum(self.curvas.at[i, 'pre_optimo'])/len(self.curvas.at[i, 'pre_optimo'])
 
 
-    def impactoTmin(self,df_tmin,completar=True,TIR=False):
+    def impactoTmin(self,df_tmin,TIR=False):
 
         cortes=f.all_cortes(self.stats)
-        if completar==True:
-            izquierda = self.df_real[['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO']+f.all_cortes(self.df_real)].copy()
-            derecha = df_tmin[['CODCLAVEOPECTA','Tmin','PDTmin','CANTmin','PRETmin']].copy()
-            df = pd.merge(left=izquierda, right=derecha, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
+        izquierda = self.df_real[['CODCLAVEOPECTA','COSECHA']+f.all_cortes(self.df_real)].copy()
+        derecha = df_tmin[['CODCLAVEOPECTA','MTODESEMBOLSADO','Tmin','PDTmin','CANTmin','PRETmin']].copy()
+        df = pd.merge(left=izquierda, right=derecha, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
         
         if cortes==['C_TODOS']:
             df.loc[:,'C_TODOS']=''

@@ -10,16 +10,13 @@ import funciones as f
 #creación de la clase
 class InputsNoRevolventeReal():
     #constructor del objeto
-    def __init__(self,df,mincosecha='',maxcosecha=''): #se insume un documento de Excel
+    def __init__(self,df_real,mincosecha='',maxcosecha=''): #se insume un dataframe y (opcionalmente) filtros por cosechas
         
-        #tranformar la data de las hojas del excel en dataframes
-        df_real = df
-        
-        #colocar las curvas en una sola celda
+        #colocar las curvas en una sola celda (por temas de orden)
         df_real['prepagos'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'PREPAGO1'):f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1')].values.tolist()})
         df_real['desembolso'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1'):f.encontrar_encabezado(df_real,'prepagos')].values.tolist()})
         
-        #seleccionar solo la data relevante
+        #seleccionar solo los campos relevantes y filtrar por 
         df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]

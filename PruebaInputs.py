@@ -71,7 +71,7 @@ product.MAE('can',optimo=True)
 product.MAE('pre',optimo=True)
 
 #%%
-product.impactoTmin(TMIN,completar=True)
+product.impactoTmin(TMIN,TIR=False)
 product.Tmin
 
 #%%
