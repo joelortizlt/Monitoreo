@@ -7,16 +7,18 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 
 
-#creación de la clase
+#Creación de la clase
 class InputsNoRevolventeReal():
     #constructor del objeto
-    def __init__(self,df_real,mincosecha='',maxcosecha=''): #se insume un dataframe y (opcionalmente) filtros por cosechas
+    def __init__(self,df,mincosecha='',maxcosecha=''): #se insume un dataframe y (opcionalmente) filtros por cosechas
         
-        #colocar las curvas en una sola celda (por temas de orden)
+        df_real = df
+        
+        #Se coloca las curvas en una sola celda (por temas de orden)
         df_real['prepagos'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'PREPAGO1'):f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1')].values.tolist()})
         df_real['desembolso'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1'):f.encontrar_encabezado(df_real,'prepagos')].values.tolist()})
         
-        #seleccionar solo los campos relevantes y filtrar por 
+        #Se selecciona solo los campos relevantes y se filtra por cosecha
         df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
@@ -28,12 +30,12 @@ class InputsNoRevolventeReal():
     #creación de los cortes
     def condensar(self,cortes=[]): #se insume una lista con los cortes que se desea
         
-        #si no se ingresa cortes espécificos, se usan todos
+        #si no se ingresa cortes espécificos, se calcula el general sin desagregar
         if cortes==[]:
             self.df_real.loc[:,'C_TODOS']=''
             cortes=['C_TODOS']
         
-        #Creamos la 'plantilla'
+        #Creamos la 'plantilla' con todas las cobinaciones de los cortes
         curvas = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         curvas['pd_real'] = ''
         curvas['can_real'] = ''

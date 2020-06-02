@@ -12,15 +12,14 @@ class InputsNoRevolventeTeorico():
     #constructor del objeto
     def __init__(self,df,mincosecha='',maxcosecha=''): #se insume un documento de Excel
         
-        #tranformar la data de las hojas del excel en dataframes
         df_teorico = df
         
-        #colocar las curvas en una sola celda
+        #Se coloca las curvas en una sola celda (por temas de orden)
         df_teorico['pd_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PD1'):f.encontrar_encabezado(df_teorico,'CAN1')].values.tolist()})
         df_teorico['can_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'CAN1'):f.encontrar_encabezado(df_teorico,'PRE1')].values.tolist()})
         df_teorico['pre_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PRE1'):f.encontrar_encabezado(df_teorico,'pd_marginal')].values.tolist()})
  
-        #seleccionar solo la data relevante
+        #Se selecciona solo los campos relevantes y se filtra por cosecha
         df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal', 'can_marginal', 'pre_marginal']]
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
@@ -32,12 +31,12 @@ class InputsNoRevolventeTeorico():
     #creación de los cortes
     def condensar(self,cortes=[]): #se insume una lista con los cortes que se desea
         
-        #si no se ingresa cortes espécificos, se usan todos
+        #si no se ingresa cortes espécificos, se calcula el general sin desagregar
         if cortes==[]:
             self.df_teorico.loc[:,'C_TODOS']=''
             cortes=['C_TODOS']
 
-        #Creamos la 'plantilla'
+        #Creamos la 'plantilla' con todas las cobinaciones de los cortes
         curvas = self.df_teorico.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         curvas['pd_teorico'] = ''
         curvas['can_teorico'] = ''
