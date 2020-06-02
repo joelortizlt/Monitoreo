@@ -10,11 +10,11 @@ from dash.dependencies import Input, Output
 from pages import overview
 from Reporte import Reporte
 
-ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, Corte1, Corte2, Completo)
-
 # Para correr:
 # --> 1. Settear [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto] // Filtros = 'C_FILTRO'
 # --> 2. Nro de Reporte --> display_page (lines 93 y 94)
+
+ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, Corte1, Corte2, Completo) de los 'n' productos.
 
 lista = [  
             # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
@@ -58,7 +58,6 @@ lista = [
             # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
             # 201701, 201712, 'C_SEGMENTO', 'C_MONEDA', 'Crédito Efectivo']
         ]  
-            # Se pueden añadir más listas para una segunda iteración del "elem"
 
 for elem in lista:
     REAL, TEORICO, TMIN = pd.read_csv(elem[0]), pd.read_csv(elem[1]), pd.read_csv(elem[2])
@@ -78,7 +77,6 @@ ASSETS_PATH = PATH.joinpath('assets').resolve()
 app = dash.Dash(
     __name__, meta_tags=[{'name': 'viewport', 'content': 'width=device-width'}]
 )
-
 # Describe the layout/UI of the app
 app.layout = html.Div(
     [dcc.Location(id='url', refresh=False), html.Div(id='page-content')]
@@ -90,8 +88,8 @@ app.layout = html.Div(
 def display_page(pathname):
 
     resultado = list()
-    for hoja in range(len(ReporteStack[0][3])): # [Producto][Reporte] --> [Producto, Corte1, Corte2, Completo] -- 1 - 3 --> 1 [REPCORTE1, REPCORTE2, COMPLETO]
-        resultado.append(overview.create_layout(app, ReporteStack[0][3][hoja])) # [0][0][hoja] necesita revisión --> corre en otro script
+    for hoja in range(len(ReporteStack[0][3])): # [Producto][Reporte] --> [Producto, Corte1, Corte2, Completo]
+        resultado.append(overview.create_layout(app, ReporteStack[0][3][hoja]))
 
     # resultado.append(overview.create_layout(app, ReporteStack[0][0])
 
