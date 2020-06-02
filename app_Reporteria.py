@@ -11,7 +11,7 @@ from pages import overview
 from Reporte import Reporte
 
 # Para correr:
-# --> 1. Settear [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto] // Filtros = 'C_FILTRO'
+# --> 1. Indicar [RutaReal, RutaTeorico, RutaTMIN, MinCosecha, MaxCosecha, Filtro1, Filtro2, NombreProducto] // Filtros = 'C_FILTRO'
 # --> 2. Nro de Reporte --> display_page (lines 93 y 94)
 
 ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, Corte1, Corte2, Completo) de los 'n' productos.
