@@ -8,18 +8,18 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_AF_Reales.csv')
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_CT_Reales.csv')
 TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Inputs.csv')
 TMIN = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Precios.csv')
 
 #%%
 #Se crea el objeto
-product = InputsNoRevolvente(REAL,TEORICO)
+product = InputsNoRevolvente(REAL,TEORICO)#,mincosecha=201801,maxcosecha=201812)
 product.df_teorico
 
 #%%
 #Se definen los cortes
-cortes = ['C_PRODUCTO']
+cortes = ['C_MONEDA']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 product.curvas
