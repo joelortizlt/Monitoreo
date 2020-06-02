@@ -8,9 +8,9 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_AF_Reales.csv')
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Inputs.csv')
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/PymeNR/PymeNR_Precios.csv')
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_AF_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
@@ -74,4 +74,6 @@ product.impactoTmin(TMIN,impactoTIR=True)
 product.TIR
 
 #%%
-product.TIRProm
+product.Tmin
+
+# %%
