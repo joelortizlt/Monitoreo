@@ -74,6 +74,6 @@ product.impactoTmin(TMIN,impactoTIR=True)
 product.TIR
 
 #%%
-product.Tmin
+product.TIRProm
 
 # %%
