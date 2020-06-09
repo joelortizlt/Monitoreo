@@ -24,9 +24,9 @@ class Reporte():
         cortes =  [[[filtro1], 0], [[filtro2], inicio_comb_filtro2], [[filtro1, filtro2], inicio_comb_mixto]] # <-- Valores a usar
         # Listas que se van a rellenar con los bucles (se muestran en el reporte los report_list)
         pd_graph_list, can_graph_list, pre_graph_list, comb_size, = [], [], [], []
-        pd_MAE_graph_list, can_MAE_graph_list, pre_MAE_graph_list, tmin_graph_list = [], [], [], []
+        pd_MAE_graph_list, can_MAE_graph_list, pre_MAE_graph_list, tmin_graph_list, tir_graph_list = [], [], [], [], []
         pd_fanChart, can_fanChart, pre_fanChart = [], [], []
-        report_list_pd, report_list_can, report_list_pre, report_list_tmin  = [], [], [], []
+        report_list_pd, report_list_can, report_list_pre, report_list_tmin, report_list_tir  = [], [], [], [], []
         report_list_MAE_pd, report_list_MAE_can, report_list_MAE_pre, MAE_titles = [], [], [], []
         report_list_PDFAN, report_list_CANFAN, report_list_PREFAN = [], [], []
         resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre = '', '', ''
@@ -37,7 +37,7 @@ class Reporte():
         # Producto General -- [Lista]
         product.condensar()
         product.optimizar()
-        product.impactoTmin(Tmin)
+        product.impactoTmin(Tmin, impactoTIR=False)
         graph = Plotgraph(product.curvas, promedio=True)
         graph2 = Plotgraph(product.curvas, curvas='Can', nombre='Cancelaciones', promedio=True)
         graph3 = Plotgraph(product.curvas, curvas='Pre', nombre='Prepagos', promedio=True)
@@ -54,7 +54,8 @@ class Reporte():
         for corte in cortes:
             product.condensar(corte[0])
             product.optimizar()
-            product.impactoTmin(Tmin)
+            product.impactoTmin(Tmin, impactoTIR=False)
+            product.impactoTmin(Tmin, impactoTIR=True)
 
             if corte[0]==[filtro1] or corte[0]==[filtro2]: # MAE - [filtro1], [filtro2] // Sin combinación
                 for curva_MAE in MAE_list:
@@ -79,8 +80,10 @@ class Reporte():
                 can_fanChart.append(FanChart(product.ci_can, nombre='Cancelaciones', corte=combinacion))
                 pre_fanChart.append(FanChart(product.ci_pre, nombre='Prepagos', corte=combinacion))
                 waterfall_aux = True if corte[0]==[filtro1, filtro2] else False
-                waterfall = Waterfallplot(product.Tmin, combinacion=combinacion, mixto=waterfall_aux) # Waterfallplot
-                tmin_graph_list.append(waterfall)
+                waterfall_Tmin = Waterfallplot(product.Tmin, combinacion=combinacion, mixto=waterfall_aux) # Impacto en Tasa Minima
+                waterfall_TIR = Waterfallplot(product.TIR, combinacion=combinacion, mixto=waterfall_aux) # Impacto en TIR
+                tmin_graph_list.append(waterfall_Tmin)
+                tir_graph_list.append(waterfall_TIR)
 
                 # Listado de Alertas -> append a la lista correspondiente 
                 for mae in MAE_list:
@@ -107,7 +110,7 @@ class Reporte():
                 # CORTE 1 Y CORTE 2 (SIN COMBINACIONES):
                 if corte[0]==[filtro1] or corte[0]==[filtro2]:
                     # Listado de Alertas:
-                    paragraph_html, aux_descal, aux_revision = paragraph_alertas(product.curvas, title[0],list(range(nro_combinaciones)), corte[1], 
+                    paragraph_html, aux_descal, aux_revision = paragraph_alertas(product.curvas, title[0], list(range(nro_combinaciones)), corte[1], 
                                                                                     corte[0], aux_descal, aux_revision)
 
                     # Generación de vector para overview (visualización en Dash)
@@ -124,12 +127,15 @@ class Reporte():
 
                     # Tasa Mínima -> Solo corre una vez (if title[1]=='PD') - Generación de vector para overview (visualización en Dash)
                     if title[1]=='PD': 
-                        tmin_aux = []
+                        tmin_aux, tir_aux = [], []
                         tmin_aux.append([('Impacto en Tasa Mínima por ' + str1, html_vacio, 'product')])
+                        tir_aux.append([('Impacto en TIR por ' + str1, html_vacio, 'product')])
                         for linea in list(range(nro_combinaciones)):
                             str2 = str(product.curvas[corte[0][0]].values[linea]).capitalize()
-                            tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[corte[1] + linea], 'twelve columns')]) 
+                            tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[corte[1] + linea], 'twelve columns')])
+                            tir_aux.append([(str1 + ' ' + str2, tir_graph_list[corte[1] + linea], 'twelve columns')])
                         report_list_tmin.append(tmin_aux) # Añadiendo hoja a su stack (report_list_TMIN) para formar luego reportes específicos
+                        report_list_tir.append(tir_aux)
 
                 # COMBINACIONES DE CORTE 1 Y CORTE 2 (ANÁLISIS GRANULAR)
                 else: 
@@ -167,13 +173,16 @@ class Reporte():
                         title[7].append(report_list_aux2)
 
                         if title[1]=='PD': # T min: 1 sola vez
-                            tmin_aux = []
+                            tmin_aux, tir_aux = [], []
                             tmin_aux.append([('Impacto en Tasa Mínima para ' + str0 + ' ' + str(ValorFiltro1) + ' por ' + str1, html_vacio, 'product')])
+                            tir_aux.append([('Impacto en TIR para ' + str0 + ' ' + str(ValorFiltro1) + ' por ' + str1, html_vacio, 'product')])
                             for linea in nro_combinacion:
                                 str2 = str(product.curvas[filtro2].values[linea]).capitalize()
-                                tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[nro_valores_filtro2 + linea], 'twelve columns')]) 
+                                tmin_aux.append([(str1 + ' ' + str2, tmin_graph_list[nro_valores_filtro2 + linea], 'twelve columns')])
+                                tir_aux.append([(str1 + ' ' + str2, tir_graph_list[nro_valores_filtro2 + linea], 'twelve columns')]) 
                             nro_valores_filtro2 += nro_combinacion[-1]
                             report_list_tmin.append(tmin_aux)
+                            report_list_tir.append(tir_aux)
                         
                         auxcorte += max(nro_combinacion)
                         aux_barplot += max(nro_combinacion)
@@ -218,7 +227,7 @@ class Reporte():
         # Reporte Completo
         ListaCompleta = []
         ListaCompleta.append(report_list_resumen) # ListaCompleta[0] = Resumen
-        ListaReportes = [report_list_pd, report_list_can, report_list_pre, report_list_PDFAN, report_list_CANFAN, report_list_PREFAN, report_list_tmin]
+        ListaReportes = [report_list_pd, report_list_can, report_list_pre, report_list_PDFAN, report_list_CANFAN, report_list_PREFAN, report_list_tmin, report_list_tir]
         for combinacion in range(len(report_list_tmin)): # in range(número listas final: 2 + numero de combinaciones entre ambos cortes)
             for lista in ListaReportes:
                 ListaCompleta.append(lista[combinacion])

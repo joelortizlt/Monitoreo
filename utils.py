@@ -269,9 +269,10 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=Fal
                 str(round(df['Valor'].values[inicio+4],4)) + '%']
         y = [df['Valor'].values[inicio], df['Valor'].values[inicio+1], df['Valor'].values[inicio+2],
             df['Valor'].values[inicio+3], df['Valor'].values[inicio+4] ]
-        limit = max(round(df['Valor'].values[inicio],4), round(df['Valor'].values[inicio+4],4)) + 0.03
+        limit_sup = max(round(df['Valor'].values[inicio],4), round(df['Valor'].values[inicio+4],4)) + 0.03
+        limit_inf = min(round(df['Valor'].values[inicio],4), round(df['Valor'].values[inicio+4],4)) - 0.01
     else:
-        height_number = 260
+        height_number = 280
         text =  [str(round(df.iloc[combinacion].values[inicio],4)) + '%',
                 str(round(df.iloc[combinacion].values[inicio+1],4)) + '%',
                 str(round(df.iloc[combinacion].values[inicio+2],4)) + '%', 
@@ -279,7 +280,8 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=Fal
                 str(round(df.iloc[combinacion].values[inicio+4],4)) + '%']
         y =  [df.iloc[combinacion].values[inicio], df.iloc[combinacion].values[inicio+1], df.iloc[combinacion].values[inicio+2],
             df.iloc[combinacion].values[inicio+3], df.iloc[combinacion].values[inicio+4] ]
-        limit = max(round(df.iloc[combinacion].values[inicio],4), round(df.iloc[combinacion].values[inicio+4],4)) + 0.03
+        limit_sup = max(round(df.iloc[combinacion].values[inicio],4), round(df.iloc[combinacion].values[inicio+4],4)) + 0.03
+        limit_inf = min(round(df.iloc[combinacion].values[inicio],4), round(df.iloc[combinacion].values[inicio+4],4)) - 0.01
 
     return dcc.Graph(
                 figure={'data': [go.Waterfall(name = 'Variation',
@@ -297,7 +299,7 @@ def Waterfallplot(df, combinacion=0, archivo='Inputs', mixto=False, promedio=Fal
                                 )],
                         'layout': go.Layout(showlegend = True,
                                             height = height_number,
-                                            yaxis = {'range': [0.015, limit], 'title': '%'},
+                                            yaxis = {'range': [limit_inf, limit_sup], 'title': '%'},
                                             font = {'family': 'flexo medium'},
                                             margin=dict(
                                                             autoexpand=True,

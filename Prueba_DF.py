@@ -38,9 +38,9 @@ from InputsNoRevolvente import InputsNoRevolvente
     # TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv')
 
 # Hipotecario
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR\PymeNR_Precios.csv', low_memory=False)
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_AF_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
