@@ -7,13 +7,11 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 
 
-
 #creación de la clase
 class OutputsNoRevolventeTeorico():
     #constructor del objeto
     def __init__(self,df,mincosecha='',maxcosecha=''): #se insume un documento de Excel
         
-        #tranformar la data de las hojas del excel en dataframes
         df_teorico = df
         
         #colocar las curvas en una sola celda
@@ -23,7 +21,6 @@ class OutputsNoRevolventeTeorico():
  
         #seleccionar solo la data relevante
         df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']]
-
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
         if maxcosecha!='':
