@@ -19,7 +19,7 @@ class InputsNoRevolventeReal():
         df_real['desembolso'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1'):f.encontrar_encabezado(df_real,'prepagos')].values.tolist()})
         
         #Se selecciona solo los campos relevantes y se filtra por cosecha
-        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MTODESEMBOLSADO','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
+        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':

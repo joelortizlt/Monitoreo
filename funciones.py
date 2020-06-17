@@ -1,5 +1,6 @@
 import itertools as it
 import pandas as pd
+import numpy as np
 
 #Se crean las funciones de soporten necesarias:
 
@@ -30,6 +31,14 @@ def aggr_count(result_col):
     filt = list(map(avg, it.zip_longest(*result_col)))
     return filt
 
+#Toma vectores y regresa la sd para cada ubicación.
+def aggr_sd(result_col):
+    def avg(x):
+        x = [i for i in x if i is not None]
+        return np.std(x)
+    filt = list(map(avg, it.zip_longest(*result_col)))
+    return filt
+
 #Esta función permite encontrar la posición de un encabezado espeífico (a) en un dataframe (df)
 def encontrar_encabezado(df,a):
     n=0
@@ -52,7 +61,7 @@ def all_cortes(df):
 def porcentaje(resultado):
     resultado = [100*x for x in resultado]
     resultado = [round(x,4) for x in resultado]
-    return resultado      
+    return resultado
 
 #Permite obtener el promedio ponderado
 def weighted_average(df, data_col, weight_col):
