@@ -54,12 +54,12 @@ str1 = str(cortes)[2:].capitalize()
 report_list = []
 report_list.append([('Cancelaciones por ' + str1 + ' - Intervalos de Confianza', html_vacio, 'product')])
 for linea in range(len(product.curvas.index)):  
-    report_list.append([(str1, can_fanChart[linea], 'twelve columns')])
+    report_list.append([(str1 + ' por ' + product.ci_can['C_LINEA'][linea], can_fanChart[linea], 'twelve columns')])
 
 report_list2 = []
 report_list2.append([('Saldos por ' + str1 + ' - Intervalos de Confianza', html_vacio, 'product')])
 for linea in range(len(product.curvas.index)):  
-    report_list2.append([(str1, pre_fanChart[linea], 'twelve columns')])
+    report_list2.append([(str1 + ' por ' + product.ci_saldo['C_LINEA'][linea], pre_fanChart[linea], 'twelve columns')])
 
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
