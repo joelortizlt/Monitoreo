@@ -52,15 +52,15 @@ class OutputsNoRevolventeTeorico():
             temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             #IF teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['if']))
-            a = f.aggr_sum(temp['result'])
+            a = f.aggr_avg(temp['result'])
             
             #EF teórico
             temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['ef']))
-            b = f.aggr_sum(temp['result'])
+            b = f.aggr_avg(temp['result'])
             
             #SALDO teórico
             temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['saldo']))
-            c = f.aggr_sum(temp['result'])
+            c = f.aggr_avg(temp['result'])
             
             curvas.at[i,'if_teorico'] = [round(x,0) for x in a]
             curvas.at[i,'ef_teorico'] = [round(x,0) for x in b]

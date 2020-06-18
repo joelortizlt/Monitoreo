@@ -14,7 +14,7 @@ TMIN = pd.read_csv('/Users/renzomartinch/Downloads/TSN/TSN_Precios.csv', low_mem
 
 #%%
 #Se crea el objeto
-product = InputsRevolvente(REAL,TEORICO,mincosecha=201801,maxcosecha=201812)
+product = InputsRevolvente(REAL,TEORICO)#,mincosecha=201801,maxcosecha=201812)
 product.df_real
 
 #%%

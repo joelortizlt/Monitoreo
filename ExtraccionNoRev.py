@@ -17,7 +17,7 @@ for i in range(len(lista_nombres)):
     REAL = pd.read_csv(ruta_real[i])
     TEORICO = pd.read_csv(ruta_teorico[i])
     TMIN = pd.read_csv(ruta_tmin[i])
-    product = InputsNoRevolvente(REAL,TEORICO,completar=True,mincosecha=201901,maxcosecha=201912)
+    product = InputsNoRevolvente(REAL,TEORICO)#,mincosecha=201901,maxcosecha=201912)
     
     for j in range(len(lista_cortes)):
         if i<5:
@@ -26,9 +26,9 @@ for i in range(len(lista_nombres)):
             cortes = lista_cortes_Pyme[j]
         product.condensar(cortes)
         product.optimizar()
-        product.impactoTmin(TMIN,completar=True)
+        product.impactoTmin(TMIN,impactoTIR=True)
 
-        temp = pd.concat([product.promedios,product.stats,product.Tmin,product.curvas], axis=1)
+        temp = pd.concat([product.promedios,product.stats,product.Tmin,product.TIR,product.curvas], axis=1)
         name=temp.columns[0]
         temp.rename(columns={name:"CORTE"}, inplace=True)
         if i==0 and j==0:

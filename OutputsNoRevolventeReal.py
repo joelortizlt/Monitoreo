@@ -57,9 +57,9 @@ class OutputsNoRevolventeReal():
             temp['sum_ef']=list(map(f.operation_pd, temp['MAXMAD'], temp['ef']))
             temp['sum_saldo']=list(map(f.operation_pd, temp['MAXMAD'], temp['saldo']))
             
-            a = f.aggr_sum(temp['sum_if'])
-            b = f.aggr_sum(temp['sum_ef'])
-            c = f.aggr_sum(temp['sum_saldo'])
+            a = f.aggr_avg(temp['sum_if'])
+            b = f.aggr_avg(temp['sum_ef'])
+            c = f.aggr_avg(temp['sum_saldo'])
             
             curvas.at[i,'if_real'] = [round(x,0) for x in a]
             curvas.at[i,'ef_real'] = [round(x,0) for x in b]
