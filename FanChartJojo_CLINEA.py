@@ -4,7 +4,7 @@ import pathlib
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from utils import Plotgraph, Barplot, Waterfallplot, FanChart, paragraph_alertas
+from utils import Plotgraph, Barplot, Waterfallplot, FanChart, paragraph_alertas, FanChart2
 from InputsRevolvente import InputsRevolvente
 from InputsRevolventeReal import InputsRevolventeReal
 from InputsRevolventeTeorico import InputsRevolventeTeorico
@@ -48,7 +48,7 @@ html_vacio = html.P('')
 nro_combinaciones = len(product.curvas.index)
 for combinacion in list(range(nro_combinaciones)):
     can_fanChart.append(FanChart(product.ci_can, nombre='Cancelaciones', corte=combinacion))
-    pre_fanChart.append(FanChart(product.ci_saldo, nombre='Saldos', corte=combinacion))
+    pre_fanChart.append(FanChart2(product.ci_saldo, nombre='Saldos', corte=combinacion))
 
 str1 = str(cortes)[2:].capitalize()
 report_list = []

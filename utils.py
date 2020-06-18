@@ -428,4 +428,94 @@ def FanChart(df, nombre='PD', corte=0, dot_name='Real', line_name='Teórica', co
                             plot_bgcolor='white',
                             font = {'family': 'flexo medium', 'size': 12})
                     }                   
-            )      
+            )  
+
+
+def FanChart2(df, nombre='PD', corte=0, dot_name='Real', line_name='Teórica', colorListRGB= [ [0,99,174], [153,212,255], [200,222,255] ]):
+
+    columns = df.columns
+    start_position = df.columns.get_loc('recuento')
+    x = list(range(len(df[columns[start_position + 1]][corte])))
+    yreal = df[columns[start_position + 1]][corte]
+    ypred = df[columns[start_position + 2]][corte]
+    yIntervLimits = list()
+    intervNames = list()
+
+    for ii in range(start_position + 3, len(columns), 2):
+        yIntervLimits.append(df[columns[ii]][corte])
+        yIntervLimits.append( [x1 - x2 for (x1, x2) in zip(df[columns[ii+1]][corte], df[columns[ii]][corte])] )
+        intervNames.append(columns[ii])
+
+    data = list()
+    # Otros intervalos
+    nn = 0
+
+
+    # puntos
+    data_aux3 = go.Scatter(
+            x=x,y=  yreal,
+            mode='markers',
+            name=dot_name,
+            opacity=1,
+            line=dict(width=.1, color='rgb(200, 10, 10)'),
+            # stackgroup='one'
+    )
+    data.append(data_aux3)
+    
+    # line of y point estimation
+    data_aux4 = go.Scatter(
+            x=x,y=  ypred,
+            mode='lines',
+            name=line_name,
+            opacity=0.7,
+            line=dict(width=3, color='rgb(10, 10, 10)'),
+            # stackgroup='one'
+    )
+    data.append(data_aux4)
+    
+    return dcc.Graph( figure={
+                        'data': data,
+                        'layout': go.Layout( 
+                            xaxis_title='Plazo',
+                            yaxis_title=nombre,
+                            xaxis=dict(
+                                showline=True,
+                                showgrid=False,
+                                showticklabels=True,
+                                linecolor='rgb(204, 204, 204)',
+                                linewidth=2,
+                                ticks='outside',
+                                tickfont=dict(
+                                    family='Arial',
+                                    size=12,
+                                    color='rgb(82, 82, 82)',
+                                ),
+                            ),
+                            yaxis=dict(
+                                showgrid=False,
+                                zeroline=False,
+                                showline=True,
+                                showticklabels=True,
+                                linecolor='rgb(204, 204, 204)',
+                                linewidth=2,
+                                ticks='outside',
+                                tickfont=dict(
+                                    family='Arial',
+                                    size=12,
+                                    color='rgb(82, 82, 82)',
+                                ),    
+                            ),
+                            height = 260,
+                            width = 700,
+                            autosize = False,
+                            margin=dict(
+                                autoexpand=True,
+                                l=100,
+                                r=20,
+                                t=20,
+                            ),
+                            showlegend=True,
+                            plot_bgcolor='white',
+                            font = {'family': 'flexo medium', 'size': 12})
+                    }                   
+            )          
