@@ -428,4 +428,4 @@ def FanChart(df, nombre='PD', corte=0, dot_name='Real', line_name='Teórica', co
                             plot_bgcolor='white',
                             font = {'family': 'flexo medium', 'size': 12})
                     }                   
-            )       
+            )      
