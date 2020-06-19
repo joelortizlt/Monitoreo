@@ -108,7 +108,9 @@ class InputsRevolvente(InputsRevolventeReal,InputsRevolventeTeorico):
             ci_saldo.at[i, 'CI:0.5-99.5_u']=curvas.at[i, 'saldo_real'].copy()
             for j in range(l):
                 p = curvas.at[i, 'saldo_teorico'][j]
-                sd = self.nT.at[i, 'saldo_teorico'][j]
+                n = self.nT.at[i, 'saldo_teorico'][j]
+                s = self.nT.at[i, 'saldo_teorico_s'][j]
+                sd = s/(n**0.5)
                 ci_saldo.at[i, 'CI:5.0-95.0'][j]=p-sd*1.645
                 ci_saldo.at[i, 'CI:5.0-95.0_u'][j]=p+sd*1.645
                 ci_saldo.at[i, 'CI:2.5-97.5'][j]=p-sd*1.96

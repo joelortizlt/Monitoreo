@@ -42,6 +42,7 @@ class InputsRevolventeTeorico():
         curvas['can_teorico'] = ''
         curvas['saldo_teorico'] = ''
         n = curvas.copy()
+        n['saldo_teorico_sd'] = ''
         
         #TEÓRICOS
         for i in range(len(curvas)):
@@ -66,7 +67,8 @@ class InputsRevolventeTeorico():
             temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['saldo_marginal']))
             resultado = f.aggr_avg(temp['result'])
             curvas.at[i,'saldo_teorico'] = [round(x,0) for x in resultado]
-            n.at[i,'saldo_teorico']= f.aggr_sd(temp['result'])
+            n.at[i,'saldo_teorico']= f.aggr_count(temp['result'])
+            n.at[i,'saldo_teorico_s']= f.aggr_sd(temp['result'])
 
         self.curvasT = curvas
         self.nT = n

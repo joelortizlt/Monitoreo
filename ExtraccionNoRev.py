@@ -7,13 +7,13 @@ import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 
 #lista_nombres=['CEF','PymeCT','PymeAF']
-lista_nombres=['CHIP','GAHI','MiViv']#,'VEH']
+lista_nombres=['CHIP','GAHI','MiViv','VEH']
 #ruta_real=['/Users/renzomartinch/Downloads/Comite_0622/CEFCB_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeCT_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeAF_Reales.csv']
-ruta_real=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Reales.csv']#,'/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Reales.csv']
+ruta_real=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Reales.csv']
 #ruta_teorico=['/Users/renzomartinch/Downloads/Comite_0622/CEFCB_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Inputs.csv']
-ruta_teorico=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Inputs.csv']#,'/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Inputs.csv']
+ruta_teorico=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Inputs.csv']
 #ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/CEFCB_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Precios.csv']
-ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Precios.csv']#,'/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Precios.csv']
+ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Precios.csv']
 lista_cortes=[[],['C_PLAZO'],['C_SEGMENTO'],['C_MONEDA']]#,['C_RANGOSCORE']]
 lista_cortes_Pyme=[[],['C_PLAZO'],['C_PRODUCTO'],['C_MONEDA'],['C_RANGOPD']]
 
