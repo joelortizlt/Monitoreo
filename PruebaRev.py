@@ -8,9 +8,16 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsRevolvente import InputsRevolvente
 
+<<<<<<< HEAD
 REAL = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/TSNCOVID_Reales.csv', low_memory=False)
 TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622TSN_Inputs.csv', low_memory=False)
 TMIN = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/TSN_Precios.csv', low_memory=False)
+=======
+
+REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Reales.csv')
+TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Inputs.csv')
+TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Precios.csv')
+>>>>>>> 5f54f489b7b966c651f52e12224ec6f02741ba55
 
 #%%
 #Se crea el objeto
