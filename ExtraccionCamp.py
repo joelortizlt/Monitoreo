@@ -4,21 +4,24 @@ import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import funciones as f
-from InputsRevolvente import InputsRevolvente
+from InputsNoRevolvente import InputsNoRevolvente
 
-lista_nombres=['TSN']
-ruta_real=['/Users/renzomartinch/Downloads/Comite_0622/TSN_Reales.csv']
-ruta_teorico=['/Users/renzomartinch/Downloads/Comite_0622/TSN_Inputs.csv']
-ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/TSN_Precios.csv']
-lista_cortes=[[],['C_LINEA'],['C_SUBSEGMENTO'],['C_PD']]
+lista_nombres=['Campanas']
+ruta_real=['/Users/renzomartinch/Downloads/Comite_0622/Campanas_Reales.csv']
+ruta_teorico=['/Users/renzomartinch/Downloads/Comite_0622/Campanas_Inputs.csv']
+ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/Campanas_Precios.csv']
+lista_cortes=[[],['C_PLAZO'],['C_CAMPANIA'],['C_GRACIA']]
 
 for i in range(len(lista_nombres)):
-    REAL = pd.read_csv(ruta_real[i])
+    REAL = pd.read_csv(ruta_real[i], encoding='latin-1')
     TEORICO = pd.read_csv(ruta_teorico[i])
     TMIN = pd.read_csv(ruta_tmin[i])
-    product = InputsRevolvente(REAL,TEORICO,mincosecha=201901,maxcosecha=201912)
+    product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801,maxcosecha=201912)
     
     for j in range(len(lista_cortes)):
+
+        print(lista_nombres[i],j)
+
         cortes = lista_cortes[j]
         product.condensar(cortes)
         product.optimizar()
@@ -33,4 +36,4 @@ for i in range(len(lista_nombres)):
             imprimir = imprimir.append(temp,ignore_index=True)
 
 print(imprimir)
-imprimir.to_excel("plancha3.xlsx")
+imprimir.to_excel("plancha4.xlsx")

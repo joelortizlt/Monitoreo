@@ -8,9 +8,9 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_AF_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Precios.csv', low_memory=False)
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
@@ -19,7 +19,7 @@ product.df_teorico
 
 #%%
 #Se definen los cortes
-cortes = ['C_PRODUCTO']
+cortes = ['C_SEGMENTO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 product.curvas
