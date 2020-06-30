@@ -13,7 +13,7 @@ ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/Campanas_Precios.csv']
 lista_cortes=[[],['C_PLAZO'],['C_CAMPANIA'],['C_GRACIA']]
 
 for i in range(len(lista_nombres)):
-    REAL = pd.read_csv(ruta_real[i], encoding='latin-1')
+    REAL = pd.read_csv(ruta_real[i])
     TEORICO = pd.read_csv(ruta_teorico[i])
     TMIN = pd.read_csv(ruta_tmin[i])
     product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801,maxcosecha=201912)
@@ -25,9 +25,9 @@ for i in range(len(lista_nombres)):
         cortes = lista_cortes[j]
         product.condensar(cortes)
         product.optimizar()
-        product.impactoTmin(TMIN,impactoTIR=True)
+        product.impactoTmin(TMIN,impactoTIR=True) #*
 
-        temp = pd.concat([product.promedios,product.stats,product.Tmin,product.TIR,product.curvas], axis=1)
+        temp = pd.concat([product.promedios,product.stats,product.Tmin,product.TIR,product.curvas], axis=1) #*
         name=temp.columns[0]
         temp.rename(columns={name:"CORTE"}, inplace=True)
         if i==0 and j==0:

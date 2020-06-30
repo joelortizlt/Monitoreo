@@ -31,9 +31,9 @@ resumen_descalibrados_pd, resumen_descalibrados_can, resumen_descalibrados_pre =
 resumen_revision_pd, resumen_revision_can, resumen_revision_pre = '', '', ''
 pd_alertas_list, can_alertas_list, pre_alertas_list = [], [], []
 
-Real = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Reales.csv')
-Teorico = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Inputs.csv')
-Tmin = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Precios.csv')
+Real = pd.read_csv('D:\Codes\Data\TSN_Reales.csv')
+Teorico = pd.read_csv('D:\Codes\Data\TSN_Inputs.csv')
+Tmin = pd.read_csv('D:\Codes\Data\TSN_Precios.csv')
 
 product = InputsRevolvente(Real, Teorico, completar=True)
 cortes =  'C_LINEA'

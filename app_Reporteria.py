@@ -17,46 +17,8 @@ from Reporte import Reporte
 ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, Corte1, Corte2, Completo) de los 'n' productos.
 
 lista = [  
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
-            # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Hipotecario'], 
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Hipotecario\Hipot_Precios.csv',
-            # 201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'Hipotecario'],
-            ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_AF_Reales.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Inputs.csv',
-            'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_PymeNR_TIR\PymeNR_Precios.csv',
-            201701, 201912, 'C_PRODUCTO', 'C_RANGOPD', 'Pyme Reactivo'],
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
-            # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Vehicular'], 
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_Vehicular\Vehicular_Precios.csv',
-            # 201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'Vehicular']
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv',
-            # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'GAHI'],
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_GAHI\Gahi_Precios.csv',
-            # 201701, 201912, 'C_SEGMENTO', 'C_MONEDA', 'GAHI'],
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_MiVivienda\Mivivienda_Precios.csv',
-            # 201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'Mi Vivienda'],
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
-            # 201701, 201712, 'C_SEGMENTO', 'C_PLAZO', 'Crédito Efectivo'],
-            # ['C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Reales.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Inputs.csv',
-            # 'C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_CEF\CEFCB_Precios.csv',
-            # 201701, 201712, 'C_SEGMENTO', 'C_MONEDA', 'Crédito Efectivo']
+            ['D:\Codes\Data\PymeNR_Reales.csv', 'D:\Codes\Data\PymeNR_Inputs.csv','D:\Codes\Data\PymeNR_Precios.csv',
+            201801, 201912, 'C_PRODUCTO', 'C_MONEDA', 'Pyme Reactivo'],
         ]  
 
 for elem in lista:
