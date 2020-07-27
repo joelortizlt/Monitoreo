@@ -15,12 +15,12 @@ class OutputsNoRevolventeTeorico():
         df_teorico = df
         
         #colocar las curvas en una sola celda
+        df_teorico['saldo'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'SALDOPROM1'):f.encontrar_encabezado(df_teorico,'IF1')].values.tolist()})
         df_teorico['if'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'IF1'):f.encontrar_encabezado(df_teorico,'EF1')].values.tolist()})
-        df_teorico['ef'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'EF1'):f.encontrar_encabezado(df_teorico,'SALDO1')].values.tolist()})
-        df_teorico['saldo'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'SALDO1'):f.encontrar_encabezado(df_teorico,'if')].values.tolist()})
+        df_teorico['ef'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'EF1'):f.encontrar_encabezado(df_teorico,'saldo')].values.tolist()})
  
         #seleccionar solo la data relevante
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']]
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -49,25 +49,25 @@ class OutputsNoRevolventeTeorico():
         #TEÓRICAS
         for i in range(len(curvas)):
             
-            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             #IF teórico
-            temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['if']))
+            temp['result'] = list(map(f.operation_pd, temp['MAXMADPYG'], temp['if']))
             a = f.aggr_avg(temp['result'])
             
             #EF teórico
-            temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['ef']))
+            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['ef']))
             b = f.aggr_avg(temp['result'])
             
             #SALDO teórico
-            temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['saldo']))
+            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['saldo']))
             c = f.aggr_avg(temp['result'])
             
             curvas.at[i,'if_teorico'] = [round(x,0) for x in a]
             curvas.at[i,'ef_teorico'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_teorico'] = [round(x,0) for x in c]
-            ratios.at[i,'r_if_teorico'] = round((1+(sum(a)/sum(c)))**12-1,6)*100
-            ratios.at[i,'r_ef_teorico'] = round((1+(sum(b)/sum(c)))**12-1,6)*100
-            ratios.at[i,'r_apread_teorico'] = round((1+((sum(a)+sum(b))/sum(c)))**12-1,6)*100
+            ratios.at[i,'r_if_teorico'] = round(sum(a)/sum(c)*12,6)*100
+            ratios.at[i,'r_ef_teorico'] = round(sum(b)/sum(c)*12,6)*100
+            ratios.at[i,'r_apread_teorico'] = round((sum(a)-sum(b))/sum(c)*12,6)*100
 
         self.curvasT = curvas
         self.ratiosT = ratios

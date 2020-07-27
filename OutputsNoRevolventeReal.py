@@ -17,12 +17,12 @@ class OutputsNoRevolventeReal():
         df_real = df
         
         #colocar las curvas en una sola celda
+        df_real['saldo'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'SALDOPROM1'):f.encontrar_encabezado(df_real,'IF1')].values.tolist()})
         df_real['if'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'IF1'):f.encontrar_encabezado(df_real,'EF1')].values.tolist()})
-        df_real['ef'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'EF1'):f.encontrar_encabezado(df_real,'SALDO1')].values.tolist()})
-        df_real['saldo'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'SALDO1'):f.encontrar_encabezado(df_real,'if')].values.tolist()})
+        df_real['ef'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'EF1'):f.encontrar_encabezado(df_real,'saldo')].values.tolist()})
         
         #seleccionar solo la data relevante
-        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']]
+        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -51,11 +51,11 @@ class OutputsNoRevolventeReal():
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             
-            temp['sum_if']=list(map(f.operation_pd, temp['MAXMAD'], temp['if']))
-            temp['sum_ef']=list(map(f.operation_pd, temp['MAXMAD'], temp['ef']))
-            temp['sum_saldo']=list(map(f.operation_pd, temp['MAXMAD'], temp['saldo']))
+            temp['sum_if']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['if']))
+            temp['sum_ef']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['ef']))
+            temp['sum_saldo']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['saldo']))
             
             a = f.aggr_avg(temp['sum_if'])
             b = f.aggr_avg(temp['sum_ef'])
@@ -65,9 +65,9 @@ class OutputsNoRevolventeReal():
             curvas.at[i,'ef_real'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_real'] = [round(x,0) for x in c]
             
-            ratios.at[i,'r_if_real'] = round((1+(sum(a)/sum(c)))**12-1,6)*100
-            ratios.at[i,'r_ef_real'] = round((1+(sum(b)/sum(c)))**12-1,6)*100
-            ratios.at[i,'r_spread_real'] = round((1+((sum(a)+sum(b))/sum(c)))**12-1,6)*100
+            ratios.at[i,'r_if_real'] = round(sum(a)/sum(c)*12,6)*100
+            ratios.at[i,'r_ef_real'] = round(sum(b)/sum(c)*12,6)*100
+            ratios.at[i,'r_spread_real'] = round((sum(a)-sum(b))/sum(c)*12,6)*100
 
         self.curvasR = curvas
         self.ratiosR = ratios

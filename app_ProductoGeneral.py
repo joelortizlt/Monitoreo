@@ -22,10 +22,10 @@ from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 # 1. Lectura de Data - Reporte PD, CAN, PRE, MAE
 
 # Elección de Producto
-REAL = pd.read_csv('D:\Codes\Data\PymeNR_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('D:\Codes\Data\PymeNR_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('D:\Codes\Data\PymeNR_Precios.csv', low_memory=False)
-mincosecha, maxcosecha = 201901, 201912
+REAL = pd.read_csv('D:\Codes\Data\Hipot_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('D:\Codes\Data\Hipot_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('D:\Codes\Data\Hipot_Precios.csv', low_memory=False)
+mincosecha, maxcosecha = 201701, 201912
 producto = 'Campañar'
 
 

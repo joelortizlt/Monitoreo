@@ -17,8 +17,8 @@ from Reporte import Reporte
 ReporteStack= [] # Lista donde se añaden los 4 report_list (ProductoSinCortes, Corte1, Corte2, Completo) de los 'n' productos.
 
 lista = [  
-            ['D:\Codes\Data\PymeNR_Reales.csv', 'D:\Codes\Data\PymeNR_Inputs.csv','D:\Codes\Data\PymeNR_Precios.csv',
-            201801, 201912, 'C_PRODUCTO', 'C_MONEDA', 'Pyme Reactivo'],
+            ['D:\Codes\Data\Hipot_Reales.csv', 'D:\Codes\Data\Hipot_Inputs.csv','D:\Codes\Data\Hipot_Precios.csv',
+            201701, 201912, 'C_SEGMENTO', 'C_PLAZO', 'HIPOTECARIO'],
         ]  
 
 for elem in lista:
