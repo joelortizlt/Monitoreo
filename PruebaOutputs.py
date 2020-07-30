@@ -14,13 +14,15 @@ TMIN = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Vehicular_Pr
 
 #%%
 #Se crea el objeto
-product = OutputsNoRevolvente(REAL,TEORICO)#,mincosecha=201801,maxcosecha=201803)
+product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201803)
 
 #%%
 #Se definen los cortes
 cortes = []
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
+
+#%%
 product.curvas
 
 #%%
@@ -36,4 +38,4 @@ product.plotear('ef')
 product.plotear('saldo')
 
 #%%
-product.ratios.to_excel("ratiosVEH.xlsx")
+product.ratios.to_excel("ratiosCHIP.xlsx")
