@@ -8,14 +8,13 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Precios.csv', low_memory=False)
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Gahi_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Gahi_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/GAHI/Gahi_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
 product = InputsNoRevolvente(REAL,TEORICO)#,mincosecha=201801,maxcosecha=201812)
-product.df_teorico
 
 #%%
 #Se definen los cortes
@@ -35,12 +34,12 @@ product.ci_pd
 
 #%%
 #Se puede ver gráficamente los resultados
-product.plotear('pd')
+#product.plotear('pd')
 product.plotear('can')
-product.plotear('pre')
-product.MAE('pd')
+#product.plotear('pre')
+#product.MAE('pd')
 product.MAE('can')
-product.MAE('pre')
+#product.MAE('pre')
 
 #%%
 #Se puede optimizar
@@ -55,12 +54,12 @@ product.promedios
 
 #%%
 #También pueden graficarse
-product.plotear('pd',optimo=True)
+#product.plotear('pd',optimo=True)
 product.plotear('can',optimo=True)
-product.plotear('pre',optimo=True)
-product.MAE('pd',optimo=True)
+#product.plotear('pre',optimo=True)
+#product.MAE('pd',optimo=True)
 product.MAE('can',optimo=True)
-product.MAE('pre',optimo=True)
+#product.MAE('pre',optimo=True)
 
 #%%
 product.impactoTmin(TMIN,impactoTIR=False)

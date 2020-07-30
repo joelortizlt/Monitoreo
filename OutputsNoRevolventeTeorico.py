@@ -39,12 +39,16 @@ class OutputsNoRevolventeTeorico():
         #Creamos la 'plantilla'
         curvas = self.df_teorico.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         ratios = curvas.copy()
+        niveles = curvas.copy()
         curvas['if_teorico'] = ''
         curvas['ef_teorico'] = ''
         curvas['saldo_teorico'] = ''
         ratios['r_if_teorico'] = ''
         ratios['r_ef_teorico'] = ''
         ratios['r_spread_teorico'] = ''
+        niveles['n_if_teorico'] = ''
+        niveles['n_ef_teorico'] = ''
+        niveles['n_spread_teorico'] = ''
         
         #TEÓRICAS
         for i in range(len(curvas)):
@@ -52,22 +56,19 @@ class OutputsNoRevolventeTeorico():
             temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             #IF teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMADPYG'], temp['if']))
-            a = f.aggr_avg(temp['result'])
+            a = f.aggr_sum(temp['result'])
             
             #EF teórico
             temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['ef']))
-            b = f.aggr_avg(temp['result'])
+            b = f.aggr_sum(temp['result'])
             
             #SALDO teórico
             temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['saldo']))
-            c = f.aggr_avg(temp['result'])
+            c = f.aggr_sum(temp['result'])
             
             curvas.at[i,'if_teorico'] = [round(x,0) for x in a]
             curvas.at[i,'ef_teorico'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_teorico'] = [round(x,0) for x in c]
-            ratios.at[i,'r_if_teorico'] = round(sum(a)/sum(c)*12,6)*100
-            ratios.at[i,'r_ef_teorico'] = round(sum(b)/sum(c)*12,6)*100
-            ratios.at[i,'r_apread_teorico'] = round((sum(a)-sum(b))/sum(c)*12,6)*100
 
         self.curvasT = curvas
         self.ratiosT = ratios

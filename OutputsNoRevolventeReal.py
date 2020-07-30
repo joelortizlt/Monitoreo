@@ -40,14 +40,17 @@ class OutputsNoRevolventeReal():
         
         #Creamos las 'plantillas'
         curvas = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
+        ratios = curvas.copy()
+        niveles = curvas.copy()
         curvas['if_real'] = ''
         curvas['ef_real'] = ''
         curvas['saldo_real'] = ''
-        
-        ratios = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         ratios['r_if_real'] = ''
         ratios['r_ef_real'] = ''
         ratios['r_spread_real'] = ''
+        niveles['n_if_real'] = ''
+        niveles['n_ef_real'] = ''
+        niveles['n_saldo_real'] = ''
         
         #REALES
         for i in range(len(curvas)):
@@ -57,17 +60,14 @@ class OutputsNoRevolventeReal():
             temp['sum_ef']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['ef']))
             temp['sum_saldo']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['saldo']))
             
-            a = f.aggr_avg(temp['sum_if'])
-            b = f.aggr_avg(temp['sum_ef'])
-            c = f.aggr_avg(temp['sum_saldo'])
+            a = f.aggr_sum(temp['sum_if'])
+            b = f.aggr_sum(temp['sum_ef'])
+            c = f.aggr_sum(temp['sum_saldo'])
             
             curvas.at[i,'if_real'] = [round(x,0) for x in a]
             curvas.at[i,'ef_real'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_real'] = [round(x,0) for x in c]
-            
-            ratios.at[i,'r_if_real'] = round(sum(a)/sum(c)*12,6)*100
-            ratios.at[i,'r_ef_real'] = round(sum(b)/sum(c)*12,6)*100
-            ratios.at[i,'r_spread_real'] = round((sum(a)-sum(b))/sum(c)*12,6)*100
 
         self.curvasR = curvas
         self.ratiosR = ratios
+        self.nivelesR = niveles

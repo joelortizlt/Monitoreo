@@ -17,7 +17,7 @@ class InputsNoRevolventeTeorico():
         #Se coloca las curvas en una sola celda (por temas de orden)
         df_teorico['pd_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PD1'):f.encontrar_encabezado(df_teorico,'CAN1')].values.tolist()})
         df_teorico['can_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'CAN1'):f.encontrar_encabezado(df_teorico,'PRE1')].values.tolist()})
-        df_teorico['pre_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PRE1'):f.encontrar_encabezado(df_teorico,'pd_marginal')].values.tolist()})
+        df_teorico['pre_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PRE1'):f.encontrar_encabezado(df_teorico,'SALDOPROM1')].values.tolist()})
  
         #Se selecciona solo los campos relevantes y se filtra por cosecha
         df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal', 'can_marginal', 'pre_marginal']]

@@ -30,6 +30,7 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
 
         curvas = curvas.rename(columns={'recuento_x':'recuento'}).drop('recuento_y',1)
         ratios = curvas[f.all_cortes(curvas)+['recuento']].copy()
+        niveles = curvas[f.all_cortes(curvas)+['recuento']].copy()
         
         for i in range(len(curvas)):
             
@@ -45,16 +46,25 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
             curvas.at[i, 'saldo_real']=curvas.loc[i, 'saldo_real'].copy()[:l]
             curvas.at[i, 'saldo_teorico']=curvas.loc[i, 'saldo_teorico'].copy()[:l]
                   
-            ratios.at[i,'r_if_real'] = round((1+(sum(curvas.loc[i, 'if_real'])/sum(curvas.loc[i, 'saldo_real'])))**12-1,6)*100
-            ratios.at[i,'r_ef_real'] = round((1+(sum(curvas.loc[i, 'ef_real'])/sum(curvas.loc[i, 'saldo_real'])))**12-1,6)*100
-            ratios.at[i,'r_spread_real'] = round((1+((sum(curvas.loc[i, 'if_real'])-sum(curvas.loc[i, 'ef_real']))/sum(curvas.loc[i, 'saldo_real'])))**12-1,6)*100
+            ratios.at[i,'r_if_real'] = round(((sum(curvas.loc[i, 'if_real'])/sum(curvas.loc[i, 'saldo_real'])))*12,6)*100
+            ratios.at[i,'r_ef_real'] = round(((sum(curvas.loc[i, 'ef_real'])/sum(curvas.loc[i, 'saldo_real'])))*12,6)*100
+            ratios.at[i,'r_spread_real'] = round((((sum(curvas.loc[i, 'if_real'])-sum(curvas.loc[i, 'ef_real']))/sum(curvas.loc[i, 'saldo_real'])))*12,6)*100
             
-            ratios.at[i,'r_if_teorico'] = round((1+(sum(curvas.loc[i, 'if_teorico'])/sum(curvas.loc[i, 'saldo_teorico'])))**12-1,6)*100
-            ratios.at[i,'r_ef_teorico'] = round((1+(sum(curvas.loc[i, 'ef_teorico'])/sum(curvas.loc[i, 'saldo_teorico'])))**12-1,6)*100
-            ratios.at[i,'r_apread_teorico'] = round((1+((sum(curvas.loc[i, 'if_teorico'])-sum(curvas.loc[i, 'ef_teorico']))/sum(curvas.loc[i, 'saldo_teorico'])))**12-1,6)*100
+            ratios.at[i,'r_if_teorico'] = round(((sum(curvas.loc[i, 'if_teorico'])/sum(curvas.loc[i, 'saldo_teorico'])))*12,6)*100
+            ratios.at[i,'r_ef_teorico'] = round(((sum(curvas.loc[i, 'ef_teorico'])/sum(curvas.loc[i, 'saldo_teorico'])))*12,6)*100
+            ratios.at[i,'r_spread_teorico'] = round((((sum(curvas.loc[i, 'if_teorico'])-sum(curvas.loc[i, 'ef_teorico']))/sum(curvas.loc[i, 'saldo_teorico'])))*12,6)*100
             
+            niveles.at[i,'n_if_real'] = round(sum(curvas.loc[i, 'if_real']),0)
+            niveles.at[i,'n_ef_real'] = round(sum(curvas.loc[i, 'ef_real']),0)
+            niveles.at[i,'n_saldo_real'] = round(sum(curvas.loc[i, 'saldo_real']),0)
+            
+            niveles.at[i,'n_if_teorico'] = round(sum(curvas.loc[i, 'if_teorico']),0)
+            niveles.at[i,'n_ef_teorico'] = round(sum(curvas.loc[i, 'ef_teorico']),0)
+            niveles.at[i,'n_saldo_teorico'] = round(sum(curvas.loc[i, 'saldo_teorico']),0)
+
         self.curvas = curvas
         self.ratios = ratios
+        self.niveles = niveles
     
     def plotear(self,texto):
         cortes_temp = f.all_cortes(self.curvas)
