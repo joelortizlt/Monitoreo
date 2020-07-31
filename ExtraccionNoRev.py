@@ -44,4 +44,4 @@ for i in range(len(lista_nombres)):
             imprimir = imprimir.append(temp,ignore_index=True)
 
 print(imprimir)
-imprimir.to_excel("plancha2.xlsx")
+imprimir.to_excel("plancha.xlsx")

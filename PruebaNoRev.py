@@ -8,9 +8,9 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Vehicular_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Vehicular_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Vehicular_Precios.csv', low_memory=False)
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Pyme_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Pyme_Inputs.csv', low_memory=False)
+#TMIN = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Vehicular_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
@@ -18,9 +18,11 @@ product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201812)
 
 #%%
 #Se definen los cortes
-cortes = []
+cortes = ['C_PRODUCTO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
+
+#%%
 product.curvas
 
 #%%

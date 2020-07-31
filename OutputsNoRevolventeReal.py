@@ -22,7 +22,7 @@ class OutputsNoRevolventeReal():
         df_real['ef'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'EF1'):f.encontrar_encabezado(df_real,'saldo')].values.tolist()})
         
         #seleccionar solo la data relevante
-        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']]
+        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','if','ef','saldo']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -40,22 +40,15 @@ class OutputsNoRevolventeReal():
         
         #Creamos las 'plantillas'
         curvas = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
-        ratios = curvas.copy()
-        niveles = curvas.copy()
+        curvas['monto'] = ''
         curvas['if_real'] = ''
         curvas['ef_real'] = ''
         curvas['saldo_real'] = ''
-        ratios['r_if_real'] = ''
-        ratios['r_ef_real'] = ''
-        ratios['r_spread_real'] = ''
-        niveles['n_if_real'] = ''
-        niveles['n_ef_real'] = ''
-        niveles['n_saldo_real'] = ''
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
-            
+            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+
             temp['sum_if']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['if']))
             temp['sum_ef']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['ef']))
             temp['sum_saldo']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['saldo']))
@@ -64,10 +57,9 @@ class OutputsNoRevolventeReal():
             b = f.aggr_sum(temp['sum_ef'])
             c = f.aggr_sum(temp['sum_saldo'])
             
+            curvas.at[i,'monto'] = temp['MTODESEMBOLSADO'].sum()
             curvas.at[i,'if_real'] = [round(x,0) for x in a]
             curvas.at[i,'ef_real'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_real'] = [round(x,0) for x in c]
 
         self.curvasR = curvas
-        self.ratiosR = ratios
-        self.nivelesR = niveles

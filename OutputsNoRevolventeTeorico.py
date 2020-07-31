@@ -20,7 +20,7 @@ class OutputsNoRevolventeTeorico():
         df_teorico['ef'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'EF1'):f.encontrar_encabezado(df_teorico,'saldo')].values.tolist()})
  
         #seleccionar solo la data relevante
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','if','ef','saldo']]
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -38,22 +38,15 @@ class OutputsNoRevolventeTeorico():
 
         #Creamos la 'plantilla'
         curvas = self.df_teorico.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
-        ratios = curvas.copy()
-        niveles = curvas.copy()
+        curvas['monto'] = ''
         curvas['if_teorico'] = ''
         curvas['ef_teorico'] = ''
         curvas['saldo_teorico'] = ''
-        ratios['r_if_teorico'] = ''
-        ratios['r_ef_teorico'] = ''
-        ratios['r_spread_teorico'] = ''
-        niveles['n_if_teorico'] = ''
-        niveles['n_ef_teorico'] = ''
-        niveles['n_spread_teorico'] = ''
         
         #TEÓRICAS
         for i in range(len(curvas)):
             
-            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             #IF teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMADPYG'], temp['if']))
             a = f.aggr_sum(temp['result'])
@@ -66,9 +59,9 @@ class OutputsNoRevolventeTeorico():
             temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['saldo']))
             c = f.aggr_sum(temp['result'])
             
+            curvas.at[i,'monto'] = temp['MTODESEMBOLSADO'].sum()
             curvas.at[i,'if_teorico'] = [round(x,0) for x in a]
             curvas.at[i,'ef_teorico'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_teorico'] = [round(x,0) for x in c]
 
         self.curvasT = curvas
-        self.ratiosT = ratios
