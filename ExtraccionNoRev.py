@@ -8,16 +8,16 @@ from InputsNoRevolvente import InputsNoRevolvente
 from OutputsNoRevolvente import OutputsNoRevolvente
 
 #CAMBIAR
-nombreproducto = 'GAHI'
+nombreproducto = 'Estacional'
 #CAMBIAR
 
-agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_OK']
+#agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_OK']
 #agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_CANAL','C_OK']
-#agregado_cortes=['C_CAMPANIA','C_PLAZO','C_GRACIA','C_OK']
+agregado_cortes=['C_CAMPANIA','C_PLAZO','C_GRACIA','C_OK']
 
-lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_OK']]
+#lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_OK']]
 #lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_CANAL'],['C_OK']]
-#lista_cortes=[['C_CAMPANIA'],['C_PLAZO'],['C_GRACIA'],['C_OK']]
+lista_cortes=[['C_CAMPANIA'],['C_PLAZO'],['C_GRACIA'],['C_OK']]
 
 ruta_real=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_reales.csv']
 ruta_teorico=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_inputs.csv']
