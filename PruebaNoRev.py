@@ -7,18 +7,18 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
-
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Pyme_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Pyme_Inputs.csv', low_memory=False)
-#TMIN = pd.read_csv('/Users/renzomartinch/Downloads/SeguimientoJulio/Vehicular_Precios.csv', low_memory=False)
+from OutputsNoRevolvente import OutputsNoRevolvente
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/ComiteAgosto/Gahi_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/ComiteAgosto/Gahi_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/ComiteAgosto/Gahi_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
-product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201812)
+product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201912)
 
 #%%
 #Se definen los cortes
-cortes = ['C_PRODUCTO']
+cortes = ['C_MONEDA']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 
@@ -46,6 +46,8 @@ product.plotear('pre')
 #%%
 #Se puede optimizar
 product.optimizar()
+
+#%%
 product.curvas
 
 #%%
@@ -64,17 +66,41 @@ product.plotear('pre',optimo=True)
 #product.MAE('pre',optimo=True)
 
 #%%
-product.impactoTmin(TMIN,impactoTIR=False)
+product.impactoTmin(TMIN)
 product.Tmin
 
 #%%
 product.TminProm
 
 #%%
-product.impactoTmin(TMIN,impactoTIR=True)
+product.impactoTIR(TMIN)
 product.TIR
 
 #%%
 product.TIRProm
 
 # %%
+#Se crea el objeto
+product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201912)
+
+#%%
+#Se definen los cortes
+cortes = ['C_MONEDA']
+#Se agrupa en base a los cortes definidos
+product.condensar(cortes)
+
+#%%
+product.curvas
+
+#%%
+product.ratios
+
+#%%
+product.niveles
+
+#%%
+#Se puede ver gráficamente los resultados
+product.plotear('if')
+product.plotear('ef')
+product.plotear('pe')
+product.plotear('saldo')

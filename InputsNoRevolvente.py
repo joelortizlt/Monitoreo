@@ -264,7 +264,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
             self.promedios.at[i, 'pre_optimo'] = sum(self.curvas.at[i, 'pre_optimo'])/len(self.curvas.at[i, 'pre_optimo'])
 
 
-    def impactoTmin(self,df_tmin,impactoTIR=False):
+    def impactoTmin(self,df_tmin):
 
         cortes=f.all_cortes(self.stats)
         izquierda = self.df_real[['CODCLAVEOPECTA','COSECHA']+f.all_cortes(self.df_real)].copy()
@@ -280,17 +280,17 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         for i in range(len(Tmin)):
             temp = pd.merge(df, pd.DataFrame([Tmin.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)    
             Tmin.at[i,'Tmin_base']  = f.weighted_average(temp,'Tmin','MTODESEMBOLSADO')
-            Tmin.at[i,'delta_pd']  = (f.weighted_average(temp,'PDTmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_pd']-1)*10
-            Tmin.at[i,'delta_can']  = (f.weighted_average(temp,'CANTmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_can']-1)*10
-            Tmin.at[i,'delta_pre']  = (f.weighted_average(temp,'PRETmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_pre']-1)*10
-            Tmin.at[i,'Tmin_final']  = Tmin.loc[i,'Tmin_base']+Tmin.loc[i,'delta_pd']+Tmin.loc[i,'delta_can']+Tmin.loc[i,'delta_pre']
+            Tmin.at[i,'delta_Tmin_pd']  = (f.weighted_average(temp,'PDTmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_pd']-1)*10
+            Tmin.at[i,'delta_Tmin_can']  = (f.weighted_average(temp,'CANTmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_can']-1)*10
+            Tmin.at[i,'delta_Tmin_pre']  = (f.weighted_average(temp,'PRETmin','MTODESEMBOLSADO')-Tmin.loc[i,'Tmin_base'])*(self.stats.loc[i,'scalar_pre']-1)*10
+            Tmin.at[i,'Tmin_final']  = Tmin.loc[i,'Tmin_base']+Tmin.loc[i,'delta_Tmin_pd']+Tmin.loc[i,'delta_Tmin_can']+Tmin.loc[i,'delta_Tmin_pre']
             Tmin.at[i,'Monto'] = temp['MTODESEMBOLSADO'].sum()
         self.Tmin = Tmin
 
         Tmin_base_prom = f.weighted_average(self.Tmin,'Tmin_base','Monto')
-        delta_pd_prom = f.weighted_average(self.Tmin,'delta_pd','Monto')
-        delta_can_prom = f.weighted_average(self.Tmin,'delta_can','Monto')
-        delta_pre_prom = f.weighted_average(self.Tmin,'delta_pre','Monto')
+        delta_pd_prom = f.weighted_average(self.Tmin,'delta_Tmin_pd','Monto')
+        delta_can_prom = f.weighted_average(self.Tmin,'delta_Tmin_can','Monto')
+        delta_pre_prom = f.weighted_average(self.Tmin,'delta_Tmin_pre','Monto')
         Tmin_final_prom = f.weighted_average(self.Tmin,'Tmin_final','Monto')      
 
         data = [['Tmin_base_prom', Tmin_base_prom], ['delta_pd_prom', delta_pd_prom], ['delta_can_prom', delta_can_prom], ['delta_pre_prom', delta_pre_prom], ['Tmin_final_prom', Tmin_final_prom]]  
@@ -298,31 +298,35 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         self.TminProm = TminProm
 
 
-        if impactoTIR==True:
-            derecha2 = df_tmin[['CODCLAVEOPECTA','ECAP','TIR','TIRPD','TIRCAN','TIRPRE']].copy()
-            df2 = pd.merge(left=izquierda, right=derecha2, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
-            
-            if cortes==['C_TODOS']:
-                df2.loc[:,'C_TODOS']=''
-            df2 = df2[cortes+['CODCLAVEOPECTA','COSECHA','ECAP','TIR','TIRPD','TIRCAN','TIRPRE']]
-            TIR = self.curvas[f.all_cortes(self.curvas)+['recuento']].copy()
+    def impactoTIR(self,df_tir):
+        
+        cortes=f.all_cortes(self.stats)
+        izquierda = self.df_real[['CODCLAVEOPECTA','COSECHA']+f.all_cortes(self.df_real)].copy()
 
-            for i in range(len(TIR)):
-                temp = pd.merge(df2, pd.DataFrame([TIR.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)    
-                TIR.at[i,'TIR_base']  = f.weighted_average(temp,'TIR','ECAP')
-                TIR.at[i,'delta_pd']  = (f.weighted_average(temp,'TIRPD','ECAP')-TIR.loc[i,'TIR_base'])*(self.stats.loc[i,'scalar_pd']-1)*10
-                TIR.at[i,'delta_can']  = (f.weighted_average(temp,'TIRCAN','ECAP')-TIR.loc[i,'TIR_base'])*(self.stats.loc[i,'scalar_can']-1)*10
-                TIR.at[i,'delta_pre']  = (f.weighted_average(temp,'TIRPRE','ECAP')-TIR.loc[i,'TIR_base'])*(self.stats.loc[i,'scalar_pre']-1)*10
-                TIR.at[i,'TIR_final']  = TIR.loc[i,'TIR_base']+TIR.loc[i,'delta_pd']+TIR.loc[i,'delta_can']+TIR.loc[i,'delta_pre']
-                TIR.at[i,'Capital promedio'] = temp['ECAP'].sum()
-            self.TIR = TIR
+        derecha2 = df_tir[['CODCLAVEOPECTA','ECAP','TIR','PDTIR','CANTIR','PRETIR']].copy()
+        df2 = pd.merge(left=izquierda, right=derecha2, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
+        
+        if cortes==['C_TODOS']:
+            df2.loc[:,'C_TODOS']=''
+        df2 = df2[cortes+['CODCLAVEOPECTA','COSECHA','ECAP','TIR','PDTIR','CANTIR','PRETIR']]
+        TIR = self.curvas[f.all_cortes(self.curvas)+['recuento']].copy()
 
-            TIR_base_prom = f.weighted_average(self.TIR,'TIR_base','Capital promedio')
-            delta_pd_prom = f.weighted_average(self.TIR,'delta_pd','Capital promedio')
-            delta_can_prom = f.weighted_average(self.TIR,'delta_can','Capital promedio')
-            delta_pre_prom = f.weighted_average(self.TIR,'delta_pre','Capital promedio')
-            TIR_final_prom = f.weighted_average(self.TIR,'TIR_final','Capital promedio')      
+        for i in range(len(TIR)):
+            temp = pd.merge(df2, pd.DataFrame([TIR.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)    
+            TIR.at[i,'TIR_base']  = f.weighted_average(temp,'TIR','ECAP')
+            TIR.at[i,'delta_TIR_pd']  = (f.weighted_average(temp,'PDTIR','ECAP')-TIR.loc[i,'TIR_base'])*(self.stats.loc[i,'scalar_pd']-1)*10
+            TIR.at[i,'delta_TIR_can']  = (f.weighted_average(temp,'CANTIR','ECAP')-TIR.loc[i,'TIR_base'])*(self.stats.loc[i,'scalar_can']-1)*10
+            TIR.at[i,'delta_TIR_pre']  = (f.weighted_average(temp,'PRETIR','ECAP')-TIR.loc[i,'TIR_base'])*(self.stats.loc[i,'scalar_pre']-1)*10
+            TIR.at[i,'TIR_final']  = TIR.loc[i,'TIR_base']+TIR.loc[i,'delta_TIR_pd']+TIR.loc[i,'delta_TIR_can']+TIR.loc[i,'delta_TIR_pre']
+            TIR.at[i,'Capital promedio'] = temp['ECAP'].sum()
+        self.TIR = TIR
 
-            data = [['TIR_base_prom', TIR_base_prom], ['delta_pd_prom', delta_pd_prom], ['delta_can_prom', delta_can_prom], ['delta_pre_prom', delta_pre_prom], ['TIR_final_prom', TIR_final_prom]]  
-            TIRProm = pd.DataFrame(data, columns = ['Campo', 'Valor'])
-            self.TIRProm = TIRProm
+        TIR_base_prom = f.weighted_average(self.TIR,'TIR_base','Capital promedio')
+        delta_pd_prom = f.weighted_average(self.TIR,'delta_TIR_pd','Capital promedio')
+        delta_can_prom = f.weighted_average(self.TIR,'delta_TIR_can','Capital promedio')
+        delta_pre_prom = f.weighted_average(self.TIR,'delta_TIR_pre','Capital promedio')
+        TIR_final_prom = f.weighted_average(self.TIR,'TIR_final','Capital promedio')      
+
+        data = [['TIR_base_prom', TIR_base_prom], ['delta_pd_prom', delta_pd_prom], ['delta_can_prom', delta_can_prom], ['delta_pre_prom', delta_pre_prom], ['TIR_final_prom', TIR_final_prom]]  
+        TIRProm = pd.DataFrame(data, columns = ['Campo', 'Valor'])
+        self.TIRProm = TIRProm
