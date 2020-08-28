@@ -5,43 +5,93 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
+from OutputsNoRevolvente import OutputsNoRevolvente
 
-#lista_nombres=['CEF','PymeCT','PymeAF']
-lista_nombres=['CHIP','GAHI','MiViv','VEH']
-#ruta_real=['/Users/renzomartinch/Downloads/Comite_0622/CEFCB_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeCT_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeAF_Reales.csv']
-ruta_real=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Reales.csv','/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Reales.csv']
-#ruta_teorico=['/Users/renzomartinch/Downloads/Comite_0622/CEFCB_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Inputs.csv']
-ruta_teorico=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Inputs.csv','/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Inputs.csv']
-#ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/CEFCB_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/PymeNR_Precios.csv']
-ruta_tmin=['/Users/renzomartinch/Downloads/Comite_0622/Hipot_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/Gahi_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/MiVivienda_Precios.csv','/Users/renzomartinch/Downloads/Comite_0622/Vehicular_Precios.csv']
-lista_cortes=[[],['C_PLAZO'],['C_SEGMENTO'],['C_MONEDA']]#,['C_RANGOSCORE']]
-lista_cortes_Pyme=[[],['C_PLAZO'],['C_PRODUCTO'],['C_MONEDA'],['C_RANGOPD']]
+#CAMBIAR
+nombreproducto = 'GAHI'
+#CAMBIAR
 
-for i in range(len(lista_nombres)):
-    REAL = pd.read_csv(ruta_real[i], encoding='latin-1')
+agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_OK']
+#agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_CANAL','C_OK']
+#agregado_cortes=['C_CAMPANIA','C_PLAZO','C_GRACIA','C_OK']
+
+lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_OK']]
+#lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_CANAL'],['C_OK']]
+#lista_cortes=[['C_CAMPANIA'],['C_PLAZO'],['C_GRACIA'],['C_OK']]
+
+ruta_real=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_reales.csv']
+ruta_teorico=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_inputs.csv']
+ruta_tmin=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_precios.csv']
+
+for i in range(len(ruta_real)):
+    
+    n = len(agregado_cortes)
+
+    REAL = pd.read_csv(ruta_real[i])
     TEORICO = pd.read_csv(ruta_teorico[i])
     TMIN = pd.read_csv(ruta_tmin[i])
-    product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801,maxcosecha=201912)
     
-    for j in range(len(lista_cortes)):
+    product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801,maxcosecha=201912)
+    product.condensar(agregado_cortes)
+    product.optimizar()
+    product.impactoTmin(TMIN)
+    product.impactoTIR(TMIN)
 
-        print(lista_nombres[i],j)
+    a = product.promedios
+    b = product.stats.drop(product.stats.iloc[:, 0:(n+1)], axis = 1)
+    c = product.Tmin.drop(product.Tmin.iloc[:, 0:(n+1)], axis = 1) 
+    d = product.TIR.drop(product.TIR.iloc[:, 0:(n+1)], axis = 1)
 
-        if lista_nombres[i]=='PymeCT' or lista_nombres[i]=='PymeAF':
-            cortes = lista_cortes_Pyme[j]
+    product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=201801,maxcosecha=201912)
+    product.condensar(agregado_cortes)
+
+    e = product.ratios.drop(product.ratios.iloc[:, 0:(n+2)], axis = 1)
+    f = product.niveles.drop(product.niveles.iloc[:, 0:(n+2)], axis = 1)
+
+    agregado = pd.concat([a,b,c,d,e,f], axis=1)
+
+    first = True
+    for corte in lista_cortes:
+
+        condensado = agregado.groupby(corte).size().reset_index().rename(columns={0:'descartar'}).drop('descartar',1)
+
+        for j in range(len(condensado)):
+            
+            temp = agregado.loc[agregado[corte[0]] == condensado.loc[j,corte[0]]]
+            r = temp['recuento']
+            m = temp['Monto']
+            e = temp['Capital promedio']
+            s = temp['n_saldo_real']
+
+            condensado.at[j,'recuento'] = sum(r)
+            
+            for k in ['pd_real','can_real','pre_real','pd_teorico','can_teorico','pre_teorico','pd_optimo','can_optimo','pre_optimo','MAE_pd','MAE_can','MAE_pre','MAEop_pd','MAEop_can','MAEop_pre','scalar_pd','scalar_can','scalar_pre']:
+                condensado.at[j,k] = sum(temp[k] * r) / sum(r)
+            
+            for k in ['Tmin_base','delta_Tmin_pd','delta_Tmin_can','delta_Tmin_pre','Tmin_final']:
+                condensado.at[j,k] = sum(temp[k] * m) / sum(m)
+            
+            condensado.at[j,'Monto'] = sum(m)
+            
+            for k in ['TIR_base','delta_TIR_pd','delta_TIR_can','delta_TIR_pre','TIR_final']:
+                condensado.at[j,k] = sum(temp[k] * e) / sum(e)
+            
+            condensado.at[j,'Capital promedio'] = sum(e)
+
+            for k in ['r_if_real','r_ef_real','r_spread_bruto_real','r_if_teorico','r_ef_teorico','r_spread_bruto_teorico']:
+                condensado.at[j,k] = sum(temp[k] * s) / sum(s)
+
+            for k in ['n_if_real','n_ef_real','n_saldo_real','n_if_teorico','n_ef_teorico','n_saldo_teorico']:
+                condensado.at[j,k] = sum(temp[k])
+
+        nametemp=condensado.columns[0]
+        condensado.rename(columns={nametemp:"CORTE"}, inplace=True)
+
+        if first==True:
+            imprimir = condensado
         else:
-            cortes = lista_cortes[j]
-        product.condensar(cortes)
-        product.optimizar()
-        product.impactoTmin(TMIN)#,impactoTIR=True)
+            imprimir = imprimir.append(condensado,ignore_index=True)
+        first=False
 
-        temp = pd.concat([product.promedios,product.stats,product.Tmin,product.curvas], axis=1) #don't forget: product.TIR
-        name=temp.columns[0]
-        temp.rename(columns={name:"CORTE"}, inplace=True)
-        if i==0 and j==0:
-            imprimir = temp
-        else:
-            imprimir = imprimir.append(temp,ignore_index=True)
-
-print(imprimir)
-imprimir.to_excel("plancha.xlsx")
+    print(imprimir)
+    imprimir.to_excel(str(nombreproducto)+"_PlanchaPonderada.xlsx") ##ir cambiando el nombre
