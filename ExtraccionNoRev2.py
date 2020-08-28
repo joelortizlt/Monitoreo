@@ -7,14 +7,26 @@ import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 from OutputsNoRevolvente import OutputsNoRevolvente
 
-ruta_real=['/Users/renzomartinch/Downloads/ComiteAgosto/gahi_Reales.csv']
-ruta_teorico=['/Users/renzomartinch/Downloads/ComiteAgosto/gahi_Inputs.csv']
-ruta_tmin=['/Users/renzomartinch/Downloads/ComiteAgosto/gahi_Precios.csv']
-agregado_cortes=['C_PLAZO','C_SEGMENTO','C_MONEDA']
-lista_cortes=[['C_PLAZO'],['C_SEGMENTO'],['C_MONEDA']]
+#CAMBIAR
+nombreproducto = 'Estacional'
+#CAMBIAR
+
+#gregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_OK']
+#agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_CANAL','C_OK']
+agregado_cortes=['C_CAMPANIA','C_PLAZO','C_GRACIA','C_OK']
+
+#lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_OK']]
+#lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_CANAL'],['C_OK']]
+lista_cortes=[['C_CAMPANIA'],['C_PLAZO'],['C_GRACIA'],['C_OK']]
+
+ruta_real=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_reales.csv']
+ruta_teorico=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_inputs.csv']
+ruta_tmin=['/Users/renzomartinch/Downloads/ComiteAgosto/'+str(nombreproducto)+'_precios.csv']
 
 for i in range(len(ruta_real)):
     
+    n = len(agregado_cortes)
+
     REAL = pd.read_csv(ruta_real[i])
     TEORICO = pd.read_csv(ruta_teorico[i])
     TMIN = pd.read_csv(ruta_tmin[i])
@@ -26,19 +38,17 @@ for i in range(len(ruta_real)):
     product.impactoTIR(TMIN)
 
     a = product.promedios
-    b = product.stats.drop(product.stats.iloc[:, 0:4], axis = 1)
-    c = product.Tmin.drop(product.Tmin.iloc[:, 0:4], axis = 1) 
-    d = product.TIR.drop(product.TIR.iloc[:, 0:4], axis = 1)
+    b = product.stats.drop(product.stats.iloc[:, 0:(n+1)], axis = 1)
+    c = product.Tmin.drop(product.Tmin.iloc[:, 0:(n+1)], axis = 1) 
+    d = product.TIR.drop(product.TIR.iloc[:, 0:(n+1)], axis = 1)
 
     product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=201801,maxcosecha=201912)
     product.condensar(agregado_cortes)
 
-    e = product.ratios.drop(product.ratios.iloc[:, 0:5], axis = 1)
-    f = product.niveles.drop(product.niveles.iloc[:, 0:5], axis = 1)
+    e = product.ratios.drop(product.ratios.iloc[:, 0:(n+2)], axis = 1)
+    f = product.niveles.drop(product.niveles.iloc[:, 0:(n+2)], axis = 1)
 
     agregado = pd.concat([a,b,c,d,e,f], axis=1)
-
-    agregado.to_excel("plancha.xlsx")
 
     first = True
     for corte in lista_cortes:
@@ -67,14 +77,14 @@ for i in range(len(ruta_real)):
             
             condensado.at[j,'Capital promedio'] = sum(e)
 
-            for k in ['r_if_real','r_ef_real','r_spread_bruto_real','r_pe_real','r_spread_neto_real','r_if_teorico','r_ef_teorico','r_spread_bruto_teorico','r_pe_teorico','r_spread_neto_teorico']:
+            for k in ['r_if_real','r_ef_real','r_spread_bruto_real','r_if_teorico','r_ef_teorico','r_spread_bruto_teorico']:
                 condensado.at[j,k] = sum(temp[k] * m) / sum(m)
 
-            for k in ['n_if_real','n_ef_real','n_pe_real','n_saldo_real','n_if_teorico','n_ef_teorico','n_pe_teorico','n_saldo_teorico']:
+            for k in ['n_if_real','n_ef_real','n_saldo_real','n_if_teorico','n_ef_teorico','n_saldo_teorico']:
                 condensado.at[j,k] = sum(temp[k])
 
-        name=condensado.columns[0]
-        condensado.rename(columns={name:"CORTE"}, inplace=True)
+        nametemp=condensado.columns[0]
+        condensado.rename(columns={nametemp:"CORTE"}, inplace=True)
 
         if first==True:
             imprimir = condensado
@@ -83,6 +93,4 @@ for i in range(len(ruta_real)):
         first=False
 
     print(imprimir)
-    imprimir.to_excel("PlanchaPonderada.xlsx") ##ir cambiando el nombre
-    print(agregado)
-    agregado.to_excel("PlanchaGranular.xlsx")
+    imprimir.to_excel(str(nombreproducto)+"_PlanchaPonderada.xlsx") ##ir cambiando el nombre

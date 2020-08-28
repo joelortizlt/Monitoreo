@@ -14,8 +14,13 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
     #constructor del objeto
     def __init__(self,df_real,df_teorico,mincosecha='',maxcosecha='',completar=True):
         if completar==True:
+
             izquierda = df_real[['CODCLAVEOPECTA','COSECHA','MAXMAD']+f.all_cortes(df_real)].copy()
             df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
+
+            izquierda = df_teorico[['CODCLAVEOPECTA']].copy()
+            df_real = pd.merge(left=izquierda, right=df_real, how='left', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
+
         InputsNoRevolventeReal.__init__(self,df=df_real,mincosecha=mincosecha,maxcosecha=maxcosecha)
         InputsNoRevolventeTeorico.__init__(self,df=df_teorico,mincosecha=mincosecha,maxcosecha=maxcosecha)
 
