@@ -53,7 +53,7 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
             l=min(len(curvas.loc[i, 'saldo_real']),len(curvas.loc[i, 'saldo_teorico']))
             curvas.at[i, 'saldo_real']=curvas.loc[i, 'saldo_real'].copy()[:l]
             curvas.at[i, 'saldo_teorico']=curvas.loc[i, 'saldo_teorico'].copy()[:l]
-                  
+
             ratios.at[i,'r_if_real'] = round(((sum(curvas.loc[i, 'if_real'])/sum(curvas.loc[i, 'saldo_real'])))*12,6)*100
             ratios.at[i,'r_ef_real'] = round(((sum(curvas.loc[i, 'ef_real'])/sum(curvas.loc[i, 'saldo_real'])))*12,6)*100
             ratios.at[i,'r_spread_bruto_real'] = ratios.at[i,'r_if_real']-ratios.at[i,'r_ef_real']

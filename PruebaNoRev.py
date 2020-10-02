@@ -8,17 +8,19 @@ from sklearn.metrics import mean_absolute_error
 import funciones as f
 from InputsNoRevolvente import InputsNoRevolvente
 from OutputsNoRevolvente import OutputsNoRevolvente
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/ComiteAgosto/estacional_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/ComiteAgosto/estacional_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/ComiteAgosto/estacional_Precios.csv', low_memory=False)
+
+nombreproducto = 'Pyme'
+REAL = pd.read_csv('/Users/renzomartinch/Downloads/ComiteSetiembre/'+str(nombreproducto)+'_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/ComiteSetiembre/'+str(nombreproducto)+'_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv('/Users/renzomartinch/Downloads/ComiteSetiembre/'+str(nombreproducto)+'_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
-product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201912)
+product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201901,maxcosecha=201912)
 
 #%%
 #Se definen los cortes
-cortes = ['C_PLAZO']
+cortes = ['C_MONEDA','C_PRODUCTO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 
@@ -85,7 +87,7 @@ product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201912
 
 #%%
 #Se definen los cortes
-cortes = ['C_CAMPANIA']
+cortes = ['C_MONEDA','C_PRODUCTO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 
