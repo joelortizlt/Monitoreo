@@ -12,6 +12,7 @@ from InputsRevolvente import InputsRevolvente
 REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Reales.csv')
 TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Inputs.csv')
 TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Precios.csv')
+#a
 
 #%%
 #Se crea el objeto
