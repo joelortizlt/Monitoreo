@@ -1,17 +1,20 @@
 #%%
 #Se importan la librerías necesarias e insumen los .CSV
+import sys
+sys.path.append('/Users/renzomartinch/VS Code/Monitoreo') #<--- CAMBIAR
+
 import numpy as np
 import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-import funciones as f
-from InputsRevolvente import InputsRevolvente
 
+from source.engine import funciones as f
+from source.engine.InputsRevolvente import InputsRevolvente
 
 REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Reales.csv')
 TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Inputs.csv')
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Precios.csv')
+#TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Precios.csv')
 #a
 
 #%%

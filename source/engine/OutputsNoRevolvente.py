@@ -4,9 +4,10 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-import funciones as f
-from OutputsNoRevolventeReal import OutputsNoRevolventeReal
-from OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
+
+from source.engine import funciones as f
+from source.engine.OutputsNoRevolventeReal import OutputsNoRevolventeReal
+from source.engine.OutputsNoRevolventeTeorico import OutputsNoRevolventeTeorico
 
 
 #creación de la clase
