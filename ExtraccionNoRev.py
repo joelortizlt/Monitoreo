@@ -3,9 +3,9 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-import funciones as f
-from InputsNoRevolvente import InputsNoRevolvente
-from OutputsNoRevolvente import OutputsNoRevolvente
+from source.engine import funciones as f
+from source.engine.InputsNoRevolvente import InputsNoRevolvente
+from source.engine.OutputsNoRevolvente import OutputsNoRevolvente
 
 #CAMBIAR
 nombreproducto = 'estacional'

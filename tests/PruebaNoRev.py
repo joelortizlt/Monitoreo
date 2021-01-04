@@ -1,7 +1,7 @@
 #%%
 #Se importan la librerías necesarias e insumen los .CSV
 import sys
-sys.path.append('/Users/renzomartinch/VS Code/Monitoreo') #<--- CAMBIAR
+sys.path.append(r"C:\Users\joelo\Documents\BCP\Monitoreo\Monitoreo") #<--- CAMBIAR
 
 import numpy as np
 import pandas as pd
@@ -13,10 +13,11 @@ from source.engine import funciones as f
 from source.engine.InputsNoRevolvente import InputsNoRevolvente
 from source.engine.OutputsNoRevolvente import OutputsNoRevolvente
 
-nombreproducto = 'Pyme'
-REAL = pd.read_csv('/Users/renzomartinch/Downloads/Comite/Bases/'+str(nombreproducto)+'_Reales.csv', low_memory=False)
-TEORICO = pd.read_csv('/Users/renzomartinch/Downloads/Comite/Bases/'+str(nombreproducto)+'_Inputs.csv', low_memory=False)
-TMIN = pd.read_csv('/Users/renzomartinch/Downloads/Comite/Bases/'+str(nombreproducto)+'_Precios.csv', low_memory=False)
+ruta = r'C:\Users\joelo\Documents\BCP\Data'
+nombreproducto = '\Gahi'
+REAL = pd.read_csv(ruta+str(nombreproducto)+'_Reales.csv', low_memory=False)
+TEORICO = pd.read_csv(ruta+str(nombreproducto)+'_Inputs.csv', low_memory=False)
+TMIN = pd.read_csv(ruta+str(nombreproducto)+'_Precios.csv', low_memory=False)
 
 #%%
 #Se crea el objeto
@@ -24,7 +25,7 @@ product = InputsNoRevolvente(REAL,TEORICO,mincosecha=201901,maxcosecha=201912)
 
 #%%
 #Se definen los cortes
-cortes = ['C_PRODUCTO']
+cortes = ['C_PLAZO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 
@@ -42,12 +43,12 @@ product.ci_pd
 
 #%%
 #Se puede ver gráficamente los resultados
-#product.plotear('pd')
+product.plotear('pd')
 product.plotear('can')
 product.plotear('pre')
-#product.MAE('pd')
-#product.MAE('can')
-#product.MAE('pre')
+product.MAE('pd')
+product.MAE('can')
+product.MAE('pre')
 
 #%%
 #Se puede optimizar
@@ -64,10 +65,10 @@ product.promedios
 
 #%%
 #También pueden graficarse
-#product.plotear('pd',optimo=True)
+product.plotear('pd',optimo=True)
 product.plotear('can',optimo=True)
 product.plotear('pre',optimo=True)
-#product.MAE('pd',optimo=True)
+product.MAE('pd',optimo=True)
 product.MAE('can',optimo=True)
 product.MAE('pre',optimo=True)
 
@@ -91,7 +92,7 @@ product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=201801)#,maxcosecha=201912
 
 #%%
 #Se definen los cortes
-cortes = ['C_PRODUCTO']
+cortes = ['C_PLAZO']
 #Se agrupa en base a los cortes definidos
 product.condensar(cortes)
 
@@ -109,3 +110,4 @@ product.niveles
 product.plotear('if')
 product.plotear('ef')
 product.plotear('saldo')
+# %%
