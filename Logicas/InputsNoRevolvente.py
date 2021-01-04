@@ -4,9 +4,9 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-import funciones as f
-from InputsNoRevolventeReal import InputsNoRevolventeReal
-from InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
+from  Logicas import funciones as f
+from Logicas.InputsNoRevolventeReal import InputsNoRevolventeReal
+from Logicas.InputsNoRevolventeTeorico import InputsNoRevolventeTeorico
 
 
 #creación de la clase

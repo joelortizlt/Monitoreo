@@ -4,21 +4,22 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-import funciones as f
+from  Logicas import funciones as f
 
 
 #Creación de la clase
-class InputsRevolventeReal():
+class InputsNoRevolventeReal():
     #constructor del objeto
     def __init__(self,df,mincosecha='',maxcosecha=''): #se insume un dataframe y (opcionalmente) filtros por cosechas
         
         df_real = df
         
         #Se coloca las curvas en una sola celda (por temas de orden)
-        df_real['saldo'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'SAL1'):].values.tolist()})
+        df_real['prepagos'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'PREPAGO1'):f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1')].values.tolist()})
+        df_real['desembolso'] = pd.DataFrame({'pd':df_real.iloc[:,f.encontrar_encabezado(df_real,'MTODESEMBOLSADO1'):f.encontrar_encabezado(df_real,'MTODES')].values.tolist()})
         
         #Se selecciona solo los campos relevantes y se filtra por cosecha
-        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','FAIL_TYPE', 'MAXMAD','SURVIVAL','saldo']]
+        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','FAIL_TYPE', 'SURVIVAL','MAXMAD','prepagos','desembolso']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -38,23 +39,23 @@ class InputsRevolventeReal():
         curvas = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         curvas['pd_real'] = ''
         curvas['can_real'] = ''
-        curvas['saldo_real'] = ''
+        curvas['pre_real'] = ''
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','MAXMAD','FAIL_TYPE','SURVIVAL','saldo']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
+            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','MAXMAD','FAIL_TYPE','SURVIVAL','prepagos','desembolso']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
             
             #pd y cancelaciones reales
             vector = pd.DataFrame()
             c = 0
             surviv = 1
-            for j in range(1, temp['SURVIVAL'].max()+1):
+            for j in range(1, temp['MAXMAD'].max()+1):
                 #Count del número de defaults en cada maduración del rango de fechas
                 default = temp.query('FAIL_TYPE == 1' + ' & SURVIVAL=='+str(j))['SURVIVAL'].count()
                 #Count del número de cancelaciones en cada maduración del rango de fechas
                 cancel = temp.query('FAIL_TYPE == 2' + ' & SURVIVAL=='+str(j))['SURVIVAL'].count()
                 #Count del número de cuentas en cada maduración tomando en cuenta la máxima maduración y rango de fechas
-                dem = temp.query('SURVIVAL>=' + str(j))['SURVIVAL'].count()
+                dem = temp.query('MAXMAD>=' + str(j))['SURVIVAL'].count()
                 #Marginales
                 pd_marginal = None
                 if not dem == 0:
@@ -73,11 +74,13 @@ class InputsRevolventeReal():
             resultado = vector['can_final'].cumsum()
             curvas.at[i,'can_real'] = f.porcentaje(resultado)
             
-            #saldo reales
-
-            temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['saldo']))
-            resultado = f.aggr_avg(temp['result'])
-            curvas.at[i,'saldo_real'] = [round(x,0) for x in resultado]
-
+            #prepagos reales
+            temp['sum_prepagos']=list(map(f.operation_pd, temp['MAXMAD'], temp['prepagos']))
+            temp['sum_desembolso']=list(map(f.operation_pd, temp['MAXMAD'], temp['desembolso']))    
+            a = f.aggr_sum(temp['sum_prepagos'])
+            b = f.aggr_sum(temp['sum_desembolso'])
+            resultado = [ai / bi for ai, bi in zip(a, b)]
+            resultado = np.cumsum(resultado)
+            curvas.at[i,'pre_real'] = f.porcentaje(resultado)
         
         self.curvasR = curvas

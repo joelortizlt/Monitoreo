@@ -5,18 +5,19 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
-import funciones as f
-from InputsRevolvente import InputsRevolvente
+from  Logicas import funciones as f
+from  Logicas import InputsRevolvente as InputsRevolvente
 
-
-REAL = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Reales.csv')
-TEORICO = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Inputs.csv')
-TMIN = pd.read_csv('C:\\Users\\usuario\Desktop\Pricing_BCP\Proyectos\Data_TSN\TSN_Precios.csv')
+REAL = pd.read_csv(r"C:\Users\joelo\Documents\BCP\Data\TSN_Reales.xlsx")
+TEORICO = pd.read_csv(r"C:\Users\joelo\Documents\BCP\Data\TSN_Inputs.xlsx")
+#TMIN = pd.read_csv('C:\Users\joelo\Documents\BCP\Data\TSN_Precios.csv')
 #a
 
 #%%
+TEORICO.head(10)
+#%%
 #Se crea el objeto
-product = InputsRevolvente(REAL,TEORICO,mincosecha=201901,maxcosecha=201912)
+product = InputsRevolvente.InputsRevolvente(REAL,TEORICO,mincosecha=201901,maxcosecha=201912)
 product.df_real
 
 #%%
