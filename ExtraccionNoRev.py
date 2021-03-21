@@ -8,21 +8,19 @@ from source.engine.InputsNoRevolvente import InputsNoRevolvente
 from source.engine.OutputsNoRevolvente import OutputsNoRevolvente
 
 #CAMBIAR
-nombreproducto = 'cef'
+nombreproducto = 'veh'
 inicio = 201901
 fin = 202012
 
-#agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_OK']                     # Gahi & Veh
-#agregado_cortes=['C_SEGMENTO','C_PLAZO','C_OK']                                # Hipot & MiViv
-agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_CANAL','C_OK']            # CEF
-#agregado_cortes=['C_PRODUCTO','C_MONEDA','C_PYG']
-#agregado_cortes=['C_CAMPANIA','C_PLAZO','C_OK']
+agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_OK']                    # Gahi & Veh
+#agregado_cortes=['C_SEGMENTO','C_PLAZO','C_OK']                               # Hipot & MiViv
+#agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_CANAL','C_OK']          # CEF
+#agregado_cortes=['C_PRODUCTO','C_PYG','C_OK']                                 # Pyme
 
-#lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_OK']]                # Gahi & Veh
-#agregado_cortes=['C_SEGMENTO','C_PLAZO','C_OK']                                # Hipot & MiViv
-lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_CANAL'],['C_OK']]     # CEF
-#lista_cortes=[['C_PRODUCTO'],['C_MONEDA'],['C_PYG']]
-#lista_cortes=[['C_CAMPANIA'],['C_PLAZO'],['C_OK']]
+lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_OK']]               # Gahi & Veh
+#lista_cortes=[['C_SEGMENTO'],['C_PLAZO'],['C_OK']]                            # Hipot & MiViv
+#lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_CANAL'],['C_OK']]   # CEF
+#lista_cortes=[['C_PRODUCTO'],['C_PYG'],['C_OK']]                              # Pyme
 
 ruta_real=['/Users/renzomartinch/Downloads/Comite/'+str(nombreproducto)+'_reales.csv']
 ruta_teorico=['/Users/renzomartinch/Downloads/Comite/'+str(nombreproducto)+'_inputs.csv']
