@@ -50,29 +50,38 @@ class InputsNoRevolventeReal():
             vector = pd.DataFrame()
             c = 0
             surviv = 1
-            for j in range(1, temp['MAXMAD'].max()+1):
+            for j in range(1, temp['SURVIVAL'].max()+1):
                 #Count del número de defaults en cada maduración del rango de fechas
                 default = temp.query('FAIL_TYPE == 1' + ' & SURVIVAL=='+str(j))['SURVIVAL'].count()
                 #Count del número de cancelaciones en cada maduración del rango de fechas
                 cancel = temp.query('FAIL_TYPE == 2' + ' & SURVIVAL=='+str(j))['SURVIVAL'].count()
                 #Count del número de cuentas en cada maduración tomando en cuenta la máxima maduración y rango de fechas
-                dem = temp.query('MAXMAD>=' + str(j))['SURVIVAL'].count()
+                dem = temp.query('SURVIVAL>=' + str(j))['SURVIVAL'].count()
+                dem_pd = temp.query('MAXMAD>=' + str(j))['SURVIVAL'].count()
                 #Marginales
                 pd_marginal = None
+                p1 = None
+
                 if not dem == 0:
-                    pd_marginal = default/dem
+                    p1 = default/dem
                     can_marginal = cancel/dem
                 can_final = surviv*can_marginal
-                surviv = (1-pd_marginal-can_marginal)*surviv
+                surviv = (1-p1-can_marginal)*surviv
+                #Agregar a la tabla
+                vector.loc[c, 'p1'] = p1
+                vector.loc[c, 'can_final'] = can_final
+
+                if not dem_pd == 0:
+                    pd_marginal = default/dem_pd
                 #Agregar a la tabla
                 vector.loc[c, 'pd_marginal'] = pd_marginal
-                vector.loc[c, 'can_final'] = can_final
                 c = c + 1
                 
             resultado = vector['pd_marginal'].cumsum()
             curvas.at[i,'pd_real'] = f.porcentaje(resultado)
 
             resultado = vector['can_final'].cumsum()
+            #pd.DataFrame(vector['can_final']).to_csv(r'C:\Users\joelo\Documents\BCP\Monitoreo\Validacion\file.csv')  
             curvas.at[i,'can_real'] = f.porcentaje(resultado)
             
             #prepagos reales

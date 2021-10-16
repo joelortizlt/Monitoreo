@@ -21,7 +21,7 @@ class InputsNoRevolventeTeorico():
         df_teorico['pre_marginal'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PRE1'):f.encontrar_encabezado(df_teorico,'SALDOPROM1')].values.tolist()})
  
         #Se selecciona solo los campos relevantes y se filtra por cosecha
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal', 'can_marginal', 'pre_marginal']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMAD','MTODESEMBOLSADO','pd_marginal', 'can_marginal', 'pre_marginal']]
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
         if maxcosecha!='':

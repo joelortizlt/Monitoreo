@@ -1,3 +1,6 @@
+
+#%%
+
 import numpy as np
 import pandas as pd
 import itertools as it
@@ -7,26 +10,23 @@ from source.engine import funciones as f
 from source.engine.InputsNoRevolvente import InputsNoRevolvente
 from source.engine.OutputsNoRevolvente import OutputsNoRevolvente
 
+
+
 #CAMBIAR
-nombreproducto = 'cef'
-inicio = 201901
-fin = 202012
+nombreproducto = '\cef'
+inicio = 201907
+fin = 202107
 
-#agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_OK']                     # Gahi & Veh
-#agregado_cortes=['C_SEGMENTO','C_PLAZO','C_OK']                                # Hipot & MiViv
-agregado_cortes=['C_SEGMENTO','C_MONEDA','C_PLAZO','C_CANAL','C_OK']            # CEF
-#agregado_cortes=['C_PRODUCTO','C_MONEDA','C_PYG']
-#agregado_cortes=['C_CAMPANIA','C_PLAZO','C_OK']
+agregado_cortes=['C_SEGMENTO','C_PLAZO','C_OK']                   # CEF, Hipot, MiViv, Gahi & Veh
+#agregado_cortes=['C_PRODUCTO','C_PYG','C_OK']                      # PYME
 
-#lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_OK']]                # Gahi & Veh
-#agregado_cortes=['C_SEGMENTO','C_PLAZO','C_OK']                                # Hipot & MiViv
-lista_cortes=[['C_SEGMENTO'],['C_MONEDA'],['C_PLAZO'],['C_CANAL'],['C_OK']]     # CEF
-#lista_cortes=[['C_PRODUCTO'],['C_MONEDA'],['C_PYG']]
-#lista_cortes=[['C_CAMPANIA'],['C_PLAZO'],['C_OK']]
+lista_cortes=[['C_SEGMENTO'],['C_PLAZO'],['C_OK']]                # CEF, Hipot, MiViv, Gahi & Veh    
+#lista_cortes=[['C_PRODUCTO'],['C_PYG'],['C_OK']]                   # PYME
 
-ruta_real=['/Users/renzomartinch/Downloads/Comite/'+str(nombreproducto)+'_reales.csv']
-ruta_teorico=['/Users/renzomartinch/Downloads/Comite/'+str(nombreproducto)+'_inputs.csv']
-ruta_tmin=['/Users/renzomartinch/Downloads/Comite/'+str(nombreproducto)+'_precios.csv']
+ruta = r'C:\Users\joelo\Documents\BCP\Monitoreo\Oct21'
+ruta_real=[ruta+str(nombreproducto)+'_reales.csv']
+ruta_teorico=[ruta+str(nombreproducto)+'_inputs.csv']
+ruta_tmin=[ruta+str(nombreproducto)+'_precios.csv']
 
 n = len(agregado_cortes)
 
@@ -72,7 +72,7 @@ for corte in lista_cortes:
         s = temp['n_saldo_real']
 
         condensado.at[j,'recuento'] = sum(r)
-        for k in ['pd_real','can_real','pre_real','pd_teorico','can_teorico','pre_teorico','pd_optimo','can_optimo','pre_optimo','MAE_pd','MAE_can','MAE_pre','MAEop_pd','MAEop_can','MAEop_pre','scalar_pd','scalar_can','scalar_pre']:
+        for k in ['pd_real','can_real','pre_real','pd_teorico','can_teorico','pre_teorico','pd_optimo','can_optimo','pre_optimo','scalar_pd','scalar_can','scalar_pre']:
             condensado.at[j,k] = sum(temp[k] * r) / sum(r)
             
         for k in ['Tmin_base','delta_Tmin_pd','delta_Tmin_can','delta_Tmin_pre','Tmin_final']:
@@ -99,4 +99,5 @@ for corte in lista_cortes:
     first=False
 
 print(imprimir)
-imprimir.to_excel(str(nombreproducto)+"_PlanchaPonderada.xlsx")
+imprimir.to_excel(ruta+str(nombreproducto)+'_PlanchaPonderada.xlsx')
+#%%

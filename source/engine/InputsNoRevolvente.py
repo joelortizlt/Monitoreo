@@ -16,7 +16,7 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
     def __init__(self,df_real,df_teorico,mincosecha='',maxcosecha='',completar=True):
         if completar==True:
 
-            izquierda = df_real[['CODCLAVEOPECTA','COSECHA','MAXMAD']+f.all_cortes(df_real)].copy()
+            izquierda = df_real[['CODCLAVEOPECTA','COSECHA','MAXMAD','MTODESEMBOLSADO']+f.all_cortes(df_real)].copy()
             df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
 
             izquierda = df_teorico[['CODCLAVEOPECTA']].copy()
