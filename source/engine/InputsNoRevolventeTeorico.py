@@ -1,5 +1,6 @@
 #Se impoortan la librerías necesarias
 import numpy as np
+from numpy.core.records import array
 import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
@@ -47,7 +48,7 @@ class InputsNoRevolventeTeorico():
         #TEÓRICOS
         for i in range(len(curvas)):
             
-            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','pd_marginal','can_marginal','pre_marginal']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
+            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMAD','MTODESEMBOLSADO','pd_marginal','can_marginal','pre_marginal']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
             
             #pd teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['pd_marginal']))
@@ -64,11 +65,15 @@ class InputsNoRevolventeTeorico():
             n.at[i,'can_teorico']= f.aggr_count(temp['result'])
             
             #prepagos teórico
-            temp['result']=list(map(f.operation_pd, temp['MAXMAD'], temp['pre_marginal']))
-            resultado = f.aggr_avg(temp['result'])
+            temp['result'] = list(map(f.operation_pd, temp['MAXMAD'], temp['pre_marginal']))
+            temp['monto'] = [len(x)*[w] for x,w in zip(temp['result'], temp['MTODESEMBOLSADO'])]
+
+            resultado = f.weighted_average2(temp,'result','monto',temp['MAXMAD'].max())
             resultado = np.cumsum(resultado)
             curvas.at[i,'pre_teorico'] = f.porcentaje(resultado)
             n.at[i,'pre_teorico']= f.aggr_count(temp['result'])
 
         self.curvasT = curvas
         self.nT = n
+
+

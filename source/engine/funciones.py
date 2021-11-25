@@ -70,3 +70,20 @@ def weighted_average(df, data_col, weight_col):
     result = df['_data_times_weight'].sum() / df['_weight_where_notnull'].sum()
     del df['_data_times_weight'], df['_weight_where_notnull']
     return result
+
+
+
+def weighted_average2(df, data_col, weight_col, maxmad):
+
+    df[data_col] = df[data_col].apply(lambda x: np.array(max_val(x,maxmad)))
+    df[weight_col] = df[weight_col].apply(lambda x: np.array(max_val(x,maxmad)))
+    df['_data_times_weight'] = df[data_col] * df[weight_col]
+    result = np.sum(df['_data_times_weight'], axis=0) / np.sum(df[weight_col], axis =0)
+    result = np.nan_to_num(result)
+    del df['_data_times_weight']
+    return result
+
+def max_val(lista, max_val):
+    for i in range(max_val - len(lista)):
+        lista.append(0)
+    return lista
