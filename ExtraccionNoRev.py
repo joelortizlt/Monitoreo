@@ -1,6 +1,4 @@
-
 #%%
-
 import numpy as np
 import pandas as pd
 import itertools as it
@@ -11,20 +9,20 @@ from source.engine.InputsNoRevolvente import InputsNoRevolvente
 from source.engine.OutputsNoRevolvente import OutputsNoRevolvente
 
 
-
 #CAMBIAR
-nombreproducto = '\cef'
-inicio = 201907
-fin = 202107
+nombreproducto = '\gahi'
 
-agregado_cortes=['C_SEGMENTO','C_PLAZO','C_OK']                   # CEF, Hipot, MiViv, Gahi & Veh
+inicio = 202101
+fin = 202306
+
+agregado_cortes=['C_OK']                   # CEF, Hipot, MiViv, Gahi & Veh
 #agregado_cortes=['C_PRODUCTO','C_PYG','C_OK']                      # PYME
 
-lista_cortes=[['C_SEGMENTO'],['C_PLAZO'],['C_OK']]                # CEF, Hipot, MiViv, Gahi & Veh    
+lista_cortes=[['C_OK']]                # CEF, Hipot, MiViv, Gahi & Veh    
 #lista_cortes=[['C_PRODUCTO'],['C_PYG'],['C_OK']]                   # PYME
 
-ruta = r'C:\Users\joelo\Documents\BCP\Monitoreo\Oct21'
-ruta_real=[ruta+str(nombreproducto)+'_reales.csv']
+ruta = r'C:\Users\joelo\Documents\Python\Monitoreo\Data'
+ruta_real=[ruta+str(nombreproducto)+'_real.csv']
 ruta_teorico=[ruta+str(nombreproducto)+'_inputs.csv']
 ruta_tmin=[ruta+str(nombreproducto)+'_precios.csv']
 
@@ -38,10 +36,12 @@ product = InputsNoRevolvente(REAL,TEORICO,mincosecha=inicio,maxcosecha=fin)
 
 #Inputs
 product.condensar(agregado_cortes)
+product.plotear(texto='can')
+#%%
 product.optimizar()
 a = product.promedios
 b = product.stats.drop(product.stats.iloc[:, 0:(n+1)], axis = 1)
-
+#%%
 #Tmin
 product.impactoTmin(TMIN)
 c = product.Tmin.drop(product.Tmin.iloc[:, 0:(n+1)], axis = 1) 
@@ -50,13 +50,19 @@ c = product.Tmin.drop(product.Tmin.iloc[:, 0:(n+1)], axis = 1)
 product.impactoTIR(TMIN)
 d = product.TIR.drop(product.TIR.iloc[:, 0:(n+1)], axis = 1)
 
+#ROA
+product.impactoROA(TMIN)
+e = product.ROA.drop(product.TIR.iloc[:, 0:(n+1)], axis = 1)
+
 #Outputs
 product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=inicio,maxcosecha=fin)
-product.condensar(agregado_cortes)
-e = product.ratios.drop(product.ratios.iloc[:, 0:(n+2)], axis = 1)
-f = product.niveles.drop(product.niveles.iloc[:, 0:(n+2)], axis = 1)
 
-agregado = pd.concat([a,b,c,d,e,f], axis=1) #<- añadir c,d,e,f
+product.condensar(agregado_cortes)
+f = product.ratios.drop(product.ratios.iloc[:, 0:(n+2)], axis = 1)
+g = product.niveles.drop(product.niveles.iloc[:, 0:(n+2)], axis = 1)
+product.plotear(texto='if')
+
+agregado = pd.concat([a,b,c,d,e,f,g], axis=1)
 
 first = True
 for corte in lista_cortes:
@@ -70,6 +76,7 @@ for corte in lista_cortes:
         m = temp['Monto']
         e = temp['Capital promedio']
         s = temp['n_saldo_real']
+        w = temp['Saldo promedio']
 
         condensado.at[j,'recuento'] = sum(r)
         for k in ['pd_real','can_real','pre_real','pd_teorico','can_teorico','pre_teorico','pd_optimo','can_optimo','pre_optimo','scalar_pd','scalar_can','scalar_pre']:
@@ -83,10 +90,14 @@ for corte in lista_cortes:
             condensado.at[j,k] = sum(temp[k] * e) / sum(e)
         condensado.at[j,'Capital promedio'] = sum(e)
 
-        for k in ['r_if_real','r_ef_real','r_spread_bruto_real','r_if_teorico','r_ef_teorico','r_spread_bruto_teorico']:
+        for k in ['ROA_base','delta_ROA_pd','delta_ROA_can','delta_ROA_pre','ROA_final']:
+            condensado.at[j,k] = sum(temp[k] * e) / sum(w)
+        condensado.at[j,'Saldo promedio'] = sum(w)
+
+        for k in ['r_if_real','r_ef_real','r_rebate_real','r_spread_bruto_real','r_provisionb_real','r_ixs_real','r_spread_neto_real','r_if_teorico','r_ef_teorico','r_rebate_teorico','r_spread_bruto_teorico','r_provisionb_teorico','r_ixs_teorico','r_spread_neto_teorico']:
             condensado.at[j,k] = sum(temp[k] * s) / sum(s)
 
-        for k in ['n_if_real','n_ef_real','n_saldo_real','n_if_teorico','n_ef_teorico','n_saldo_teorico']:
+        for k in ['n_if_real','n_ef_real','n_rebate_real','n_spread_bruto_real','n_provisionb_real','n_ixs_real','r_spread_neto_real','n_saldo_real','n_if_teorico','n_ef_teorico','n_rebate_teorico','n_spread_bruto_teorico','n_provisionb_teorico','n_ixs_teorico','r_spread_neto_teorico','n_saldo_teorico']:
             condensado.at[j,k] = sum(temp[k])
 
     nametemp=condensado.columns[0]
@@ -99,5 +110,10 @@ for corte in lista_cortes:
     first=False
 
 print(imprimir)
-imprimir.to_excel(ruta+str(nombreproducto)+'_PlanchaPonderada.xlsx')
-#%%
+
+#imprimir.to_excel(ruta+str(nombreproducto)+'_PlanchaPonderada2.xlsx')
+
+
+ # %%
+git config --global user.name "Joel Ortiz"
+# %%

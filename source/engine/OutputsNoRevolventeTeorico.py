@@ -15,19 +15,20 @@ class OutputsNoRevolventeTeorico():
         df_teorico = df
         
         #colocar las curvas en una sola celda
-        df_teorico['saldo'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'SALDOPROM1'):f.encontrar_encabezado(df_teorico,'IF1')].values.tolist()})
-        df_teorico['if'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'IF1'):f.encontrar_encabezado(df_teorico,'EF1')].values.tolist()})
-        df_teorico['ef'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'EF1'):f.encontrar_encabezado(df_teorico,'saldo')].values.tolist()})#'PE1')].values.tolist()})
-        #df_teorico['pe'] = pd.DataFrame({'pd':df_teorico.iloc[:,f.encontrar_encabezado(df_teorico,'PE1'):f.encontrar_encabezado(df_teorico,'saldo')].values.tolist()})
- 
+        df_teorico['Saldo'] = pd.DataFrame({'pd':df_teorico.loc[:,'SALDOPROM1':'SALDOPROM36'].values.tolist()})
+        df_teorico['IF'] = pd.DataFrame({'pd':df_teorico.loc[:,'IF1':'IF36'].values.tolist()})
+        df_teorico['EF'] = pd.DataFrame({'pd':df_teorico.loc[:,'EF1':'EF36'].values.tolist()})
+        df_teorico['Rebate'] = pd.DataFrame({'pd':df_teorico.loc[:,'Rebate1':'Rebate36'].values.tolist()})
+        df_teorico['ProvisionB'] = pd.DataFrame({'pd':df_teorico.loc[:,'PE1':'PE36'].values.tolist()})
+        df_teorico['IxS'] = pd.DataFrame({'pd':df_teorico.loc[:,'IxS1':'IxS36'].values.tolist()})
+
         #seleccionar solo la data relevante
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','if','ef','saldo']]#,'pe']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','Saldo','IF','EF','Rebate','ProvisionB','IxS']]#,'pe']]
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
         if maxcosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']<=maxcosecha]
         self.df_teorico = df_teorico
-        
         
     #creación de los cortes
     def condensar(self,cortes=[]): #se insume una lista con los cortes que se desea
@@ -40,35 +41,50 @@ class OutputsNoRevolventeTeorico():
         #Creamos la 'plantilla'
         curvas = self.df_teorico.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         curvas['monto'] = ''
+        curvas['saldo_teorico'] = ''
         curvas['if_teorico'] = ''
         curvas['ef_teorico'] = ''
-        #curvas['pe_teorico'] = ''
-        curvas['saldo_teorico'] = ''
+        curvas['rebate_teorico'] = ''
+        curvas['provisionb_teorico'] = ''
+        curvas['ixs_teorico'] = ''
+        
         
         #TEÓRICAS
         for i in range(len(curvas)):
             
-            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','if','ef','saldo']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')#,'pe']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO',
+                                                    'Saldo','IF','EF','Rebate','ProvisionB','IxS']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')#,'pe']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             #IF teórico
-            temp['result'] = list(map(f.operation_pd, temp['MAXMADPYG'], temp['if']))
+            temp['result'] = list(map(f.operation_pd, temp['MAXMADPYG'], temp['IF']))
             a = f.aggr_sum(temp['result'])
             
             #EF teórico
-            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['ef']))
+            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['EF']))
             b = f.aggr_sum(temp['result'])
 
-            #PE teórico
-            #temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['pe']))
-            #c = f.aggr_sum(temp['result'])
             
             #SALDO teórico
-            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['saldo']))
+            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['Saldo']))
             d = f.aggr_sum(temp['result'])
-
+            
+            #Rebate teorico
+            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['Rebate']))
+            e = f.aggr_sum(temp['result'])
+            
+            #Provision teorico
+            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['ProvisionB']))
+            g = f.aggr_sum(temp['result'])
+            
+            #Ing no financiero teorico
+            temp['result']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['IxS']))
+            h = f.aggr_sum(temp['result'])
+            
             curvas.at[i,'monto'] = temp['MTODESEMBOLSADO'].sum()
             curvas.at[i,'if_teorico'] = [round(x,0) for x in a]
             curvas.at[i,'ef_teorico'] = [round(x,0) for x in b]
-            #curvas.at[i,'pe_teorico'] = [round(x,0) for x in c]
             curvas.at[i,'saldo_teorico'] = [round(x,0) for x in d]
+            curvas.at[i,'rebate_teorico'] = [round(x,0) for x in e]
+            curvas.at[i,'provisionb_teorico'] = [round(x,0) for x in g]
+            curvas.at[i,'ixs_teorico'] = [round(x,0) for x in h]
 
         self.curvasT = curvas

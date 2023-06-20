@@ -4,6 +4,7 @@ import pandas as pd
 import itertools as it
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
+import math
 
 from source.engine import funciones as f
 from source.engine.InputsNoRevolventeReal import InputsNoRevolventeReal
@@ -138,29 +139,53 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         self.ci_pre = ci_pre
     
     
-    def plotear(self,texto,optimo=False):
+    def plotear(self, texto, optimo=False, print = False): 
         cortes_temp = f.all_cortes(self.curvas)
         for i in range(len(self.curvas)):
-            z=[]
+            z = []
             for j in range(len(self.curvas[texto+'_real'][i])):
                 z.append(j+1)
-            a=''
+            a = ''
             for j in cortes_temp:
-                a=a+str(j)[2:]+' '+str(self.curvas[j][i])+' y '
-                
-            plt.xlabel('Periodo', fontsize=12)
-            plt.ylabel(texto, fontsize=12)
-            plt.title(texto+': curva real vs. teórico para '+a[0:-3], fontsize=16)
-            r = self.curvas[texto+'_real'][i]
-            plt.plot(z,r,label = 'real')
-            t = self.curvas[texto+'_teorico'][i]
-            plt.plot(z,t,label = 'teórico')
+                a = a + str(j)[2:] + ' ' + str(self.curvas[j][i]) + ' y '
+
+            plt.xlabel('Maduración', fontsize=10)
+            plt.title(texto.upper() + ': ' + a[0:-3], fontsize=14, pad=20, color = 'midnightblue')
+            max_real = max(max(self.curvas[texto+'_real']))
+            max_teorico = max(max(self.curvas[texto+'_teorico']))
+            len_y = math.ceil(max(max_real,max_teorico)/5)*5
+            
+            r = self.curvas[texto + '_real'][i]
+            plt.annotate(round(r[0],1),(1-0.5,r[0]+len_y/50)) #Etiqueta 1
+            plt.annotate(round(r[5],1),(6-0.5,r[5]+len_y/50)) #Etiqueta 6
+
+            b = min(12,len(r))-1
+            plt.annotate(round(r[b],1),(b+1-0.5,r[b]+len_y/50)) #Etiqueta 12
+            plt.plot(z, r, label='real', linestyle='', marker='o', markersize=4, color='black')
+            
+            t = self.curvas[texto + '_teorico'][i]
+            plt.annotate(round(t[0],1),(1-0.5,t[0]+len_y/50)) #Etiqueta 1
+            plt.annotate(round(t[5],1),(6-0.5,t[5]+len_y/50)) #Etiqueta 6
+            plt.annotate(round(t[b],1),(b+1-0.5,t[b]+len_y/50)) #Etiqueta 12
+            plt.plot(z, t, label='teórico', color='lightseagreen') #color='royalblue'
+            
             if optimo:
-                o = self.curvas[texto+'_optimo'][i]
-                plt.plot(z,o,label = 'óptimo')
+                o = self.curvas[texto + '_optimo'][i]
+                plt.plot(z, o, label='óptimo', color='black')
             plt.plot(0)
-            plt.legend(fontsize=10)
-            plt.show()
+            plt.ylim([0, len_y]) #add len
+
+#            plt.annotate('Créditos: ' + str(f"{self.curvas['recuento'][i]:,}") + "\n" +
+#                        'Cancelados: ' + str(f"{self.df_real[(self.df_real.FAIL_TYPE==2)].groupby(corte)['CODCLAVEOPECTA'].count().reset_index(drop=True)[i]:,}"),
+#                        (0.5,len_y/1.14), size=9.5,
+#                        bbox=dict(boxstyle="round", alpha=0.05)) #Etiqueta inferior derecha
+            plt.legend(fontsize = 9, loc=1 ,bbox_to_anchor=(1.025,-0.04), frameon=False)
+            
+            if print == True:
+                plt.savefig(texto, dpi=400)
+                plt.close()
+            else:
+                plt.show()
     
     
     def MAE(self,texto,optimo=False):
@@ -336,3 +361,36 @@ class InputsNoRevolvente(InputsNoRevolventeReal,InputsNoRevolventeTeorico):
         data = [['TIR_base_prom', TIR_base_prom], ['delta_pd_prom', delta_pd_prom], ['delta_can_prom', delta_can_prom], ['delta_pre_prom', delta_pre_prom], ['TIR_final_prom', TIR_final_prom]]  
         TIRProm = pd.DataFrame(data, columns = ['Campo', 'Valor'])
         self.TIRProm = TIRProm
+
+    def impactoROA(self,df_roa):
+
+        cortes=f.all_cortes(self.stats)
+        izquierda = self.df_real[['CODCLAVEOPECTA','COSECHA']+f.all_cortes(self.df_real)].copy()
+
+        derecha2 = df_roa[['CODCLAVEOPECTA','SALDOPROM','ROA','PDROA','CANROA','PREROA']].copy()
+        df2 = pd.merge(left=izquierda, right=derecha2, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
+
+        if cortes==['C_TODOS']:
+            df2.loc[:,'C_TODOS']=''
+        df2 = df2[cortes+['CODCLAVEOPECTA','COSECHA','SALDOPROM','ROA','PDROA','CANROA','PREROA']]
+        ROA = self.curvas[cortes+['recuento']].copy()
+
+        for i in range(len(ROA)):
+            temp = pd.merge(df2, pd.DataFrame([ROA.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)    
+            ROA.at[i,'ROA_base']  = f.weighted_average(temp,'ROA','SALDOPROM')
+            ROA.at[i,'delta_ROA_pd']  = (f.weighted_average(temp,'PDROA','SALDOPROM')-ROA.loc[i,'ROA_base'])*(self.stats.loc[i,'scalar_pd']-1)*10
+            ROA.at[i,'delta_ROA_can']  = (f.weighted_average(temp,'CANROA','SALDOPROM')-ROA.loc[i,'ROA_base'])*(self.stats.loc[i,'scalar_can']-1)*10
+            ROA.at[i,'delta_ROA_pre']  = (f.weighted_average(temp,'PREROA','SALDOPROM')-ROA.loc[i,'ROA_base'])*(self.stats.loc[i,'scalar_pre']-1)*10
+            ROA.at[i,'ROA_final']  = ROA.loc[i,'ROA_base']+ROA.loc[i,'delta_ROA_pd']+ROA.loc[i,'delta_ROA_can']+ROA.loc[i,'delta_ROA_pre']
+            ROA.at[i,'Saldo promedio'] = temp['SALDOPROM'].sum()
+        self.ROA = ROA
+
+        ROA_base_prom = f.weighted_average(self.ROA,'ROA_base','Saldo promedio')
+        delta_pd_prom = f.weighted_average(self.ROA,'delta_ROA_pd','Saldo promedio')
+        delta_can_prom = f.weighted_average(self.ROA,'delta_ROA_can','Saldo promedio')
+        delta_pre_prom = f.weighted_average(self.ROA,'delta_ROA_pre','Saldo promedio')
+        ROA_final_prom = f.weighted_average(self.ROA,'ROA_final','Saldo promedio')      
+
+        data = [['ROA_base_prom', ROA_base_prom], ['delta_pd_prom', delta_pd_prom], ['delta_can_prom', delta_can_prom], ['delta_pre_prom', delta_pre_prom], ['ROA_final_prom', ROA_final_prom]]  
+        ROAProm = pd.DataFrame(data, columns = ['Campo', 'Valor'])
+        self.ROAProm = ROAProm        
