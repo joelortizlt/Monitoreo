@@ -115,5 +115,5 @@ print(imprimir)
 
 
  # %%
-git config --global user.name "Joel Ortiz"
+
 # %%
