@@ -87,3 +87,7 @@ def max_val(lista, max_val):
     for i in range(max_val - len(lista)):
         lista.append(0)
     return lista
+
+
+def corte_portafolio(a, b):
+    return b[a-1:a]

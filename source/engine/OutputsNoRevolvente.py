@@ -16,7 +16,7 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
     #constructor del objeto
     def __init__(self,df_real,df_teorico,mincosecha='',maxcosecha='',completar=True):
         if completar==True:
-            izquierda = df_real[['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO']+f.all_cortes(df_real)].copy()
+            izquierda = df_real[['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','TEA']+f.all_cortes(df_real)].copy()
             df_teorico = pd.merge(left=izquierda, right=df_teorico, how='inner', left_on=['CODCLAVEOPECTA'], right_on=['CODCLAVEOPECTA'])
 
             izquierda = df_teorico[['CODCLAVEOPECTA']].copy()
@@ -35,9 +35,10 @@ class OutputsNoRevolvente(OutputsNoRevolventeReal,OutputsNoRevolventeTeorico):
 
         curvas = curvas.rename(columns={'recuento_x':'recuento'}).drop('recuento_y',1)
         curvas = curvas.rename(columns={'monto_x':'monto'}).drop('monto_y',1)
-        ratios = curvas[f.all_cortes(curvas)+['recuento','monto']].copy()
-        niveles = curvas[f.all_cortes(curvas)+['recuento','monto']].copy()
-        
+        curvas = curvas.rename(columns={'teaprom_x':'teaprom'}).drop('teaprom_y',1)
+
+        ratios = curvas[f.all_cortes(curvas)+['recuento','monto','teaprom']].copy()
+        niveles = curvas[f.all_cortes(curvas)+['recuento','monto','teaprom']].copy()     
         for i in range(len(curvas)):
             
             l=min(len(curvas.loc[i, 'if_real']),len(curvas.loc[i, 'if_teorico']))

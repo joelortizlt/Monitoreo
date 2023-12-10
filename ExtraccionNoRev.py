@@ -10,15 +10,15 @@ from source.engine.OutputsNoRevolvente import OutputsNoRevolvente
 
 
 #CAMBIAR
-nombreproducto = '\gahi'
+nombreproducto = '\cef'
 
 inicio = 202101
-fin = 202306
+fin = 202303
 
-agregado_cortes=['C_OK']                   # CEF, Hipot, MiViv, Gahi & Veh
+agregado_cortes=['C_OK','C_QUARTER','C_PLAZO','C_SEGMENTO']                   # CEF, Hipot, MiViv, Gahi & Veh
 #agregado_cortes=['C_PRODUCTO','C_PYG','C_OK']                      # PYME
 
-lista_cortes=[['C_OK']]                # CEF, Hipot, MiViv, Gahi & Veh    
+lista_cortes=[['C_OK'],['C_QUARTER'],['C_PLAZO'],['C_SEGMENTO']]                # CEF, Hipot, MiViv, Gahi & Veh    
 #lista_cortes=[['C_PRODUCTO'],['C_PYG'],['C_OK']]                   # PYME
 
 ruta = r'C:\Users\joelo\Documents\Python\Monitoreo\Data'
@@ -31,17 +31,15 @@ n = len(agregado_cortes)
 REAL = pd.read_csv(ruta_real[0])#, encoding='latin-1')
 TEORICO = pd.read_csv(ruta_teorico[0])#, encoding='latin-1')
 TMIN = pd.read_csv(ruta_tmin[0])#, encoding='latin-1')
-    
+#%%    
 product = InputsNoRevolvente(REAL,TEORICO,mincosecha=inicio,maxcosecha=fin)
 
 #Inputs
 product.condensar(agregado_cortes)
-product.plotear(texto='can')
-#%%
 product.optimizar()
 a = product.promedios
 b = product.stats.drop(product.stats.iloc[:, 0:(n+1)], axis = 1)
-#%%
+
 #Tmin
 product.impactoTmin(TMIN)
 c = product.Tmin.drop(product.Tmin.iloc[:, 0:(n+1)], axis = 1) 
@@ -58,9 +56,10 @@ e = product.ROA.drop(product.TIR.iloc[:, 0:(n+1)], axis = 1)
 product = OutputsNoRevolvente(REAL,TEORICO,mincosecha=inicio,maxcosecha=fin)
 
 product.condensar(agregado_cortes)
+
 f = product.ratios.drop(product.ratios.iloc[:, 0:(n+2)], axis = 1)
 g = product.niveles.drop(product.niveles.iloc[:, 0:(n+2)], axis = 1)
-product.plotear(texto='if')
+#product.plotear(texto='if')
 
 agregado = pd.concat([a,b,c,d,e,f,g], axis=1)
 
@@ -79,6 +78,7 @@ for corte in lista_cortes:
         w = temp['Saldo promedio']
 
         condensado.at[j,'recuento'] = sum(r)
+
         for k in ['pd_real','can_real','pre_real','pd_teorico','can_teorico','pre_teorico','pd_optimo','can_optimo','pre_optimo','scalar_pd','scalar_can','scalar_pre']:
             condensado.at[j,k] = sum(temp[k] * r) / sum(r)
             
@@ -93,7 +93,7 @@ for corte in lista_cortes:
         for k in ['ROA_base','delta_ROA_pd','delta_ROA_can','delta_ROA_pre','ROA_final']:
             condensado.at[j,k] = sum(temp[k] * e) / sum(w)
         condensado.at[j,'Saldo promedio'] = sum(w)
-
+ 
         for k in ['r_if_real','r_ef_real','r_rebate_real','r_spread_bruto_real','r_provisionb_real','r_ixs_real','r_spread_neto_real','r_if_teorico','r_ef_teorico','r_rebate_teorico','r_spread_bruto_teorico','r_provisionb_teorico','r_ixs_teorico','r_spread_neto_teorico']:
             condensado.at[j,k] = sum(temp[k] * s) / sum(s)
 
@@ -111,7 +111,7 @@ for corte in lista_cortes:
 
 print(imprimir)
 
-#imprimir.to_excel(ruta+str(nombreproducto)+'_PlanchaPonderada2.xlsx')
+imprimir.to_excel(ruta+str(nombreproducto)+'_PlanchaPonderada.xlsx')
 
 
  # %%

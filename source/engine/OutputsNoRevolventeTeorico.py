@@ -23,7 +23,7 @@ class OutputsNoRevolventeTeorico():
         df_teorico['IxS'] = pd.DataFrame({'pd':df_teorico.loc[:,'IxS1':'IxS36'].values.tolist()})
 
         #seleccionar solo la data relevante
-        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','Saldo','IF','EF','Rebate','ProvisionB','IxS']]#,'pe']]
+        df_teorico = df_teorico[f.all_cortes(df_teorico)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','TEA','Saldo','IF','EF','Rebate','ProvisionB','IxS']]#,'pe']]
         if mincosecha!='':
             df_teorico = df_teorico[df_teorico['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -41,6 +41,7 @@ class OutputsNoRevolventeTeorico():
         #Creamos la 'plantilla'
         curvas = self.df_teorico.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         curvas['monto'] = ''
+        curvas['teaprom'] = ''
         curvas['saldo_teorico'] = ''
         curvas['if_teorico'] = ''
         curvas['ef_teorico'] = ''
@@ -52,7 +53,7 @@ class OutputsNoRevolventeTeorico():
         #TEÓRICAS
         for i in range(len(curvas)):
             
-            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO',
+            temp = pd.merge(self.df_teorico[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','TEA',
                                                     'Saldo','IF','EF','Rebate','ProvisionB','IxS']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')#,'pe']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
             #IF teórico
             temp['result'] = list(map(f.operation_pd, temp['MAXMADPYG'], temp['IF']))
@@ -80,6 +81,7 @@ class OutputsNoRevolventeTeorico():
             h = f.aggr_sum(temp['result'])
             
             curvas.at[i,'monto'] = temp['MTODESEMBOLSADO'].sum()
+            curvas.at[i,'teaprom'] = f.weighted_average(temp,'TEA','MTODESEMBOLSADO')
             curvas.at[i,'if_teorico'] = [round(x,0) for x in a]
             curvas.at[i,'ef_teorico'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_teorico'] = [round(x,0) for x in d]

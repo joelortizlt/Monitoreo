@@ -21,12 +21,12 @@ class OutputsNoRevolventeReal():
         df_real['Saldo'] = pd.DataFrame({'pd':df_real.loc[:,'SALDOPROM1':'SALDOPROM36'].values.tolist()})
         df_real['IF'] = pd.DataFrame({'pd':df_real.loc[:,'IF1':'IF36'].values.tolist()})
         df_real['EF'] = pd.DataFrame({'pd':df_real.loc[:,'EF1':'EF36'].values.tolist()})
-        df_real['Rebate'] = pd.DataFrame({'pd':df_real.loc[:,'Rebate1':'Rebate36'].values.tolist()})
+        df_real['Rebate'] = pd.DataFrame({'pd':df_real.loc[:,'REBATE1':'REBATE36'].values.tolist()})
         df_real['ProvisionB'] = pd.DataFrame({'pd':df_real.loc[:,'PROVBRUTA1':'PROVBRUTA36'].values.tolist()})
-        df_real['IxS'] = pd.DataFrame({'pd':df_real.loc[:,'IxS1':'IxS36'].values.tolist()})
+        df_real['IxS'] = pd.DataFrame({'pd':df_real.loc[:,'IXS1':'IXS36'].values.tolist()})
 
         #seleccionar solo la data relevante
-        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','IF','EF','Saldo','Rebate','ProvisionB','IxS']]
+        df_real = df_real[f.all_cortes(df_real)+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','TEA','IF','EF','Saldo','Rebate','ProvisionB','IxS']]
         if mincosecha!='':
             df_real = df_real[df_real['COSECHA']>=mincosecha]
         if maxcosecha!='':
@@ -45,6 +45,7 @@ class OutputsNoRevolventeReal():
         #Creamos las 'plantillas'
         curvas = self.df_real.groupby(cortes).size().reset_index().rename(columns={0:'recuento'})
         curvas['monto'] = ''
+        curvas['teaprom'] = ''
         curvas['if_real'] = ''
         curvas['ef_real'] = ''
         curvas['saldo_real'] = ''
@@ -54,7 +55,7 @@ class OutputsNoRevolventeReal():
         
         #REALES
         for i in range(len(curvas)):
-            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','IF','EF','Saldo','Rebate','ProvisionB','IxS']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
+            temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','COSECHA','MAXMADPYG','MTODESEMBOLSADO','TEA','IF','EF','Saldo','Rebate','ProvisionB','IxS']], pd.DataFrame([curvas.loc[i,:]]), left_on=cortes, right_on=cortes, how='inner')
 
             temp['sum_if']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['IF']))
             temp['sum_ef']=list(map(f.operation_pd, temp['MAXMADPYG'], temp['EF']))
@@ -71,6 +72,7 @@ class OutputsNoRevolventeReal():
             h = f.aggr_sum(temp['sum_IxS'])
             
             curvas.at[i,'monto'] = temp['MTODESEMBOLSADO'].sum()
+            curvas.at[i,'teaprom'] = f.weighted_average(temp,'TEA','MTODESEMBOLSADO')
             curvas.at[i,'if_real'] = [round(x,0) for x in a]
             curvas.at[i,'ef_real'] = [round(x,0) for x in b]
             curvas.at[i,'saldo_real'] = [round(x,0) for x in d]

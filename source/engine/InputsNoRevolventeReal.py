@@ -41,7 +41,7 @@ class InputsNoRevolventeReal():
         curvas['pd_real'] = ''
         curvas['can_real'] = ''
         curvas['pre_real'] = ''
-        
+        curvas['vivos'] = ''
         #REALES
         for i in range(len(curvas)):
             temp = pd.merge(self.df_real[cortes+['CODCLAVEOPECTA','MAXMAD','FAIL_TYPE','SURVIVAL','prepagos','desembolso']], pd.DataFrame([curvas.loc[i,:]]), how='inner', left_on=cortes, right_on=cortes)
@@ -70,6 +70,7 @@ class InputsNoRevolventeReal():
                 #Agregar a la tabla
                 vector.loc[c, 'p1'] = p1
                 vector.loc[c, 'can_final'] = can_final
+                vector.loc[c,'vivos'] = dem
 
                 if not dem_pd == 0:
                     pd_marginal = default/dem_pd
@@ -81,9 +82,10 @@ class InputsNoRevolventeReal():
             curvas.at[i,'pd_real'] = f.porcentaje(resultado)
 
             resultado = vector['can_final'].cumsum()
-            #pd.DataFrame(vector['can_final']).to_csv(r'C:\Users\joelo\Documents\BCP\Monitoreo\Validacion\file.csv')  
             curvas.at[i,'can_real'] = f.porcentaje(resultado)
             
+            curvas.at[i,'vivos'] = vector['vivos'].values
+
             #prepagos reales
             temp['sum_prepagos']=list(map(f.operation_pd, temp['MAXMAD'], temp['prepagos']))
             temp['sum_desembolso']=list(map(f.operation_pd, temp['MAXMAD'], temp['desembolso']))    
